@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cours - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="cours-page">
+    <div class="cours-header">
+        <h1>📚 Accès aux Cours</h1>
+        <p class="intro-text">Bienvenue sur la plateforme de cours de la FMOS MFMC. Accédez à vos cours selon votre profil : enseignant ou étudiant.</p>
+    </div>
+
+    <div class="cours-content">
+        <!-- Section pour les enseignants -->
+        <section class="access-section enseignant-section">
+            <div class="section-icon">👨‍🏫</div>
+            <h2>Espace Enseignant</h2>
+            <p class="section-description">
+                En tant qu'enseignant, vous avez accès à un espace dédié pour gérer vos cours, 
+                créer des sessions en ligne, organiser des évaluations et suivre la progression de vos étudiants.
+            </p>
+            
+            <div class="features-list">
+                <div class="feature-item">
+                    <span class="feature-icon">📝</span>
+                    <div class="feature-content">
+                        <h3>Gérer vos cours</h3>
+                        <p>Créez, modifiez et organisez vos cours avec du contenu riche et interactif.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">💻</span>
+                    <div class="feature-content">
+                        <h3>Sessions en ligne</h3>
+                        <p>Conduisez des cours en ligne en temps réel avec vos étudiants.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📊</span>
+                    <div class="feature-content">
+                        <h3>Suivi des étudiants</h3>
+                        <p>Consultez la progression de vos étudiants et identifiez ceux qui ont besoin d'aide.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">✅</span>
+                    <div class="feature-content">
+                        <h3>Évaluations</h3>
+                        <p>Créez et gérez des évaluations en ligne avec suivi des résultats en temps réel.</p>
+                    </div>
+                </div>
+            </div>
+
+            {% if user.is_authenticated and user.est_enseignant %}
+            <a href="{% url 'dashboard_enseignant' %}" class="btn-access btn-enseignant">
+                Accéder à mon espace enseignant →
+            </a>
+            {% elif user.is_authenticated %}
+            <div class="alert-info">
+                <p>⚠️ Vous êtes connecté en tant qu'étudiant. Pour accéder à l'espace enseignant, veuillez vous connecter avec un compte enseignant.</p>
+            </div>
+            <a href="{% url 'login' %}?next=dashboard_enseignant" class="btn-access btn-enseignant">
+                Se connecter en tant qu'enseignant →
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}?next=dashboard_enseignant" class="btn-access btn-enseignant">
+                Se connecter en tant qu'enseignant →
+            </a>
+            {% endif %}
+        </section>
+
+        <!-- Section pour les étudiants -->
+        <section class="access-section etudiant-section">
+            <div class="section-icon">🎓</div>
+            <h2>Espace Étudiant</h2>
+            <p class="section-description">
+                En tant qu'étudiant, accédez à tous vos cours, suivez votre progression, 
+                participez aux sessions en ligne et consultez vos résultats d'évaluations.
+            </p>
+            
+            <div class="features-list">
+                <div class="feature-item">
+                    <span class="feature-icon">📖</span>
+                    <div class="feature-content">
+                        <h3>Mes cours</h3>
+                        <p>Accédez à tous les cours de votre classe avec le contenu complet et les ressources pédagogiques.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📈</span>
+                    <div class="feature-content">
+                        <h3>Suivi de progression</h3>
+                        <p>Visualisez votre progression dans chaque cours et dans le programme complet.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🎥</span>
+                    <div class="feature-content">
+                        <h3>Sessions en ligne</h3>
+                        <p>Participez aux cours en ligne en direct avec vos enseignants et camarades.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📋</span>
+                    <div class="feature-content">
+                        <h3>Évaluations</h3>
+                        <p>Passez vos évaluations en ligne et consultez vos résultats et commentaires.</p>
+                    </div>
+                </div>
+            </div>
+
+            {% if user.is_authenticated and user.est_etudiant %}
+            <a href="{% url 'dashboard_etudiant' %}" class="btn-access btn-etudiant">
+                Accéder à mon espace étudiant →
+            </a>
+            {% elif user.is_authenticated %}
+            <div class="alert-info">
+                <p>⚠️ Vous êtes connecté en tant qu'enseignant. Pour accéder à l'espace étudiant, veuillez vous connecter avec un compte étudiant.</p>
+            </div>
+            <a href="{% url 'login' %}?next=dashboard_etudiant" class="btn-access btn-etudiant">
+                Se connecter en tant qu'étudiant →
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}?next=dashboard_etudiant" class="btn-access btn-etudiant">
+                Se connecter en tant qu'étudiant →
+            </a>
+            {% endif %}
+        </section>
+    </div>
+
+    <!-- Section d'aide -->
+    <section class="help-section">
+        <h2>💡 Besoin d'aide ?</h2>
+        <div class="help-content">
+            <div class="help-item">
+                <h3>Première connexion ?</h3>
+                <p>Si vous n'avez pas encore de compte, <a href="{% url 'inscription' %}">créez-en un</a> en choisissant votre profil (enseignant ou étudiant).</p>
+            </div>
+            <div class="help-item">
+                <h3>Problème de connexion ?</h3>
+                <p>Vérifiez que vous utilisez le bon identifiant et mot de passe. Si vous avez oublié vos identifiants, contactez l'administration.</p>
+            </div>
+            <div class="help-item">
+                <h3>Questions sur les cours ?</h3>
+                <p>Pour toute question concernant les cours ou la plateforme, n'hésitez pas à <a href="{% url 'contact' %}">nous contacter</a>.</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.cours-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.cours-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 3px solid #005a9c;
+}
+
+.cours-header h1 {
+    color: #005a9c;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.intro-text {
+    font-size: 1.2rem;
+    color: #666;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.cours-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 3rem;
+    margin-bottom: 4rem;
+}
+
+.access-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e0e0e0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.access-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 90, 156, 0.15);
+}
+
+.enseignant-section {
+    border-top: 4px solid #005a9c;
+}
+
+.etudiant-section {
+    border-top: 4px solid #28a745;
+}
+
+.section-icon {
+    font-size: 4rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.access-section h2 {
+    color: #005a9c;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.etudiant-section h2 {
+    color: #28a745;
+}
+
+.section-description {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.features-list {
+    margin-bottom: 2rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border-left: 4px solid #005a9c;
+    transition: background-color 0.3s ease;
+}
+
+.etudiant-section .feature-item {
+    border-left-color: #28a745;
+}
+
+.feature-item:hover {
+    background-color: #f8f9fa;
+}
+
+.feature-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.feature-content h3 {
+    color: #005a9c;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+}
+
+.etudiant-section .feature-content h3 {
+    color: #28a745;
+}
+
+.feature-content p {
+    margin: 0;
+    color: #666;
+    line-height: 1.5;
+}
+
+.btn-access {
+    display: block;
+    width: 100%;
+    padding: 1.2rem 2rem;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    margin-top: 1.5rem;
+}
+
+.btn-enseignant {
+    background-color: #005a9c;
+    color: white;
+    border: 2px solid #005a9c;
+}
+
+.btn-enseignant:hover {
+    background-color: #004070;
+    border-color: #004070;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 90, 156, 0.3);
+}
+
+.btn-etudiant {
+    background-color: #28a745;
+    color: white;
+    border: 2px solid #28a745;
+}
+
+.btn-etudiant:hover {
+    background-color: #218838;
+    border-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.alert-info {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.alert-info p {
+    margin: 0;
+    color: #856404;
+}
+
+.help-section {
+    background-color: #e3f2fd;
+    padding: 2.5rem;
+    border-radius: 15px;
+    border: 2px solid #005a9c;
+    margin-top: 3rem;
+}
+
+.help-section h2 {
+    color: #005a9c;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.help-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.help-item {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #005a9c;
+}
+
+.help-item h3 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+}
+
+.help-item p {
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.help-item a {
+    color: #005a9c;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.help-item a:hover {
+    color: #004070;
+}
+
+@media screen and (max-width: 768px) {
+    .cours-page {
+        padding: 1rem;
+    }
+    
+    .cours-header h1 {
+        font-size: 2rem;
+    }
+    
+    .cours-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .access-section {
+        padding: 1.5rem;
+    }
+    
+    .help-content {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+

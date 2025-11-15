@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Administration - Alertes Agenda{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <h1>⚠️ Alertes Agenda</h1>
+
+    <div class="alertes-section">
+        <h2>🔴 Activités à venir (3 prochains jours)</h2>
+        {% if alertes_prochaines %}
+            {% for alerte in alertes_prochaines %}
+            <div class="alerte-item urgent">
+                <div class="alerte-date">{{ alerte.date_debut|date:"d/m/Y à H:i" }}</div>
+                <div class="alerte-content">
+                    <h4>{{ alerte.titre }}</h4>
+                    <p><strong>Classe:</strong> {{ alerte.classe.nom }}</p>
+                    {% if alerte.cours_lie %}
+                    <p><strong>Cours:</strong> {{ alerte.cours_lie.titre }}</p>
+                    {% endif %}
+                    {% if alerte.description %}
+                    <p>{{ alerte.description }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucune activité dans les 3 prochains jours.</p>
+        {% endif %}
+    </div>
+
+    <div class="alertes-section">
+        <h2>📋 Activités récentes (7 derniers jours)</h2>
+        {% if alertes_passees %}
+            {% for alerte in alertes_passees %}
+            <div class="alerte-item past">
+                <div class="alerte-date">{{ alerte.date_debut|date:"d/m/Y à H:i" }}</div>
+                <div class="alerte-content">
+                    <h4>{{ alerte.titre }}</h4>
+                    <p><strong>Classe:</strong> {{ alerte.classe.nom }}</p>
+                    {% if alerte.cours_lie %}
+                    <p><strong>Cours:</strong> {{ alerte.cours_lie.titre }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucune activité récente.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.alerte-item.urgent {
+    background: #f8d7da;
+    border-left: 4px solid #dc3545;
+}
+
+.alerte-item.past {
+    background: #e7f3ff;
+    border-left: 4px solid #6c757d;
+}
+</style>
+{% endblock %}
+

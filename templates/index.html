@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <!-- Section 1: Médecine Famille/Communautaire (Grande) -->
+    <section class="section-hero">
+      <div class="section-content">
+        <div class="section-image">
+          <img src="{% static 'images/medecine-famille.jpg' %}" alt="Médecine de famille et médecine communautaire" />
+        </div>
+        <div class="section-text">
+          <h2>Médecine de Famille et Médecine Communautaire</h2>
+          <p>
+            La Médecine de Famille et la Médecine Communautaire (MFMC) représentent une approche holistique 
+            et centrée sur le patient qui vise à offrir des soins de santé complets, continus et accessibles 
+            à toute la famille, de la naissance à la fin de vie. Cette spécialité médicale se distingue par 
+            sa capacité à prendre en charge une grande variété de problèmes de santé, en tenant compte du 
+            contexte familial, social et communautaire du patient.
+          </p>
+          <p>
+            À la FMOS MFMC, nous formons des médecins compétents capables de répondre aux besoins de santé 
+            des populations, particulièrement dans les contextes où l'accès aux soins spécialisés est limité. 
+            Notre programme met l'accent sur la prévention, la promotion de la santé, la gestion des maladies 
+            chroniques et la coordination des soins au sein de la communauté.
+          </p>
+          <p>
+            Les médecins formés en MFMC sont des acteurs essentiels du système de santé, travaillant en 
+            première ligne pour améliorer la santé globale des communautés qu'ils servent. Ils développent 
+            des compétences en communication, en gestion de cas complexes, en médecine préventive et en 
+            santé publique, faisant d'eux des professionnels polyvalents et indispensables.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Conteneur pour les 3 sections en bas -->
+    <div class="sections-container">
+      <!-- Section 2: DESMFMC -->
+      <section class="section-small">
+        <div class="section-content">
+          <div class="section-image">
+            <img src="{% static 'images/desmfmc.jpg' %}" alt="Diplôme d'Études Spécialisées en Médecine de Famille et Médecine Communautaire" />
+          </div>
+          <div class="section-text">
+            <h2>DESMFMC</h2>
+            <p>
+              Le Diplôme d'Études Spécialisées en Médecine de Famille et Médecine Communautaire (DESMFMC) 
+              est un programme de formation post-universitaire de 4 ans qui prépare les médecins à devenir 
+              des spécialistes en médecine de famille. Ce programme combine formation théorique rigoureuse 
+              et expérience clinique pratique dans divers contextes de soins.
+            </p>
+            <p>
+              Les résidents en DESMFMC acquièrent des compétences approfondies en médecine générale, 
+              pédiatrie, gynécologie, psychiatrie, médecine d'urgence et santé publique. Ils effectuent 
+              des stages dans des centres de santé communautaires, des hôpitaux de district et des 
+              structures de soins primaires, leur permettant de comprendre les défis réels de la pratique 
+              médicale en contexte communautaire.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: CSCom-U -->
+      <section class="section-small">
+        <div class="section-content">
+          <div class="section-image">
+            <img src="{% static 'images/cscom-u.jpg' %}" alt="Centres de Santé Communautaires Universitaires" />
+          </div>
+          <div class="section-text">
+            <h2>CSCom-U (Centres de Santé Communautaires Universitaires)</h2>
+            <p>
+              Les Centres de Santé Communautaires Universitaires (CSCom-U) sont des structures de soins 
+              primaires intégrées à notre programme de formation. Ces centres servent à la fois de lieux 
+              de soins pour les communautés locales et de sites d'enseignement clinique pour nos étudiants 
+              et résidents.
+            </p>
+            <p>
+              Dans ces centres, les apprenants développent leurs compétences pratiques sous la supervision 
+              de médecins expérimentés, tout en contribuant à améliorer l'accès aux soins de santé de qualité 
+              pour les populations. Les CSCom-U sont des modèles de soins intégrés qui démontrent l'importance 
+              de la médecine communautaire dans le système de santé.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Activités à la FMOS -->
+      <section class="section-small">
+        <div class="section-content">
+          <div class="section-image">
+            <img src="{% static 'images/activites-fmos.jpg' %}" alt="Activités à la FMOS" />
+          </div>
+          <div class="section-text">
+            <h2>Activités à la FMOS</h2>
+            <p>
+              La Faculté de Médecine et d'Odontostomatologie (FMOS) propose une gamme variée d'activités 
+              académiques, cliniques et communautaires. Nos activités incluent des conférences scientifiques, 
+              des ateliers de formation continue, des projets de recherche en santé communautaire, et des 
+              campagnes de sensibilisation et de prévention.
+            </p>
+            <p>
+              Nous organisons régulièrement des séminaires avec des experts nationaux et internationaux, 
+              des sessions de formation pratique sur des techniques médicales spécifiques, et des activités 
+              de service communautaire qui permettent à nos étudiants de s'engager directement avec les 
+              populations qu'ils serviront dans leur future pratique professionnelle.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/news-ticker.js' %}"></script>
+{% endblock %}

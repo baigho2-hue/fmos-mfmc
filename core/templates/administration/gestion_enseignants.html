@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Gestion des Enseignants - Administration{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <div class="page-header">
+        <div class="header-top">
+            <div>
+                <h1>👨‍🏫 Gestion des Enseignants</h1>
+                <p class="subtitle">Gérer les enseignants, leurs spécialités, cours et leçons</p>
+            </div>
+            <a href="{% url 'ajouter_enseignant' %}" class="btn-add-teacher">➕ Ajouter un enseignant</a>
+        </div>
+    </div>
+
+    <!-- Barre de recherche -->
+    <div class="search-bar">
+        <form method="get" action="{% url 'gestion_enseignants' %}">
+            <input 
+                type="text" 
+                name="recherche" 
+                placeholder="Rechercher par nom, email ou spécialité..." 
+                value="{{ recherche }}"
+                class="search-input"
+            >
+            <button type="submit" class="btn-search">🔍 Rechercher</button>
+            {% if recherche %}
+            <a href="{% url 'gestion_enseignants' %}" class="btn-clear">✖️ Effacer</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Liste des enseignants -->
+    <div class="enseignants-table-container">
+        <table class="enseignants-table">
+            <thead>
+                <tr>
+                    <th>Nom complet</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Spécialités</th>
+                    <th>Cours (Principal)</th>
+                    <th>Cours (Co-enseignant)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in enseignants_list %}
+                {% with enseignant=item.enseignant %}
+                <tr>
+                    <td>
+                        <strong>{{ enseignant.get_full_name|default:enseignant.username }}</strong>
+                        {% if enseignant.membre_coordination %}
+                        <span class="badge-coordination">Coordination</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="mailto:{{ enseignant.email }}">{{ enseignant.email }}</a>
+                    </td>
+                    <td>
+                        {% if enseignant.telephone %}
+                        <a href="tel:{{ enseignant.telephone }}">{{ enseignant.telephone }}</a>
+                        {% else %}
+                        <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.specialites %}
+                        <div class="specialites-list">
+                            {% for specialite in item.specialites %}
+                            <span class="badge-specialite">{{ specialite }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <span class="text-muted">Aucune spécialité</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <span class="badge-count">{{ enseignant.nb_cours_principaux }}</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge-count">{{ enseignant.nb_cours_co }}</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{% url 'detail_enseignant' enseignant.id %}" class="btn-action btn-view">👁️ Voir</a>
+                            <a href="{% url 'modifier_enseignant' enseignant.id %}" class="btn-action btn-edit">✏️ Modifier</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endwith %}
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted">
+                        {% if recherche %}
+                        Aucun enseignant trouvé pour "{{ recherche }}"
+                        {% else %}
+                        Aucun enseignant enregistré
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-summary">
+        <div class="stat-item">
+            <span class="stat-label">Total enseignants:</span>
+            <span class="stat-value">{{ enseignants_list|length }}</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.administration-container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.btn-add-teacher {
+    background-color: #28a745;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-add-teacher:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.subtitle {
+    color: #666;
+    font-size: 1rem;
+}
+
+.search-bar {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.search-bar form {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #005a9c;
+}
+
+.btn-search, .btn-clear {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-search {
+    background-color: #005a9c;
+    color: white;
+}
+
+.btn-search:hover {
+    background-color: #004070;
+}
+
+.btn-clear {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-clear:hover {
+    background-color: #5a6268;
+}
+
+.enseignants-table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow-x: auto;
+}
+
+.enseignants-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.enseignants-table thead {
+    background-color: #005a9c;
+    color: white;
+}
+
+.enseignants-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+.enseignants-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.enseignants-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.badge-coordination {
+    display: inline-block;
+    background-color: #ffc107;
+    color: #000;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+.specialites-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.badge-specialite {
+    display: inline-block;
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+}
+
+.badge-count {
+    display: inline-block;
+    background-color: #005a9c;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 600;
+    min-width: 30px;
+    text-align: center;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-action {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-view {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-view:hover {
+    background-color: #138496;
+}
+
+.btn-edit {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: #218838;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.stats-summary {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stat-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #005a9c;
+}
+
+@media screen and (max-width: 768px) {
+    .enseignants-table-container {
+        overflow-x: scroll;
+    }
+    
+    .search-bar form {
+        flex-direction: column;
+    }
+    
+    .search-input {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+

@@ -1,0 +1,899 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Pédagogie en santé - Formations - FMOS MFMC{% endblock %}
+
+{% block content %}
+<h2>Programme d'Enseignement en Pédagogie</h2>
+
+{% if user.is_authenticated %}
+    {% if user.est_etudiant or user.est_enseignant %}
+    <div class="formation-content">
+        {% if user.est_etudiant %}
+        <div class="user-info-badge">
+            <p>👤 <strong>Étudiant</strong> - Classe : {{ user.classe|default:"Non renseignée" }}</p>
+        </div>
+        {% elif user.est_enseignant %}
+        <div class="user-info-badge">
+            <p>👨‍🏫 <strong>Enseignant</strong> - Matières : {{ user.matieres|default:"Non renseignées" }}</p>
+            {% if user.a_acces_complet %}
+            <p class="acces-complet-badge">🔓 Accès complet au contenu</p>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <h3>Description du programme</h3>
+        <p>Le programme d'enseignement en Pédagogie est conçu pour former les apprenants à comprendre, concevoir et appliquer des méthodes pédagogiques efficaces pour favoriser l'apprentissage et le développement intégral des élèves. Ce programme offre une formation complète sur 12 semaines, couvrant tous les aspects essentiels de la pédagogie moderne.</p>
+        
+        <h3>Objectif général</h3>
+        <p>Former les apprenants à comprendre, concevoir et appliquer des méthodes pédagogiques efficaces pour favoriser l'apprentissage et le développement intégral des élèves.</p>
+        
+        <h3>Durée et structure</h3>
+        <p>Le programme s'étend sur <strong>12 semaines</strong> et peut être adapté selon le niveau (primaire, secondaire, universitaire) et le contexte (formation initiale ou continue). Il comprend une alternance théorie/pratique avec des cours magistraux, des activités pratiques, des études de cas, et la réalisation d'un dossier pédagogique complet.</p>
+        
+        <h3>Conditions d'admission</h3>
+        <p>La formation est ouverte aux enseignants, formateurs, étudiants en sciences de l'éducation, professionnels de santé souhaitant développer des compétences pédagogiques, et toute personne intéressée par l'enseignement et la formation.</p>
+        
+        <!-- Bouton d'inscription -->
+        {% include 'formations/_bouton_inscription.html' %}
+        
+        <!-- Modules du programme -->
+        <div class="competences-finales-section">
+            <h3>📚 Modules du Programme de Pédagogie</h3>
+            <p class="competences-intro">Le programme est structuré en 5 modules progressifs couvrant tous les aspects essentiels de la pédagogie moderne, permettant aux apprenants d'acquérir des compétences complètes pour enseigner efficacement.</p>
+            
+            <div class="competences-grid">
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">📖</div>
+                        <h4>Module 1 : Fondements de la Pédagogie<br><span class="module-duration">(Semaines 1-2)</span></h4>
+                    </div>
+                    <ul>
+                        <li>Définitions et concepts clés (pédagogie, didactique, andragogie)</li>
+                        <li>Histoire et courants pédagogiques (traditionnel, constructiviste, socio-constructiviste)</li>
+                        <li>Rôle et posture de l'enseignant</li>
+                        <li>Auto-évaluation des styles d'enseignement</li>
+                    </ul>
+                    <div class="module-activities">
+                        <strong>Activités :</strong>
+                        <ul>
+                            <li>Études de cas</li>
+                            <li>Discussions en groupe</li>
+                            <li>Auto-évaluation des styles d'enseignement</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">🎯</div>
+                        <h4>Module 2 : Méthodes et Stratégies d'Enseignement<br><span class="module-duration">(Semaines 3-5)</span></h4>
+                    </div>
+                    <ul>
+                        <li>Méthodes actives (apprentissage par projet, classe inversée, jeu pédagogique)</li>
+                        <li>Méthodes magistrales et interactives</li>
+                        <li>Différenciation pédagogique</li>
+                        <li>Adaptation aux différents styles d'apprentissage</li>
+                    </ul>
+                    <div class="module-activities">
+                        <strong>Activités :</strong>
+                        <ul>
+                            <li>Conception d'une séquence pédagogique</li>
+                            <li>Simulation de cours</li>
+                            <li>Analyse de vidéos de pratiques enseignantes</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">📋</div>
+                        <h4>Module 3 : Planification et Gestion de Classe<br><span class="module-duration">(Semaines 6-8)</span></h4>
+                    </div>
+                    <ul>
+                        <li>Élaboration d'un plan de cours</li>
+                        <li>Gestion du temps et des ressources</li>
+                        <li>Climat de classe et discipline positive</li>
+                        <li>Stratégies de gestion des comportements</li>
+                    </ul>
+                    <div class="module-activities">
+                        <strong>Activités :</strong>
+                        <ul>
+                            <li>Création d'un emploi du temps pédagogique</li>
+                            <li>Jeux de rôle sur la gestion de conflits</li>
+                            <li>Observation de classes</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">📊</div>
+                        <h4>Module 4 : Évaluation des Apprentissages<br><span class="module-duration">(Semaines 9-10)</span></h4>
+                    </div>
+                    <ul>
+                        <li>Types d'évaluation (diagnostique, formative, sommative)</li>
+                        <li>Outils d'évaluation (grilles, tests, portfolios)</li>
+                        <li>Rétroaction constructive</li>
+                        <li>Utilisation des résultats pour améliorer l'enseignement</li>
+                    </ul>
+                    <div class="module-activities">
+                        <strong>Activités :</strong>
+                        <ul>
+                            <li>Élaboration d'outils d'évaluation</li>
+                            <li>Correction collaborative</li>
+                            <li>Analyse de copies anonymisées</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">💡</div>
+                        <h4>Module 5 : Innovation et Inclusion en Pédagogie<br><span class="module-duration">(Semaines 11-12)</span></h4>
+                    </div>
+                    <ul>
+                        <li>Intégration du numérique dans l'enseignement</li>
+                        <li>Pédagogie inclusive et adaptation aux besoins spécifiques</li>
+                        <li>Tendances actuelles en éducation</li>
+                        <li>Innovation pédagogique et créativité</li>
+                    </ul>
+                    <div class="module-activities">
+                        <strong>Activités :</strong>
+                        <ul>
+                            <li>Création d'une ressource numérique éducative</li>
+                            <li>Présentation d'un projet pédagogique innovant</li>
+                            <li>Débat sur l'avenir de l'éducation</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">🎓</div>
+                        <h4>Évaluation Finale</h4>
+                    </div>
+                    <ul>
+                        <li>Dossier pédagogique complet (plan de cours, séquence, outils d'évaluation)</li>
+                        <li>Présentation orale devant le groupe</li>
+                        <li>Démonstration des compétences acquises</li>
+                        <li>Réflexion critique sur la pratique pédagogique</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Approche pédagogique -->
+        <div class="approche-pedagogique-section">
+            <h3>💡 Approche Pédagogique</h3>
+            <p class="approche-intro">Le programme utilise une approche pédagogique variée et interactive pour favoriser l'apprentissage pratique et l'acquisition de compétences pédagogiques.</p>
+            
+            <div class="approche-grid">
+                <div class="approche-item">
+                    <h4>📚 Cours Magistraux</h4>
+                    <p>Enseignements théoriques fondamentaux dispensés par des pédagogues expérimentés.</p>
+                </div>
+                
+                <div class="approche-item">
+                    <h4>🔧 Ateliers Pratiques</h4>
+                    <p>Sessions pratiques sur la conception de séquences pédagogiques et l'utilisation d'outils pédagogiques.</p>
+                </div>
+                
+                <div class="approche-item">
+                    <h4>📋 Études de Cas</h4>
+                    <p>Analyse de situations réelles d'enseignement pour comprendre l'application pratique.</p>
+                </div>
+                
+                <div class="approche-item">
+                    <h4>👥 Travaux de Groupe</h4>
+                    <p>Collaboration sur des projets pédagogiques pour développer les compétences collectives.</p>
+                </div>
+                
+                <div class="approche-item">
+                    <h4>🎭 Simulations et Jeux de Rôle</h4>
+                    <p>Mise en pratique des compétences pédagogiques dans un environnement sécurisé.</p>
+                </div>
+                
+                <div class="approche-item">
+                    <h4>🔍 Observation et Analyse</h4>
+                    <p>Observation de classes et analyse de pratiques enseignantes pour enrichir l'apprentissage.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Éléments d'une séance pédagogique -->
+        <div class="seance-pedagogique-section">
+            <h3>📝 Éléments d'une Séance Pédagogique</h3>
+            <p class="seance-intro">Une séance pédagogique bien structurée comprend plusieurs éléments essentiels qui garantissent un apprentissage efficace et organisé. Voici les composants fondamentaux :</p>
+            
+            <div class="seance-elements-grid">
+                <div class="seance-element-card">
+                    <div class="seance-element-header">
+                        <div class="seance-element-icon">🎯</div>
+                        <h4>1. Objectifs d'Apprentissage</h4>
+                    </div>
+                    <p>Définir clairement ce que les apprenants doivent savoir, comprendre ou être capables de faire à la fin de la séance.</p>
+                    <ul>
+                        <li>Objectifs spécifiques et mesurables</li>
+                        <li>Alignés avec les compétences visées</li>
+                        <li>Communiqués aux apprenants en début de séance</li>
+                    </ul>
+                </div>
+                
+                <div class="seance-element-card">
+                    <div class="seance-element-header">
+                        <div class="seance-element-icon">⏰</div>
+                        <h4>2. Introduction / Mise en Situation</h4>
+                    </div>
+                    <p>Créer un contexte d'apprentissage motivant et établir le lien avec les connaissances antérieures.</p>
+                    <ul>
+                        <li>Accroche et motivation</li>
+                        <li>Rappel des prérequis</li>
+                        <li>Annonce du plan de la séance</li>
+                    </ul>
+                </div>
+                
+                <div class="seance-element-card">
+                    <div class="seance-element-header">
+                        <div class="seance-element-icon">📚</div>
+                        <h4>3. Développement / Activités d'Apprentissage</h4>
+                    </div>
+                    <p>Présenter le contenu et organiser des activités variées pour favoriser l'acquisition des connaissances.</p>
+                    <ul>
+                        <li>Exposé structuré du contenu</li>
+                        <li>Activités pratiques et interactives</li>
+                        <li>Alternance théorie/pratique</li>
+                    </ul>
+                </div>
+                
+                <div class="seance-element-card">
+                    <div class="seance-element-header">
+                        <div class="seance-element-icon">💬</div>
+                        <h4>4. Interactions et Participation</h4>
+                    </div>
+                    <p>Encourager l'engagement actif des apprenants et favoriser les échanges.</p>
+                    <ul>
+                        <li>Questions et discussions</li>
+                        <li>Travaux de groupe</li>
+                        <li>Retours et feedback</li>
+                    </ul>
+                </div>
+                
+                <div class="seance-element-card">
+                    <div class="seance-element-header">
+                        <div class="seance-element-icon">📊</div>
+                        <h4>5. Évaluation Formative</h4>
+                    </div>
+                    <p>Vérifier la compréhension et ajuster l'enseignement en cours de séance.</p>
+                    <ul>
+                        <li>Questions de vérification</li>
+                        <li>Exercices pratiques</li>
+                        <li>Auto-évaluation des apprenants</li>
+                    </ul>
+                </div>
+                
+                <div class="seance-element-card">
+                    <div class="seance-element-header">
+                        <div class="seance-element-icon">🔚</div>
+                        <h4>6. Synthèse et Conclusion</h4>
+                    </div>
+                    <p>Faire le point sur les apprentissages et préparer la suite.</p>
+                    <ul>
+                        <li>Récapitulatif des points clés</li>
+                        <li>Lien avec les objectifs initiaux</li>
+                        <li>Annonce de la séance suivante</li>
+                    </ul>
+                </div>
+                
+                <div class="seance-element-card">
+                    <div class="seance-element-header">
+                        <div class="seance-element-icon">📝</div>
+                        <h4>7. Travail à Faire / Devoirs</h4>
+                    </div>
+                    <p>Proposer des activités complémentaires pour consolider les apprentissages.</p>
+                    <ul>
+                        <li>Exercices d'application</li>
+                        <li>Lectures complémentaires</li>
+                        <li>Préparation de la prochaine séance</li>
+                    </ul>
+                </div>
+                
+                <div class="seance-element-card">
+                    <div class="seance-element-header">
+                        <div class="seance-element-icon">⏱️</div>
+                        <h4>8. Gestion du Temps</h4>
+                    </div>
+                    <p>Allouer le temps approprié à chaque phase de la séance.</p>
+                    <ul>
+                        <li>Planification temporelle</li>
+                        <li>Respect du timing</li>
+                        <li>Flexibilité selon les besoins</li>
+                    </ul>
+                </div>
+                
+                <div class="seance-element-card">
+                    <div class="seance-element-header">
+                        <div class="seance-element-icon">🛠️</div>
+                        <h4>9. Ressources et Matériel</h4>
+                    </div>
+                    <p>Préparer et utiliser les outils nécessaires à l'apprentissage.</p>
+                    <ul>
+                        <li>Supports visuels (diapositives, tableaux)</li>
+                        <li>Matériel pédagogique</li>
+                        <li>Technologies numériques</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="seance-structure-example">
+                <h4>📋 Structure Type d'une Séance (90 minutes)</h4>
+                <div class="timeline-structure">
+                    <div class="timeline-item">
+                        <span class="timeline-time">0-5 min</span>
+                        <span class="timeline-content">Introduction et présentation des objectifs</span>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">5-20 min</span>
+                        <span class="timeline-content">Rappel des prérequis et mise en situation</span>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">20-60 min</span>
+                        <span class="timeline-content">Développement du contenu avec activités pratiques</span>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">60-75 min</span>
+                        <span class="timeline-content">Évaluation formative et interactions</span>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">75-85 min</span>
+                        <span class="timeline-content">Synthèse et conclusion</span>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">85-90 min</span>
+                        <span class="timeline-content">Annonce du travail à faire</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Compétences acquises -->
+        <div class="competences-acquises-section">
+            <h3>✅ Compétences Acquises</h3>
+            <p class="competences-intro">À l'issue de cette formation, les apprenants seront capables de :</p>
+            
+            <div class="competences-list">
+                <div class="competence-item">
+                    <h4>🎯 Concevoir</h4>
+                    <p>Élaborer des plans de cours et des séquences pédagogiques adaptés aux besoins des apprenants.</p>
+                </div>
+                
+                <div class="competence-item">
+                    <h4>📚 Enseigner</h4>
+                    <p>Utiliser efficacement diverses méthodes et stratégies d'enseignement pour favoriser l'apprentissage.</p>
+                </div>
+                
+                <div class="competence-item">
+                    <h4>📊 Évaluer</h4>
+                    <p>Concevoir et utiliser des outils d'évaluation appropriés pour mesurer les apprentissages.</p>
+                </div>
+                
+                <div class="competence-item">
+                    <h4>💻 Innover</h4>
+                    <p>Intégrer les technologies numériques et les approches innovantes dans l'enseignement.</p>
+                </div>
+                
+                <div class="competence-item">
+                    <h4>🤝 Inclure</h4>
+                    <p>Adapter l'enseignement aux besoins spécifiques et créer un environnement inclusif.</p>
+                </div>
+                
+                <div class="competence-item">
+                    <h4>🔄 Réfléchir</h4>
+                    <p>Analyser sa pratique pédagogique et l'améliorer de manière continue.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="access-restricted">
+        <p>🔒 <strong>Accès restreint</strong></p>
+        <p>Vous n'avez pas les permissions nécessaires pour accéder à ce contenu.</p>
+    </div>
+    {% endif %}
+{% else %}
+<div class="access-restricted">
+    <p>🔒 <strong>Contenu réservé aux utilisateurs inscrits</strong></p>
+    <p>Pour accéder au contenu complet de cette formation, veuillez <a href="{% url 'login' %}">vous connecter</a> ou <a href="{% url 'inscription' %}">créer un compte</a>.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.access-restricted {
+    background-color: #f8d7da;
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.access-restricted p {
+    margin: 0.5rem 0;
+    color: #721c24;
+}
+
+.access-restricted a {
+    color: #005a9c;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.formation-content {
+    line-height: 1.8;
+}
+
+.formation-content h3 {
+    color: #005a9c;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.formation-content ul {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.formation-content li {
+    margin-bottom: 0.5rem;
+}
+
+.user-info-badge {
+    background-color: #e3f2fd;
+    border: 2px solid #005a9c;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+.user-info-badge p {
+    margin: 0.5rem 0;
+    color: #005a9c;
+}
+
+.acces-complet-badge {
+    background-color: #28a745;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-weight: bold;
+}
+
+.module-duration {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: normal;
+    font-style: italic;
+}
+
+.module-activities {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.module-activities strong {
+    color: #005a9c;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.module-activities ul {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+}
+
+.module-activities li {
+    font-size: 0.95rem;
+    color: #666;
+}
+
+/* Styles pour la section des modules */
+.competences-finales-section {
+    background-color: #f8f9fa;
+    border: 2px solid #005a9c;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.competences-finales-section h3 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.competences-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.competences-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.competence-card {
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.competence-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 90, 156, 0.15);
+    border-color: #005a9c;
+}
+
+/* Styles uniformes pour toutes les cartes */
+.competence-header-with-image {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.competence-icon-container {
+    width: 80px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    background-color: #f0f8ff;
+    border: 2px solid #005a9c;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 90, 156, 0.2);
+    flex-shrink: 0;
+}
+
+.competence-card h4 {
+    color: #005a9c;
+    margin: 0;
+    font-size: 1.2rem;
+    border-bottom: none;
+    padding-bottom: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.competence-header-with-image h4 {
+    color: #005a9c;
+    font-size: 1.2rem;
+}
+
+.competence-card ul {
+    margin-left: 1.5rem;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.competence-card li {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+    color: #555;
+}
+
+/* Styles pour la section approche pédagogique */
+.approche-pedagogique-section {
+    background-color: #ffffff;
+    border: 2px solid #28a745;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.approche-pedagogique-section h3 {
+    color: #28a745;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.approche-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.approche-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.approche-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.approche-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
+    border-color: #28a745;
+}
+
+.approche-item h4 {
+    color: #28a745;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.approche-item p {
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Styles pour la section compétences acquises */
+.competences-acquises-section {
+    background-color: #ffffff;
+    border: 2px solid #9c27b0;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.competences-acquises-section h3 {
+    color: #9c27b0;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.competences-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.competence-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.competence-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.15);
+    border-color: #9c27b0;
+}
+
+.competence-item h4 {
+    color: #9c27b0;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.competence-item p {
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Styles pour la section éléments d'une séance pédagogique */
+.seance-pedagogique-section {
+    background-color: #ffffff;
+    border: 2px solid #17a2b8;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.seance-pedagogique-section h3 {
+    color: #17a2b8;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.seance-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.seance-elements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.seance-element-card {
+    background-color: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.seance-element-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(23, 162, 184, 0.15);
+    border-color: #17a2b8;
+}
+
+.seance-element-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.seance-element-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background-color: #e0f7fa;
+    border: 2px solid #17a2b8;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.seance-element-card h4 {
+    color: #17a2b8;
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.seance-element-card p {
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+.seance-element-card ul {
+    margin-left: 1.5rem;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.seance-element-card li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.seance-structure-example {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 2px solid #17a2b8;
+}
+
+.seance-structure-example h4 {
+    color: #17a2b8;
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+}
+
+.timeline-structure {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-left: 4px solid #17a2b8;
+    border-radius: 5px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.timeline-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(23, 162, 184, 0.1);
+}
+
+.timeline-time {
+    font-weight: bold;
+    color: #17a2b8;
+    min-width: 80px;
+    font-size: 0.95rem;
+}
+
+.timeline-content {
+    color: #555;
+    flex: 1;
+    line-height: 1.6;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .competences-grid,
+    .approche-grid,
+    .competences-list,
+    .seance-elements-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .seance-pedagogique-section {
+        padding: 1rem;
+    }
+    
+    .timeline-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .timeline-time {
+        min-width: auto;
+    }
+    
+    .competences-finales-section,
+    .approche-pedagogique-section,
+    .competences-acquises-section {
+        padding: 1rem;
+    }
+    
+    .competence-icon-container {
+        width: 60px;
+        height: 45px;
+        font-size: 2rem;
+    }
+    
+    .competence-header-with-image {
+        gap: 0.75rem;
+    }
+    
+    .competence-header-with-image h4 {
+        font-size: 1.1rem;
+    }
+}
+</style>
+{% endblock %}

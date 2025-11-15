@@ -1,0 +1,487 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Administration - Téléverser {% if type == 'cours' %}un Cours{% else %}une Leçon{% endif %}{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <h1>📤 Téléverser {% if type == 'cours' %}un Cours{% else %}une Leçon{% endif %}</h1>
+    <p class="subtitle">Téléversez un fichier {% if type == 'cours' %}de cours{% else %}de leçon{% endif %} directement</p>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="upload-form-container">
+        <form method="post" enctype="multipart/form-data" class="upload-form">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <h3>📋 Informations de base</h3>
+                
+                {% if type == 'cours' %}
+                <div class="form-group">
+                    <label for="{{ form.classe.id_for_label }}">{{ form.classe.label }} *</label>
+                    {{ form.classe }}
+                    {% if form.classe.help_text %}
+                    <small class="form-help">{{ form.classe.help_text }}</small>
+                    {% endif %}
+                    {% if form.classe.errors %}
+                    <div class="error-list">{{ form.classe.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.titre.id_for_label }}">{{ form.titre.label }} *</label>
+                        {{ form.titre }}
+                        {% if form.titre.help_text %}
+                        <small class="form-help">{{ form.titre.help_text }}</small>
+                        {% endif %}
+                        {% if form.titre.errors %}
+                        <div class="error-list">{{ form.titre.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.code.id_for_label }}">{{ form.code.label }} *</label>
+                        {{ form.code }}
+                        {% if form.code.help_text %}
+                        <small class="form-help">{{ form.code.help_text }}</small>
+                        {% endif %}
+                        {% if form.code.errors %}
+                        <div class="error-list">{{ form.code.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                    {{ form.description }}
+                    {% if form.description.help_text %}
+                    <small class="form-help">{{ form.description.help_text }}</small>
+                    {% endif %}
+                    {% if form.description.errors %}
+                    <div class="error-list">{{ form.description.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.enseignant.id_for_label }}">{{ form.enseignant.label }}</label>
+                        {{ form.enseignant }}
+                        {% if form.enseignant.help_text %}
+                        <small class="form-help">{{ form.enseignant.help_text }}</small>
+                        {% endif %}
+                        {% if form.enseignant.errors %}
+                        <div class="error-list">{{ form.enseignant.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.ordre.id_for_label }}">{{ form.ordre.label }}</label>
+                        {{ form.ordre }}
+                        {% if form.ordre.help_text %}
+                        <small class="form-help">{{ form.ordre.help_text }}</small>
+                        {% endif %}
+                        {% if form.ordre.errors %}
+                        <div class="error-list">{{ form.ordre.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.date_debut.id_for_label }}">{{ form.date_debut.label }}</label>
+                        {{ form.date_debut }}
+                        {% if form.date_debut.help_text %}
+                        <small class="form-help">{{ form.date_debut.help_text }}</small>
+                        {% endif %}
+                        {% if form.date_debut.errors %}
+                        <div class="error-list">{{ form.date_debut.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.date_fin.id_for_label }}">{{ form.date_fin.label }}</label>
+                        {{ form.date_fin }}
+                        {% if form.date_fin.help_text %}
+                        <small class="form-help">{{ form.date_fin.help_text }}</small>
+                        {% endif %}
+                        {% if form.date_fin.errors %}
+                        <div class="error-list">{{ form.date_fin.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.methodes_pedagogiques.id_for_label }}">{{ form.methodes_pedagogiques.label }}</label>
+                    <div class="methodes-help">
+                        <small class="form-help">💡 <strong>Astuce :</strong> Maintenez la touche Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs méthodes pédagogiques (double, triple, etc.)</small>
+                    </div>
+                    {{ form.methodes_pedagogiques }}
+                    {% if form.methodes_pedagogiques.help_text %}
+                    <small class="form-help">{{ form.methodes_pedagogiques.help_text }}</small>
+                    {% endif %}
+                    {% if form.methodes_pedagogiques.errors %}
+                    <div class="error-list">{{ form.methodes_pedagogiques.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.description_methodes.id_for_label }}">{{ form.description_methodes.label }}</label>
+                    {{ form.description_methodes }}
+                    {% if form.description_methodes.help_text %}
+                    <small class="form-help">{{ form.description_methodes.help_text }}</small>
+                    {% endif %}
+                    {% if form.description_methodes.errors %}
+                    <div class="error-list">{{ form.description_methodes.errors }}</div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label for="{{ form.cours.id_for_label }}">{{ form.cours.label }} *</label>
+                    {{ form.cours }}
+                    {% if form.cours.help_text %}
+                    <small class="form-help">{{ form.cours.help_text }}</small>
+                    {% endif %}
+                    {% if form.cours.errors %}
+                    <div class="error-list">{{ form.cours.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.titre.id_for_label }}">{{ form.titre.label }} *</label>
+                        {{ form.titre }}
+                        {% if form.titre.help_text %}
+                        <small class="form-help">{{ form.titre.help_text }}</small>
+                        {% endif %}
+                        {% if form.titre.errors %}
+                        <div class="error-list">{{ form.titre.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.numero.id_for_label }}">{{ form.numero.label }}</label>
+                        {{ form.numero }}
+                        {% if form.numero.help_text %}
+                        <small class="form-help">{{ form.numero.help_text }}</small>
+                        {% endif %}
+                        {% if form.numero.errors %}
+                        <div class="error-list">{{ form.numero.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.type_lecon.id_for_label }}">{{ form.type_lecon.label }}</label>
+                        {{ form.type_lecon }}
+                        {% if form.type_lecon.help_text %}
+                        <small class="form-help">{{ form.type_lecon.help_text }}</small>
+                        {% endif %}
+                        {% if form.type_lecon.errors %}
+                        <div class="error-list">{{ form.type_lecon.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.ordre.id_for_label }}">{{ form.ordre.label }}</label>
+                        {{ form.ordre }}
+                        {% if form.ordre.help_text %}
+                        <small class="form-help">{{ form.ordre.help_text }}</small>
+                        {% endif %}
+                        {% if form.ordre.errors %}
+                        <div class="error-list">{{ form.ordre.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                    {{ form.description }}
+                    {% if form.description.help_text %}
+                    <small class="form-help">{{ form.description.help_text }}</small>
+                    {% endif %}
+                    {% if form.description.errors %}
+                    <div class="error-list">{{ form.description.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.duree_estimee.id_for_label }}">{{ form.duree_estimee.label }}</label>
+                        {{ form.duree_estimee }}
+                        {% if form.duree_estimee.help_text %}
+                        <small class="form-help">{{ form.duree_estimee.help_text }}</small>
+                        {% endif %}
+                        {% if form.duree_estimee.errors %}
+                        <div class="error-list">{{ form.duree_estimee.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.date_dispensation.id_for_label }}">{{ form.date_dispensation.label }}</label>
+                        {{ form.date_dispensation }}
+                        {% if form.date_dispensation.help_text %}
+                        <small class="form-help">{{ form.date_dispensation.help_text }}</small>
+                        {% endif %}
+                        {% if form.date_dispensation.errors %}
+                        <div class="error-list">{{ form.date_dispensation.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-section">
+                <h3>📎 Fichier à téléverser</h3>
+                
+                {% if type == 'cours' %}
+                <div class="form-group file-upload-group">
+                    <label for="{{ form.fichier_cours.id_for_label }}">{{ form.fichier_cours.label }} *</label>
+                    <div class="file-input-wrapper">
+                        {{ form.fichier_cours }}
+                        <div class="file-input-info">
+                            <p>📄 Formats acceptés: PDF, Word (.doc, .docx), PowerPoint (.ppt, .pptx), Texte (.txt)</p>
+                            <p>💡 Taille maximale recommandée: 50 MB</p>
+                        </div>
+                    </div>
+                    {% if form.fichier_cours.help_text %}
+                    <small class="form-help">{{ form.fichier_cours.help_text }}</small>
+                    {% endif %}
+                    {% if form.fichier_cours.errors %}
+                    <div class="error-list">{{ form.fichier_cours.errors }}</div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="form-group file-upload-group">
+                    <label for="{{ form.fichier_lecon.id_for_label }}">{{ form.fichier_lecon.label }} *</label>
+                    <div class="file-input-wrapper">
+                        {{ form.fichier_lecon }}
+                        <div class="file-input-info">
+                            <p>📄 Formats acceptés: PDF, Word (.doc, .docx), PowerPoint (.ppt, .pptx), Texte (.txt), Archive (.zip)</p>
+                            <p>💡 Taille maximale recommandée: 50 MB</p>
+                        </div>
+                    </div>
+                    {% if form.fichier_lecon.help_text %}
+                    <small class="form-help">{{ form.fichier_lecon.help_text }}</small>
+                    {% endif %}
+                    {% if form.fichier_lecon.errors %}
+                    <div class="error-list">{{ form.fichier_lecon.errors }}</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    📤 Téléverser {% if type == 'cours' %}le cours{% else %}la leçon{% endif %}
+                </button>
+                <a href="{% url 'upload_cours_lecons' %}" class="btn-cancel">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.administration-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.upload-form-container {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.form-section {
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 2rem;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.form-section h3 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #005a9c;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.methodes-help {
+    background-color: #e3f2fd;
+    border-left: 4px solid #2196f3;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.methodes-help small {
+    color: #1565c0;
+    font-size: 0.85rem;
+}
+
+.form-group select[multiple] {
+    min-height: 120px;
+    padding: 0.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: #666;
+    font-style: italic;
+}
+
+.error-list {
+    margin-top: 0.5rem;
+    color: #f44336;
+    font-size: 0.9rem;
+}
+
+.file-upload-group {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 6px;
+    border: 2px dashed #005a9c;
+}
+
+.file-input-wrapper {
+    margin-top: 1rem;
+}
+
+.file-input-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 4px;
+}
+
+.file-input-info p {
+    margin: 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e0e0e0;
+}
+
+.btn-submit {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #005a9c 0%, #003d6b 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 90, 156, 0.3);
+}
+
+.btn-cancel {
+    padding: 12px 24px;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.btn-cancel:hover {
+    background: #5a6268;
+}
+
+@media screen and (max-width: 768px) {
+    .administration-container {
+        padding: 1rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn-submit,
+    .btn-cancel {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+

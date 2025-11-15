@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Détail Évaluation Stage - DESMFMC{% endblock %}
+
+{% block content %}
+<div class="evaluation-container">
+    <div class="evaluation-header">
+        <h1>📋 Évaluation de Stage</h1>
+        <a href="{% url 'mon_carnet_stage' %}" class="btn-back">← Retour au carnet</a>
+    </div>
+
+    <div class="evaluation-details">
+        <div class="detail-section">
+            <h2>Informations générales</h2>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <strong>Année :</strong> {{ evaluation.annee }}ème année
+                </div>
+                <div class="detail-item">
+                    <strong>Type de stage :</strong> {{ evaluation.get_type_stage_display }}
+                    {% if evaluation.stage_rotation %}
+                        {% if evaluation.stage_rotation.centre.type_centre == 'urbain' %}
+                            <span class="badge badge-info">Urbain</span>
+                        {% else %}
+                            <span class="badge badge-success">Rural</span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <div class="detail-item">
+                    <strong>Lieu :</strong> {{ evaluation.lieu_stage }}
+                    {% if evaluation.stage_rotation %}
+                        <br><small>CSCom-U: {{ evaluation.stage_rotation.centre.nom }} ({{ evaluation.stage_rotation.centre.get_type_centre_display }})</small>
+                    {% endif %}
+                </div>
+                {% if evaluation.service_stage %}
+                <div class="detail-item">
+                    <strong>Service :</strong> {{ evaluation.service_stage }}
+                </div>
+                {% endif %}
+                <div class="detail-item">
+                    <strong>Période :</strong> {{ evaluation.date_debut|date:"d/m/Y" }} - {{ evaluation.date_fin|date:"d/m/Y" }}
+                </div>
+                {% if evaluation.duree_semaines %}
+                <div class="detail-item">
+                    <strong>Durée :</strong> {{ evaluation.duree_semaines }} semaines
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h2>Maître de stage</h2>
+            <div class="detail-grid">
+                {% if evaluation.maitre_stage %}
+                <div class="detail-item">
+                    <strong>Nom :</strong> {{ evaluation.maitre_stage.get_full_name }}
+                </div>
+                {% elif evaluation.maitre_stage_nom %}
+                <div class="detail-item">
+                    <strong>Nom :</strong> {{ evaluation.maitre_stage_nom }}
+                </div>
+                {% endif %}
+                {% if evaluation.maitre_stage_titre %}
+                <div class="detail-item">
+                    <strong>Titre :</strong> {{ evaluation.maitre_stage_titre }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h2>Évaluation globale</h2>
+            {% if evaluation.note_globale %}
+            <div class="note-display">
+                <span class="note-label">Note globale :</span>
+                <span class="note-value">{{ evaluation.note_globale }}/20</span>
+            </div>
+            {% endif %}
+            {% if evaluation.appreciation_globale %}
+            <div class="appreciation">
+                <h3>Appréciation globale</h3>
+                <p>{{ evaluation.appreciation_globale }}</p>
+            </div>
+            {% endif %}
+            {% if evaluation.points_forts %}
+            <div class="points-section">
+                <h3>Points forts</h3>
+                <p>{{ evaluation.points_forts }}</p>
+            </div>
+            {% endif %}
+            {% if evaluation.points_amelioration %}
+            <div class="points-section">
+                <h3>Points à améliorer</h3>
+                <p>{{ evaluation.points_amelioration }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="detail-section">
+            <h2>Évaluation des compétences</h2>
+            {% if evaluations_competences %}
+                <table class="competences-table">
+                    <thead>
+                        <tr>
+                            <th>Compétence</th>
+                            <th>Jalon</th>
+                            <th>Niveau d'acquisition</th>
+                            <th>Commentaire</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for eval_comp in evaluations_competences %}
+                        <tr>
+                            <td>{{ eval_comp.competence.libelle }}</td>
+                            <td>{% if eval_comp.jalon %}{{ eval_comp.jalon.nom }}{% else %}-{% endif %}</td>
+                            <td>
+                                {% if eval_comp.niveau_acquisition %}
+                                    <span class="niveau-badge niveau-{{ eval_comp.niveau_acquisition }}">
+                                        {{ eval_comp.get_niveau_acquisition_display }}
+                                    </span>
+                                {% else %}
+                                    <span class="niveau-badge">Non évalué</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ eval_comp.commentaire|default:"-" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="no-data">Aucune compétence évaluée pour ce stage.</p>
+            {% endif %}
+            <div class="actions">
+                <a href="{% url 'ajouter_evaluation_competence' evaluation.id %}" class="btn-primary">➕ Ajouter une évaluation de compétence</a>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h2>Validation</h2>
+            <div class="validation-info">
+                {% if evaluation.valide %}
+                    <span class="badge badge-success">✓ Stage validé</span>
+                    {% if evaluation.date_validation %}
+                        <p><strong>Date de validation :</strong> {{ evaluation.date_validation|date:"d/m/Y" }}</p>
+                    {% endif %}
+                    {% if evaluation.valide_par %}
+                        <p><strong>Validé par :</strong> {{ evaluation.valide_par.get_full_name }}</p>
+                    {% endif %}
+                {% else %}
+                    <span class="badge badge-warning">Stage non validé</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="actions-section">
+            <a href="{% url 'modifier_evaluation_stage' evaluation.id %}" class="btn-primary">✏️ Modifier l'évaluation</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.evaluation-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.evaluation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.evaluation-header h1 {
+    color: #005a9c;
+    margin: 0;
+}
+
+.btn-back {
+    padding: 0.5rem 1rem;
+    background-color: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.btn-back:hover {
+    background-color: #5a6268;
+}
+
+.evaluation-details {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.detail-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-section:last-child {
+    border-bottom: none;
+}
+
+.detail-section h2 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.detail-item {
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+.note-display {
+    text-align: center;
+    padding: 1.5rem;
+    background: #e3f2fd;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.note-label {
+    font-size: 1.2rem;
+    color: #666;
+    margin-right: 1rem;
+}
+
+.note-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #005a9c;
+}
+
+.appreciation, .points-section {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+.appreciation h3, .points-section h3 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.competences-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.competences-table thead {
+    background: #005a9c;
+    color: white;
+}
+
+.competences-table th,
+.competences-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.competences-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.niveau-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+.niveau-1 {
+    background-color: #dc3545;
+    color: white;
+}
+
+.niveau-2 {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.niveau-3 {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.niveau-4 {
+    background-color: #28a745;
+    color: white;
+}
+
+.validation-info {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+.actions-section {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #004070;
+}
+</style>
+{% endblock %}
+

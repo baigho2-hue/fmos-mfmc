@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Étudiants</title>
+</head>
+<body>
+    <div class="header">
+        <h1>📋 Liste des Étudiants</h1>
+        {% if classe %}
+        <p><strong>Classe:</strong> {{ classe.nom }} - {{ classe.formation.nom }}</p>
+        {% else %}
+        <p><strong>Toutes les classes</strong></p>
+        {% endif %}
+        <p><strong>Date d'émission:</strong> {{ date_emission|date:"d/m/Y" }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Classe</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for etudiant in etudiants %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ etudiant.last_name|default:"-" }}</td>
+                <td>{{ etudiant.first_name|default:"-" }}</td>
+                <td>{{ etudiant.email }}</td>
+                <td>{{ etudiant.classe|default:"-" }}</td>
+                <td>
+                    {% if etudiant.email_verifie %}
+                        ✓ Vérifié
+                    {% else %}
+                        ⚠ Non vérifié
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center;">Aucun étudiant trouvé</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>Document généré le {{ date_emission|date:"d/m/Y à H:i" }} - FMOS MFMC</p>
+        <p>Total: {{ etudiants.count }} étudiant{{ etudiants.count|pluralize }}</p>
+    </div>
+
+    {% if signature_coordination %}
+    <div class="signature-section">
+        <div class="signature-content">
+            {% if signature_coordination.cachet %}
+            <img src="{{ signature_coordination.cachet.url }}" alt="Cachet" class="cachet-image">
+            {% endif %}
+            <div class="signature-name">{{ signature_coordination.get_nom_complet }}</div>
+            <div class="signature-title">{{ signature_coordination.titre_signataire }}</div>
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>
+

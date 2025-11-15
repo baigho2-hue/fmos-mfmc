@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Page non trouvée - FMOS MFMC{% endblock %}
+
+{% block content %}
+<h2>Erreur 404</h2>
+<p>La page que vous recherchez n'existe pas.</p>
+<p><a href="{% url 'accueil' %}">Retour à l'accueil</a></p>
+{% endblock %}

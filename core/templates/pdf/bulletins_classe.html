@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bulletins de Notes - {{ classe.nom }}</title>
+</head>
+<body>
+    {% for bulletin in bulletins_data %}
+    <div class="bulletin-page" style="page-break-after: always;">
+        <div class="header">
+            <h1>📄 Bulletin de Notes</h1>
+            <p><strong>Classe:</strong> {{ classe.nom }} - {{ classe.formation.nom }}</p>
+            <p><strong>Étudiant:</strong> {{ bulletin.etudiant.get_full_name|default:bulletin.etudiant.username }}</p>
+            <p><strong>Année scolaire:</strong> {{ annee_scolaire }}-{{ annee_scolaire|add:1 }}</p>
+            <p><strong>Date d'émission:</strong> {{ date_emission|date:"d/m/Y" }}</p>
+        </div>
+
+        <div class="notes-content">
+            {% for cours_data in bulletin.cours_moyennes %}
+            <div class="cours-section">
+                <h3>{{ cours_data.cours.titre }}</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Évaluation</th>
+                            <th>Date</th>
+                            <th>Note</th>
+                            <th>Coefficient</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for eval_data in cours_data.evaluations %}
+                        <tr>
+                            <td>{{ eval_data.evaluation.titre }}</td>
+                            <td>{{ eval_data.date|date:"d/m/Y" }}</td>
+                            <td>{{ eval_data.note }}/{{ eval_data.note_sur }}</td>
+                            <td>{{ eval_data.coefficient }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if cours_data.moyenne %}
+                <p class="moyenne-cours"><strong>Moyenne du cours:</strong> {{ cours_data.moyenne|floatformat:2 }}/20</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            {% if bulletin.moyenne_generale %}
+            <div class="moyenne-generale">
+                <h2>Moyenne générale: {{ bulletin.moyenne_generale|floatformat:2 }}/20</h2>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if signature_coordination %}
+        <div class="signature-section">
+            <div class="signature-content">
+                {% if signature_coordination.cachet %}
+                <img src="{{ signature_coordination.cachet.url }}" alt="Cachet" class="cachet-image">
+                {% endif %}
+                <div class="signature-name">{{ signature_coordination.get_nom_complet }}</div>
+                <div class="signature-title">{{ signature_coordination.titre_signataire }}</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p>Aucun bulletin disponible.</p>
+    {% endfor %}
+</body>
+</html>
+

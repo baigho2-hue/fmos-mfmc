@@ -1,0 +1,646 @@
+{
+  "annee_1": {
+    "annee": 1,
+    "cours": [
+      {
+        "titre": "Urgence médicale (20 heures)",
+        "code": "UM(H",
+        "description": "Leçon 1 : arrêt cardio-respiratoire",
+        "lecons": [
+          "Leçon 2 : Traumatisme choc intoxications",
+          "Leçon 3 : Brulures et électrocution",
+          "Leçon 4 : …"
+        ]
+      },
+      {
+        "titre": "Médecine (44 heures)",
+        "code": "M(H",
+        "description": "Leçon 5 : HTA",
+        "lecons": [
+          "Leçon 6 : Arythmies cardiaque",
+          "Leçon 7 : Insuffisance cardiaque",
+          "Leçon 8 : Douleur thoracique cardiaque",
+          "Leçon 9 : Dyspnée Cardiaque",
+          "Leçon 10 : La toux",
+          "Leçon 11 : L’épanchement pleural",
+          "Leçon 12 : Les BPCO",
+          "Leçon 13 : Le Diabète",
+          "Leçon 14 : Les désordres thyroïdiens",
+          "Leçon 15 : l’insuffisance rénale",
+          "Leçon 16 : Les désordres électrolytiques",
+          "Leçon 17 : l’obésité et dyslipidémies",
+          "Compétence : Communicateur"
+        ]
+      },
+      {
+        "titre": "Anglais (20 heures)",
+        "code": "A(H",
+        "description": "Compétence : Promoteur de santé",
+        "lecons": []
+      },
+      {
+        "titre": "Santé publique/Communautaire (10 heures)",
+        "code": "SP(H",
+        "description": "Leçon 18 : Les indicateurs de santé",
+        "lecons": [
+          "Leçon 19 : Politique sectorielle de santé",
+          "Leçon 20 : Santé communautaire",
+          "Leçon 21 : Le paquet minimum d’activité",
+          "Leçon 22 : Système d’information sanitaire",
+          "Leçon 23 : Système de référence évacuation",
+          "Compétence : Érudit"
+        ]
+      },
+      {
+        "titre": "informatique médicale (10 heures)",
+        "code": "IM(H",
+        "description": "Leçon 24 : Word",
+        "lecons": [
+          "Leçon 25 : Excel",
+          "Leçon 26 : Powerpoint"
+        ]
+      },
+      {
+        "titre": "Méthodologie de la recherche (10 heures)",
+        "code": "MDLR",
+        "description": "Leçon 27 : La statistique descriptive",
+        "lecons": [
+          "Leçon 28 : Plan d’un protocole de recherche",
+          "Compétence :  Professionnel"
+        ]
+      },
+      {
+        "titre": "éthique et déontologie",
+        "code": "ÉED",
+        "description": "Leçon 29 : Droit éthique et santé",
+        "lecons": [
+          "Leçon 30 : Médecine légale"
+        ]
+      }
+    ],
+    "raw_text": [
+      "Classe : 1ère année DES",
+      "Compétence : Expert médical",
+      "Cours : Urgence médicale (20 heures)",
+      "Leçon 1 : arrêt cardio-respiratoire",
+      "Leçon 2 : Traumatisme choc intoxications",
+      "Leçon 3 : Brulures et électrocution",
+      "Leçon 4 : …",
+      "Cours : Médecine (44 heures)",
+      "Leçon 5 : HTA",
+      "Leçon 6 : Arythmies cardiaque",
+      "Leçon 7 : Insuffisance cardiaque",
+      "Leçon 8 : Douleur thoracique cardiaque",
+      "Leçon 9 : Dyspnée Cardiaque",
+      "Leçon 10 : La toux",
+      "Leçon 11 : L’épanchement pleural",
+      "Leçon 12 : Les BPCO",
+      "Leçon 13 : Le Diabète",
+      "Leçon 14 : Les désordres thyroïdiens",
+      "Leçon 15 : l’insuffisance rénale",
+      "Leçon 16 : Les désordres électrolytiques",
+      "Leçon 17 : l’obésité et dyslipidémies",
+      "Compétence : Communicateur",
+      "Cours : Anglais (20 heures)",
+      "Compétence : Promoteur de santé",
+      "Cours : Santé publique/Communautaire (10 heures)",
+      "Leçon 18 : Les indicateurs de santé",
+      "Leçon 19 : Politique sectorielle de santé",
+      "Leçon 20 : Santé communautaire",
+      "Leçon 21 : Le paquet minimum d’activité",
+      "Leçon 22 : Système d’information sanitaire",
+      "Leçon 23 : Système de référence évacuation",
+      "Compétence : Érudit",
+      "Cours : informatique médicale (10 heures)",
+      "Leçon 24 : Word",
+      "Leçon 25 : Excel",
+      "Leçon 26 : Powerpoint",
+      "Cours : Méthodologie de la recherche (10 heures)",
+      "Leçon 27 : La statistique descriptive",
+      "Leçon 28 : Plan d’un protocole de recherche",
+      "Compétence :  Professionnel",
+      "Cours : éthique et déontologie",
+      "Leçon 29 : Droit éthique et santé",
+      "Leçon 30 : Médecine légale"
+    ]
+  },
+  "annee_2": {
+    "annee": 2,
+    "cours": [
+      {
+        "titre": "Pédiatrie : Soins courants aux enfants (20 heures)",
+        "code": "P:SC",
+        "description": "Leçon 1 : Maladies fébrile",
+        "lecons": [
+          "Leçon 2 : Infections fréquentes",
+          "Leçon 3 : Retard de développement staturo-pondéral et psychomoteur",
+          "Leçon 4 : Pleurs excessifs",
+          "Leçon 5 : Troubles digestifs et alimentaires fréquents",
+          "Leçon 6 : Problèmes locomoteurs",
+          "Leçon 7 : Troubles du sommeil",
+          "Leçon 8 : Troubles de l’ouïe et de la parole"
+        ]
+      },
+      {
+        "titre": "Obstétrique :",
+        "code": "O:",
+        "description": "Grossesse, accouchement et allaitement (15 heures)",
+        "lecons": [
+          "Leçon 9 : la planification familiale (PF)",
+          "Leçon 10 : Suivi des grossesse (normales, à risques et pathologiques)",
+          "Leçon 11 : Techniques obstétricale",
+          "Leçon 12 : Dystocies",
+          "Leçon 13 : Infections et grossesse"
+        ]
+      },
+      {
+        "titre": "urgences obstétricales (27 heures)",
+        "code": "UO(H",
+        "description": "Atelier 1 : Gestion des Hémorragies du post partum",
+        "lecons": [
+          "Atelier 2 : La réanimation du nouveau-né"
+        ]
+      },
+      {
+        "titre": "Chirurgie générale",
+        "code": "CG",
+        "description": "Atelier 3 : Chirurgicaux (FISRT) (35 heures)",
+        "lecons": []
+      },
+      {
+        "titre": "Gynécologie",
+        "code": "G",
+        "description": "Soins aux femmes et aux adolescentes (20 heures)",
+        "lecons": [
+          "Leçon 14 : L’infertilité",
+          "Leçon 15 : Les infections sexuellement transmissibles",
+          "Leçon 16 : Les dysménorrhées",
+          "Leçon 17 : Les métrorragies",
+          "Leçon 18 : Les tumeurs pelviennes",
+          "Leçon 19 : les Maladies du sein",
+          "Leçon 20 : Violences et abus sexuels",
+          "Leçon 21 : La ménopause",
+          "Leçon 22 : L’ostéoporose",
+          "Leçon 23 : Gestion des MGF/E",
+          "Atelier 4 : technique de dépistage du cancer du col de l’utérus",
+          "Compétence : Communicateur"
+        ]
+      },
+      {
+        "titre": "Technique de communication (18 heures)",
+        "code": "TDC(",
+        "description": "Leçon 24 : L’entrevue du malade",
+        "lecons": [
+          "Leçon 25 : Particularité de l’approche des adolescents (es)",
+          "Atelier 4 : Début d’entrevu",
+          "Atelier 5 : Fin d’entrevu",
+          "Compétence : Promoteur de la Santé"
+        ]
+      },
+      {
+        "titre": "Pédiatrie",
+        "code": "P",
+        "description": "Suivi de l’enfant (15 heures)",
+        "lecons": [
+          "Leçon 26 : Examen périodique et vaccination",
+          "Leçon 27 : Conseils Nutrition",
+          "Leçon 28 : Consultation Post natale",
+          "Leçon 29 : Examen périodique",
+          "Leçon 30 : Méthodes de changment et modification des habitudes de vie",
+          "Compétence : Gestionnaire"
+        ]
+      },
+      {
+        "titre": "Gestion",
+        "code": "G",
+        "description": "Gestion des données (10 heures)",
+        "lecons": [
+          "Leçon 31 : La micro-planification",
+          "Leçon 32 : Comptes d’exploitation",
+          "Leçon 33 : remplissage des supports",
+          "Compétence : Érudit"
+        ]
+      },
+      {
+        "titre": "Méthodologie de la recherche",
+        "code": "MDLR",
+        "description": "Clubs de lecture (10 heures)",
+        "lecons": [
+          "Leçon 34 : Analyse critique de la littérature",
+          "Leçon 35 : Niveaux de preuve",
+          "Compétence : Professionnelle"
+        ]
+      },
+      {
+        "titre": "Éthique et déontologie (3 heures)",
+        "code": "ÉED(",
+        "description": "Leçon 36 : Discussion éthique",
+        "lecons": []
+      },
+      {
+        "titre": "informatique médicale (10 heures)",
+        "code": "IM(H",
+        "description": "Leçon 37 : critères d’une bonne présentation",
+        "lecons": [
+          "Leçon 21 : Word",
+          "Leçon 22 : Excel",
+          "Leçon 23 : Powerpoint"
+        ]
+      }
+    ],
+    "raw_text": [
+      "Classe :  2ème année DES",
+      "Compétence : Expert médical",
+      "Cours : Pédiatrie : Soins courants aux enfants (20 heures)",
+      "Leçon 1 : Maladies fébrile",
+      "Leçon 2 : Infections fréquentes",
+      "Leçon 3 : Retard de développement staturo-pondéral et psychomoteur",
+      "Leçon 4 : Pleurs excessifs",
+      "Leçon 5 : Troubles digestifs et alimentaires fréquents",
+      "Leçon 6 : Problèmes locomoteurs",
+      "Leçon 7 : Troubles du sommeil",
+      "Leçon 8 : Troubles de l’ouïe et de la parole",
+      "Cours : Obstétrique :",
+      "Grossesse, accouchement et allaitement (15 heures)",
+      "Leçon 9 : la planification familiale (PF)",
+      "Leçon 10 : Suivi des grossesse (normales, à risques et pathologiques)",
+      "Leçon 11 : Techniques obstétricale",
+      "Leçon 12 : Dystocies",
+      "Leçon 13 : Infections et grossesse",
+      "Cours : urgences obstétricales (27 heures)",
+      "Atelier 1 : Gestion des Hémorragies du post partum",
+      "Atelier 2 : La réanimation du nouveau-né",
+      "Cours : Chirurgie générale",
+      "Atelier 3 : Chirurgicaux (FISRT) (35 heures)",
+      "Cours : Gynécologie",
+      "Soins aux femmes et aux adolescentes (20 heures)",
+      "Leçon 14 : L’infertilité",
+      "Leçon 15 : Les infections sexuellement transmissibles",
+      "Leçon 16 : Les dysménorrhées",
+      "Leçon 17 : Les métrorragies",
+      "Leçon 18 : Les tumeurs pelviennes",
+      "Leçon 19 : les Maladies du sein",
+      "Leçon 20 : Violences et abus sexuels",
+      "Leçon 21 : La ménopause",
+      "Leçon 22 : L’ostéoporose",
+      "Leçon 23 : Gestion des MGF/E",
+      "Atelier 4 : technique de dépistage du cancer du col de l’utérus",
+      "Compétence : Communicateur",
+      "Cours : Technique de communication (18 heures)",
+      "Leçon 24 : L’entrevue du malade",
+      "Leçon 25 : Particularité de l’approche des adolescents (es)",
+      "Atelier 4 : Début d’entrevu",
+      "Atelier 5 : Fin d’entrevu",
+      "Compétence : Promoteur de la Santé",
+      "Cours : Pédiatrie",
+      "Suivi de l’enfant (15 heures)",
+      "Leçon 26 : Examen périodique et vaccination",
+      "Leçon 27 : Conseils Nutrition",
+      "Leçon 28 : Consultation Post natale",
+      "Leçon 29 : Examen périodique",
+      "Leçon 30 : Méthodes de changment et modification des habitudes de vie",
+      "Compétence : Gestionnaire",
+      "Cours : Gestion",
+      "Gestion des données (10 heures)",
+      "Leçon 31 : La micro-planification",
+      "Leçon 32 : Comptes d’exploitation",
+      "Leçon 33 : remplissage des supports",
+      "Compétence : Érudit",
+      "Cours : Méthodologie de la recherche",
+      "Clubs de lecture (10 heures)",
+      "Leçon 34 : Analyse critique de la littérature",
+      "Leçon 35 : Niveaux de preuve",
+      "Compétence : Professionnelle",
+      "Cours : Éthique et déontologie (3 heures)",
+      "Leçon 36 : Discussion éthique",
+      "Cours : informatique médicale (10 heures)",
+      "Leçon 37 : critères d’une bonne présentation",
+      "Leçon 21 : Word",
+      "Leçon 22 : Excel",
+      "Leçon 23 : Powerpoint"
+    ]
+  },
+  "annee_3": {
+    "annee": 3,
+    "cours": [
+      {
+        "titre": "Santé mentale (26 heures)",
+        "code": "SM(H",
+        "description": "Leçon 1 : Troubles anxieux",
+        "lecons": [
+          "Leçon 2 : Troubles dépressifs",
+          "Leçon 3 : Troubles de la personnalité",
+          "Leçon 4 : Troubles psychotiques et délirants",
+          "Leçon 5 : Troubles du sommeil",
+          "Leçon 6 : Patient suicidaire",
+          "Leçon 7 : Psychose aigue"
+        ]
+      },
+      {
+        "titre": "Urgences obstétricales (21 heures)",
+        "code": "UO(H",
+        "description": "Leçon 8 : Gesta niveau II",
+        "lecons": []
+      },
+      {
+        "titre": "Urgences Médicales (30 heures)",
+        "code": "UM(H",
+        "description": "Leçon 9 : Infections aigues",
+        "lecons": [
+          "Leçon 10 : Traumatismes mineurs",
+          "Leçon 11 : Gestion de la douleur aigue",
+          "Leçon 12 : Syndrome Coronarien aigue",
+          "Leçon 13 : Dyspnée aigue",
+          "Leçon 14 : Convulsions",
+          "Leçon 15 : Urgences ophtalmiques et ORL",
+          "Leçon 16 : Urgences pédiatriques",
+          "Leçon 17 : Problèmes locomoteurs aigus",
+          "Leçon 18 : Problèmes bucco-dentaires",
+          "Leçon 19 : État de mal épileptique"
+        ]
+      },
+      {
+        "titre": "Médecine",
+        "code": "M",
+        "description": "Problèmes fréquents chez l’adulte et l’adolescent (20 heures)",
+        "lecons": [
+          "Leçon 20 : Asthme",
+          "Leçon 21 : Problèmes cutanés (acné, eczéma, psoriasis, gale, teigne, )",
+          "Leçon 22 : céphalées",
+          "Leçon 23 : Vertiges et étourdissements",
+          "Leçon 24 : Problèmes digestifs hauts et bas",
+          "Leçon 25 : Problèmes locomoteurs",
+          "Leçon 26 : Infections Sexuellement transmissibles",
+          "Leçon 27 : Arthrose/Arthrite",
+          "Leçon 28 : Maladies infectieuses"
+        ]
+      },
+      {
+        "titre": "Médecine",
+        "code": "M",
+        "description": "Suivi des maladies chroniques (20 heures)",
+        "lecons": [
+          "Leçon 29 : HTA",
+          "Leçon 30 : Maladie vasculaire athérosclérotique",
+          "Leçon 31 : Insuffisance cardiaque",
+          "Leçon 32 : BPCO",
+          "Leçon 33 : Diabète",
+          "Leçon 34 : SIDA",
+          "Leçon 35 : Cancer",
+          "Leçon 36 : Tuberculose",
+          "Leçon 37 : Épilepsie"
+        ]
+      },
+      {
+        "titre": "Gériatrie (24 heures)",
+        "code": "G(H",
+        "description": "Leçon 38 : Vieillissement normale",
+        "lecons": [
+          "Leçon 39 : Vieillissement pathologique",
+          "Leçon 40 : Les démences, délirium et trouble du comportement",
+          "Leçon 41 : Troubles de la marche et chutes",
+          "Leçon 42 : Incontinences et rétention",
+          "Leçon 43 : Problèmes cutanés courants",
+          "Leçon 44 : Pharmacothérapie chez la personne âgée",
+          "Compétence : Communicateur"
+        ]
+      },
+      {
+        "titre": "Communication et sciences comportementales (21 heures)",
+        "code": "CESC",
+        "description": "Leçon 45 : Approche des troubles psychiques ou psycho-comportementales (anxiété, dépression, trouble de la personnalité)",
+        "lecons": [
+          "Leçon 46 : Annonce d’une mauvaise nouvelle",
+          "Leçon 47 : Niveaux de Soins",
+          "Leçon 48 : Approches des victimes de violences (femmes, enfants, personnes âgées)",
+          "Compétence : Érudit"
+        ]
+      },
+      {
+        "titre": "érudition",
+        "code": "É",
+        "description": "Leçon 49 : Clubs de lecture (10 heures)",
+        "lecons": []
+      },
+      {
+        "titre": "Méthodologie de la recherche (10 heures)",
+        "code": "MDLR",
+        "description": "Leçon 50 : Plan d’un protocole de recherche",
+        "lecons": [
+          "Compétence :  Professionnel"
+        ]
+      },
+      {
+        "titre": "éthique et déontologie (6 heures)",
+        "code": "ÉED(",
+        "description": "Leçon 51 : discussion éthique",
+        "lecons": []
+      }
+    ],
+    "raw_text": [
+      "Classe : 3ème année DES",
+      "Compétence : Expert médical",
+      "Cours : Santé mentale (26 heures)",
+      "Leçon 1 : Troubles anxieux",
+      "Leçon 2 : Troubles dépressifs",
+      "Leçon 3 : Troubles de la personnalité",
+      "Leçon 4 : Troubles psychotiques et délirants",
+      "Leçon 5 : Troubles du sommeil",
+      "Leçon 6 : Patient suicidaire",
+      "Leçon 7 : Psychose aigue",
+      "Cours : Urgences obstétricales (21 heures)",
+      "Leçon 8 : Gesta niveau II",
+      "Cours : Urgences Médicales (30 heures)",
+      "Leçon 9 : Infections aigues",
+      "Leçon 10 : Traumatismes mineurs",
+      "Leçon 11 : Gestion de la douleur aigue",
+      "Leçon 12 : Syndrome Coronarien aigue",
+      "Leçon 13 : Dyspnée aigue",
+      "Leçon 14 : Convulsions",
+      "Leçon 15 : Urgences ophtalmiques et ORL",
+      "Leçon 16 : Urgences pédiatriques",
+      "Leçon 17 : Problèmes locomoteurs aigus",
+      "Leçon 18 : Problèmes bucco-dentaires",
+      "Leçon 19 : État de mal épileptique",
+      "Cours : Médecine",
+      "Problèmes fréquents chez l’adulte et l’adolescent (20 heures)",
+      "Leçon 20 : Asthme",
+      "Leçon 21 : Problèmes cutanés (acné, eczéma, psoriasis, gale, teigne, )",
+      "Leçon 22 : céphalées",
+      "Leçon 23 : Vertiges et étourdissements",
+      "Leçon 24 : Problèmes digestifs hauts et bas",
+      "Leçon 25 : Problèmes locomoteurs",
+      "Leçon 26 : Infections Sexuellement transmissibles",
+      "Leçon 27 : Arthrose/Arthrite",
+      "Leçon 28 : Maladies infectieuses",
+      "Cours : Médecine",
+      "Suivi des maladies chroniques (20 heures)",
+      "Leçon 29 : HTA",
+      "Leçon 30 : Maladie vasculaire athérosclérotique",
+      "Leçon 31 : Insuffisance cardiaque",
+      "Leçon 32 : BPCO",
+      "Leçon 33 : Diabète",
+      "Leçon 34 : SIDA",
+      "Leçon 35 : Cancer",
+      "Leçon 36 : Tuberculose",
+      "Leçon 37 : Épilepsie",
+      "Cours : Gériatrie (24 heures)",
+      "Leçon 38 : Vieillissement normale",
+      "Leçon 39 : Vieillissement pathologique",
+      "Leçon 40 : Les démences, délirium et trouble du comportement",
+      "Leçon 41 : Troubles de la marche et chutes",
+      "Leçon 42 : Incontinences et rétention",
+      "Leçon 43 : Problèmes cutanés courants",
+      "Leçon 44 : Pharmacothérapie chez la personne âgée",
+      "Compétence : Communicateur",
+      "Cours : Communication et sciences comportementales (21 heures)",
+      "Leçon 45 : Approche des troubles psychiques ou psycho-comportementales (anxiété, dépression, trouble de la personnalité)",
+      "Leçon 46 : Annonce d’une mauvaise nouvelle",
+      "Leçon 47 : Niveaux de Soins",
+      "Leçon 48 : Approches des victimes de violences (femmes, enfants, personnes âgées)",
+      "Compétence : Érudit",
+      "Cours : érudition",
+      "Leçon 49 : Clubs de lecture (10 heures)",
+      "Cours : Méthodologie de la recherche (10 heures)",
+      "Leçon 50 : Plan d’un protocole de recherche",
+      "Compétence :  Professionnel",
+      "Cours : éthique et déontologie (6 heures)",
+      "Leçon 51 : discussion éthique"
+    ]
+  },
+  "annee_4": {
+    "annee": 4,
+    "cours": [
+      {
+        "titre": "Soins de fin de vie (15 heures)",
+        "code": "SDFD",
+        "description": "Leçon 1 : Douleur totale (nociceptive, neuropathique, morale)",
+        "lecons": [
+          "Leçon 2 : Détresse respiratoire et douleur aigue",
+          "Leçon 3 : Soins de confort (problèmes buccaux, cutanés, …)"
+        ]
+      },
+      {
+        "titre": "Gestion des problèmes de fin de vie (15 heures)",
+        "code": "GDPD",
+        "description": "Leçon 4 : Nausées, Constipation et diarrhée",
+        "lecons": [
+          "Leçon 5 : Anorexie",
+          "Leçon 6 : Confusion agitation",
+          "Leçon 7 : Soins des plaies",
+          "Leçon 8 : Asthénie",
+          "Compétence : Communicateur"
+        ]
+      },
+      {
+        "titre": "Communication et science comportementale (09 heures)",
+        "code": "CESC",
+        "description": "Leçon 9 : Deuil, mort et souffrance",
+        "lecons": [
+          "Leçon 10 : Approche familiale",
+          "Leçon 11 : Gestion des comportements agressifs",
+          "Leçon 12 : Approche socio-culturelle",
+          "Leçon 13 : Plan d’action de la politique nationale genre (PNG)",
+          "Compétence : Collaborateur"
+        ]
+      },
+      {
+        "titre": "Responsabilité et tâches administratives et techniques (3 heures)",
+        "code": "RETA",
+        "description": "Leçon 14 : Relations avec le personnel, l’ASACO",
+        "lecons": [
+          "Leçon 15 : Relations ASACO, Marie, CSCom, HD"
+        ]
+      },
+      {
+        "titre": "Gestion (09 heures)",
+        "code": "G(H",
+        "description": "Leçon 16 : Planification, animation de réunion et tenue des rapports",
+        "lecons": [
+          "Compétence : Gestionnaire"
+        ]
+      },
+      {
+        "titre": "Gestions pratique (30 heures)",
+        "code": "GP(H",
+        "description": "Leçon 17 : Planification budgétaire et gestion administrative",
+        "lecons": [
+          "Leçon 18 : Planification et développement des services et de stratégies avancées",
+          "Leçon 19 : Gestion et formation du personnel",
+          "Leçon 20 : Gestion d’un environnement de pratique sécuritaire incluant les déchets biomédicaux.",
+          "Leçon 21 Organisation des services",
+          "Compétence : Érudit"
+        ]
+      },
+      {
+        "titre": "érudition (40 heures)",
+        "code": "É(H",
+        "description": "Leçon 22 : Clubs de lecture",
+        "lecons": [
+          "Leçon 23 : Rédaction scientifique",
+          "Compétence : Professionnelle"
+        ]
+      },
+      {
+        "titre": "Éthique (6 heures)",
+        "code": "É(H",
+        "description": "Leçon 24 : Discussions éthique",
+        "lecons": []
+      },
+      {
+        "titre": "Déontologie (6 heures)",
+        "code": "D(H",
+        "description": "Leçon 25 : Code de bonne conduite professionnelle",
+        "lecons": [
+          "Leçon 26 : Cadre réglementaire de la prescription",
+          "Leçon 27 : Responsabilité médicale"
+        ]
+      }
+    ],
+    "raw_text": [
+      "Classe : 3ème année DES",
+      "Compétence : Expert médical",
+      "Cours : Soins de fin de vie (15 heures)",
+      "Leçon 1 : Douleur totale (nociceptive, neuropathique, morale)",
+      "Leçon 2 : Détresse respiratoire et douleur aigue",
+      "Leçon 3 : Soins de confort (problèmes buccaux, cutanés, …)",
+      "Cours : Gestion des problèmes de fin de vie (15 heures)",
+      "Leçon 4 : Nausées, Constipation et diarrhée",
+      "Leçon 5 : Anorexie",
+      "Leçon 6 : Confusion agitation",
+      "Leçon 7 : Soins des plaies",
+      "Leçon 8 : Asthénie",
+      "Compétence : Communicateur",
+      "Cours : Communication et science comportementale (09 heures)",
+      "Leçon 9 : Deuil, mort et souffrance",
+      "Leçon 10 : Approche familiale",
+      "Leçon 11 : Gestion des comportements agressifs",
+      "Leçon 12 : Approche socio-culturelle",
+      "Leçon 13 : Plan d’action de la politique nationale genre (PNG)",
+      "Compétence : Collaborateur",
+      "Cours : Responsabilité et tâches administratives et techniques (3 heures)",
+      "Leçon 14 : Relations avec le personnel, l’ASACO",
+      "Leçon 15 : Relations ASACO, Marie, CSCom, HD",
+      "Cours : Gestion (09 heures)",
+      "Leçon 16 : Planification, animation de réunion et tenue des rapports",
+      "Compétence : Gestionnaire",
+      "Cours : Gestions pratique (30 heures)",
+      "Leçon 17 : Planification budgétaire et gestion administrative",
+      "Leçon 18 : Planification et développement des services et de stratégies avancées",
+      "Leçon 19 : Gestion et formation du personnel",
+      "Leçon 20 : Gestion d’un environnement de pratique sécuritaire incluant les déchets biomédicaux.",
+      "Leçon 21 Organisation des services",
+      "Compétence : Érudit",
+      "Cours : érudition (40 heures)",
+      "Leçon 22 : Clubs de lecture",
+      "Leçon 23 : Rédaction scientifique",
+      "Compétence : Professionnelle",
+      "Cours : Éthique (6 heures)",
+      "Leçon 24 : Discussions éthique",
+      "Cours : Déontologie (6 heures)",
+      "Leçon 25 : Code de bonne conduite professionnelle",
+      "Leçon 26 : Cadre réglementaire de la prescription",
+      "Leçon 27 : Responsabilité médicale"
+    ]
+  }
+}

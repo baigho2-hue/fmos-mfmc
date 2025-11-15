@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Lettres d'Informations</title>
+</head>
+<body>
+    <div class="header">
+        <h1>📧 Lettres d'Informations</h1>
+        <p><strong>Date d'émission:</strong> {{ date_emission|date:"d/m/Y" }}</p>
+    </div>
+
+    {% for lettre in lettres %}
+    <div class="lettre-section" style="page-break-after: always;">
+        <h2>{{ lettre.titre }}</h2>
+        <p><strong>Type:</strong> {{ lettre.get_type_lettre_display }}</p>
+        <p><strong>Date d'envoi:</strong> {{ lettre.date_envoi|date:"d/m/Y à H:i" }}</p>
+        {% if lettre.auteur %}
+        <p><strong>Auteur:</strong> {{ lettre.auteur.get_full_name|default:lettre.auteur.username }}</p>
+        {% endif %}
+        
+        <div class="lettre-contenu">
+            {{ lettre.contenu|linebreaks }}
+        </div>
+    </div>
+    {% empty %}
+    <p>Aucune lettre d'information disponible.</p>
+    {% endfor %}
+
+    <div class="footer">
+        <p>Document généré le {{ date_emission|date:"d/m/Y à H:i" }} - FMOS MFMC</p>
+        <p>Total: {{ lettres.count }} lettre{{ lettres.count|pluralize }}</p>
+    </div>
+
+    {% if signature_coordination %}
+    <div class="signature-section">
+        <div class="signature-content">
+            {% if signature_coordination.cachet %}
+            <img src="{{ signature_coordination.cachet.url }}" alt="Cachet" class="cachet-image">
+            {% endif %}
+            <div class="signature-name">{{ signature_coordination.get_nom_complet }}</div>
+            <div class="signature-title">{{ signature_coordination.titre_signataire }}</div>
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>
+

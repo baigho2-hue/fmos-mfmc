@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Administration - Inscriptions - {{ formation.nom }}{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <h1>✏️ Inscriptions - {{ formation.nom }}</h1>
+    <p class="subtitle">{{ formation.get_type_formation_display }}</p>
+
+    {% for classe_id, data in etudiants_par_classe.items %}
+    <div class="classe-section">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+            <div>
+                <h2>{{ data.classe.nom }}</h2>
+                <p class="classe-count">{{ data.nb_etudiants }} étudiant{{ data.nb_etudiants|pluralize }}</p>
+            </div>
+            {% include 'includes/boutons_pdf.html' with doc_type='liste_etudiants' classe_id=data.classe.id %}
+        </div>
+        
+        {% if data.etudiants %}
+        <table class="inscriptions-table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Date d'inscription</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for etudiant in data.etudiants %}
+                <tr>
+                    <td>{{ etudiant.last_name }}</td>
+                    <td>{{ etudiant.first_name }}</td>
+                    <td>{{ etudiant.email }}</td>
+                    <td>{{ etudiant.telephone|default:"-" }}</td>
+                    <td>{{ etudiant.date_joined|date:"d/m/Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Aucun étudiant inscrit dans cette classe.</p>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p>Aucune classe pour cette formation.</p>
+    {% endfor %}
+
+    <div class="actions">
+        <a href="{% url 'gestion_inscriptions' %}" class="btn-back">← Retour à la liste</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.classe-section {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.classe-count {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.inscriptions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.inscriptions-table th {
+    background: #005a9c;
+    color: white;
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.inscriptions-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #eee;
+}
+
+.inscriptions-table tbody tr:hover {
+    background: #f8f9fa;
+}
+</style>
+{% endblock %}
+

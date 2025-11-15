@@ -1,0 +1,152 @@
+{% comment %}
+Snippet réutilisable pour le bouton d'inscription aux formations
+Variables requises: formation_slug, est_inscrit
+{% endcomment %}
+{% if user.is_authenticated %}
+<div class="inscription-section">
+    {% if est_inscrit %}
+    <a href="{% url 'mes_formations' %}" class="btn-formation btn-ma-page">
+        📚 Ma page de formation
+    </a>
+    {% else %}
+    <a href="{% url 'inscrire_formation' formation_slug %}" class="btn-formation btn-inscription">
+        ✍️ S'inscrire à cette formation
+    </a>
+    {% endif %}
+</div>
+{% else %}
+<div class="inscription-buttons-top-right">
+    <a href="{% url 'login' %}" class="btn-top btn-login">
+        🔐 Connexion
+    </a>
+    <a href="{% url 'inscription' %}" class="btn-top btn-inscription-top">
+        ✍️ Inscription
+    </a>
+</div>
+{% endif %}
+
+<style>
+/* Styles pour les boutons d'inscription */
+.inscription-section {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 2px solid #005a9c;
+}
+
+.btn-formation {
+    display: inline-block;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 2px solid;
+}
+
+.btn-inscription {
+    background-color: #005a9c;
+    color: #ffffff;
+    border-color: #005a9c;
+}
+
+.btn-inscription:hover {
+    background-color: #004070;
+    border-color: #004070;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 90, 156, 0.3);
+}
+
+.btn-ma-page {
+    background-color: #28a745;
+    color: #ffffff;
+    border-color: #28a745;
+}
+
+.btn-ma-page:hover {
+    background-color: #218838;
+    border-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+/* Styles pour les boutons en haut à droite */
+.inscription-buttons-top-right {
+    position: fixed;
+    top: 90px; /* Positionné en dessous du header/menu */
+    right: 20px;
+    display: flex;
+    flex-direction: column; /* Empile les boutons verticalement */
+    gap: 0.5rem;
+    z-index: 999; /* En dessous du menu mais au-dessus du contenu */
+    align-items: flex-end;
+}
+
+.btn-top {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.95rem;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 2px solid;
+    white-space: nowrap;
+}
+
+.btn-login {
+    background-color: #005a9c;
+    color: #ffffff;
+    border-color: #005a9c;
+}
+
+.btn-login:hover {
+    background-color: #004070;
+    border-color: #004070;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 90, 156, 0.3);
+}
+
+.btn-inscription-top {
+    background-color: #28a745;
+    color: #ffffff;
+    border-color: #28a745;
+}
+
+.btn-inscription-top:hover {
+    background-color: #218838;
+    border-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+@media screen and (max-width: 768px) {
+    .btn-formation {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        display: block;
+        width: 100%;
+    }
+    
+    .inscription-buttons-top-right {
+        position: relative;
+        top: 0;
+        right: 0;
+        margin-bottom: 1rem;
+        align-items: center;
+        padding: 0 1rem;
+    }
+    
+    .btn-top {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        width: 100%;
+        text-align: center;
+        min-width: 150px;
+    }
+}
+</style>
+

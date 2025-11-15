@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ajouter Évaluation Compétence - DESMFMC{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h1>➕ Ajouter une évaluation de compétence</h1>
+        <a href="{% url 'detail_evaluation_stage' evaluation.id %}" class="btn-back">← Retour à l'évaluation</a>
+    </div>
+
+    <div class="evaluation-info">
+        <h2>Stage : {{ evaluation.get_type_stage_display }}</h2>
+        <p><strong>Lieu :</strong> {{ evaluation.lieu_stage }}</p>
+        <p><strong>Période :</strong> {{ evaluation.date_debut|date:"d/m/Y" }} - {{ evaluation.date_fin|date:"d/m/Y" }}</p>
+    </div>
+
+    <form method="post" class="evaluation-form">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <div class="form-group">
+                <label>{{ form.competence.label }}</label>
+                {{ form.competence }}
+                {% if form.competence.errors %}
+                    <div class="error">{{ form.competence.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label>{{ form.jalon.label }}</label>
+                {{ form.jalon }}
+                {% if form.jalon.errors %}
+                    <div class="error">{{ form.jalon.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label>{{ form.niveau_acquisition.label }}</label>
+                {{ form.niveau_acquisition }}
+                {% if form.niveau_acquisition.errors %}
+                    <div class="error">{{ form.niveau_acquisition.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group full-width">
+                <label>{{ form.commentaire.label }}</label>
+                {{ form.commentaire }}
+                {% if form.commentaire.errors %}
+                    <div class="error">{{ form.commentaire.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group full-width">
+                <label>{{ form.observations.label }}</label>
+                {{ form.observations }}
+                {% if form.observations.errors %}
+                    <div class="error">{{ form.observations.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label>{{ form.date_evaluation.label }}</label>
+                {{ form.date_evaluation }}
+                {% if form.date_evaluation.errors %}
+                    <div class="error">{{ form.date_evaluation.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Enregistrer</button>
+            <a href="{% url 'detail_evaluation_stage' evaluation.id %}" class="btn-cancel">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.form-header h1 {
+    color: #005a9c;
+    margin: 0;
+}
+
+.evaluation-info {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.evaluation-info h2 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.evaluation-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #005a9c;
+    box-shadow: 0 0 0 2px rgba(0, 90, 156, 0.2);
+}
+
+.error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #eee;
+}
+
+.btn-submit {
+    padding: 0.75rem 2rem;
+    background-color: #005a9c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-submit:hover {
+    background-color: #004070;
+}
+
+.btn-cancel {
+    padding: 0.75rem 2rem;
+    background-color: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-cancel:hover {
+    background-color: #5a6268;
+}
+</style>
+{% endblock %}
+

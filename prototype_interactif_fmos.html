@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype FMOS MFMC</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+body {font-family: Arial, sans-serif; margin:0; padding:0; background:linear-gradient(to bottom, #e6f0ff, #ffffff);}
+header {background:#004080; color:white; padding:20px; text-align:center;}
+nav {background:#336699; color:white; display:flex; justify-content:space-around; padding:10px;}
+nav button {background:#6699cc; border:none; padding:10px 20px; color:white; cursor:pointer; border-radius:5px; display:flex; align-items:center;}
+nav button i {margin-right:8px;}
+nav button:hover {background:#336699;}
+section {padding:20px; display:none;}
+section.active {display:block;}
+h2 {color:#004080; display:flex; align-items:center;}
+h2 i {margin-right:10px;}
+.card {background:white; padding:15px; margin:10px 0; border-radius:5px; box-shadow:0 2px 5px rgba(0,0,0,0.1); display:flex; align-items:center;}
+.card i {margin-right:10px; color:#004080;}
+.progress-bar {background:#cce0ff; border-radius:5px; overflow:hidden; height:20px; margin:5px 0;}
+.progress {background:#336699; height:100%; width:0%; text-align:center; color:white; line-height:20px;}
+footer {background:#004080; color:white; text-align:center; padding:10px; margin-top:20px;}
+</style>
+</head>
+<body>
+<header>
+<h1><i class="fas fa-hospital-symbol"></i> Plateforme FMOS MFMC – E-Formation Médicale</h1>
+<p>Prototype interactif pour test de navigation et interface</p>
+</header>
+<nav>
+<button onclick="showSection('accueil')"><i class="fas fa-home"></i>Accueil</button>
+<button onclick="showSection('etudiant')"><i class="fas fa-user-graduate"></i>Étudiant</button>
+<button onclick="showSection('enseignant')"><i class="fas fa-chalkboard-teacher"></i>Enseignant</button>
+<button onclick="showSection('admin')"><i class="fas fa-user-shield"></i>Admin</button>
+<button onclick="showSection('financier')"><i class="fas fa-hand-holding-usd"></i>Appuis Financiers</button>
+<button onclick="showSection('recherche')"><i class="fas fa-flask"></i>Recherche</button>
+<button onclick="showSection('paiements')"><i class="fas fa-credit-card"></i>Paiements</button>
+<button onclick="showSection('contact')"><i class="fas fa-envelope"></i>Contact</button>
+</nav>
+
+<section id="accueil" class="active">
+<h2><i class="fas fa-home"></i>Accueil</h2>
+<div class="card"><i class="fas fa-info-circle"></i>Bienvenue sur la plateforme FMOS MFMC. Découvrez les formations, actualités et modules.</div>
+<div class="card"><i class="fas fa-mouse-pointer"></i>Cliquez sur les menus pour naviguer dans les sections.</div>
+</section>
+
+<section id="etudiant">
+<h2><i class="fas fa-user-graduate"></i>Tableau de bord Étudiant</h2>
+<div class="card"><i class="fas fa-book"></i>Modules DES1-DES4</div>
+<div class="card"><i class="fas fa-tasks"></i>Progression:</div>
+<div class="progress-bar"><div class="progress" style="width:40%">40%</div></div>
+<div class="card"><i class="fas fa-clipboard-list"></i>Évaluations disponibles</div>
+<div class="card"><i class="fas fa-certificate"></i>Certificats à générer</div>
+</section>
+
+<section id="enseignant">
+<h2><i class="fas fa-chalkboard-teacher"></i>Tableau de bord Enseignant</h2>
+<div class="card"><i class="fas fa-book-medical"></i>Créer et gérer modules</div>
+<div class="card"><i class="fas fa-users"></i>Suivi des étudiants</div>
+<div class="card"><i class="fas fa-comment-dots"></i>Feedback et corrections</div>
+</section>
+
+<section id="admin">
+<h2><i class="fas fa-user-shield"></i>Tableau de bord Administrateur</h2>
+<div class="card"><i class="fas fa-user-check"></i>Validation comptes utilisateurs</div>
+<div class="card"><i class="fas fa-hand-holding-usd"></i>Suivi paiements et partenaires</div>
+<div class="card"><i class="fas fa-calendar-alt"></i>Calendrier et alertes</div>
+</section>
+
+<section id="financier">
+<h2><i class="fas fa-hand-holding-usd"></i>Appuis Financiers</h2>
+<div class="card"><i class="fas fa-file-alt"></i>Soumission de demandes d’appui</div>
+<div class="card"><i class="fas fa-chart-line"></i>Suivi des demandes et partenaires</div>
+</section>
+
+<section id="recherche">
+<h2><i class="fas fa-flask"></i>Recherche & Publications</h2>
+<div class="card"><i class="fas fa-file-medical-alt"></i>Soumission de protocoles et thèses</div>
+<div class="card"><i class="fas fa-vote-yea"></i>Comité de validation et votes</div>
+<div class="card"><i class="fas fa-edit"></i>Révisions et historique</div>
+</section>
+
+<section id="paiements">
+<h2><i class="fas fa-credit-card"></i>Paiements</h2>
+<div class="card"><i class="fas fa-wallet"></i>Paiements en ligne et liquide</div>
+<div class="card"><i class="fas fa-receipt"></i>Génération de reçus automatiques</div>
+</section>
+
+<section id="contact">
+<h2><i class="fas fa-envelope"></i>Contact / Support</h2>
+<div class="card"><i class="fas fa-edit"></i>Formulaire de contact</div>
+<div class="card"><i class="fas fa-question-circle"></i>FAQ et assistance</div>
+</section>
+
+<footer>
+<p>FMOS MFMC - Prototype interactif © 2025</p>
+</footer>
+
+<script>
+function showSection(id) {
+    document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+</script>
+
+</body>
+</html>

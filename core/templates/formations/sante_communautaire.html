@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Santé Communautaire - Formations - FMOS MFMC{% endblock %}
+
+{% block content %}
+<h2>Programme de Formation en Santé Communautaire</h2>
+
+{% if user.is_authenticated %}
+    {% if user.est_etudiant or user.est_enseignant %}
+    <div class="formation-content">
+        {% if user.est_etudiant %}
+        <div class="user-info-badge">
+            <p>👤 <strong>Étudiant</strong> - Classe : {{ user.classe|default:"Non renseignée" }}</p>
+        </div>
+        {% elif user.est_enseignant %}
+        <div class="user-info-badge">
+            <p>👨‍🏫 <strong>Enseignant</strong> - Matières : {{ user.matieres|default:"Non renseignées" }}</p>
+            {% if user.a_acces_complet %}
+            <p class="acces-complet-badge">🔓 Accès complet au contenu</p>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <h3>Description du programme</h3>
+        <p>Le programme de formation en Santé Communautaire est conçu pour former des professionnels capables d'améliorer la santé des populations à travers des approches préventives, participatives et communautaires. Ce programme combine théorie et pratique pour développer des compétences essentielles en santé publique communautaire.</p>
+        
+        <h3>Objectifs de la formation</h3>
+        <ul>
+            <li>Comprendre les concepts et principes fondamentaux de la santé communautaire</li>
+            <li>Maîtriser les méthodes d'épidémiologie et de surveillance sanitaire</li>
+            <li>Développer des compétences en promotion et éducation pour la santé</li>
+            <li>Appliquer les approches participatives avec les communautés</li>
+            <li>Gérer et organiser des programmes de santé communautaire</li>
+        </ul>
+        
+        <h3>Durée et structure</h3>
+        <p>Le programme peut être adapté selon le niveau de formation (certificat, licence, master) avec une durée indicative de 6 à 12 mois pour un certificat, jusqu'à 3 ans pour une licence. Il comprend une alternance théorie/pratique avec des cours magistraux, études de cas, travaux de groupe, simulations et stages pratiques dans les communautés.</p>
+        
+        <h3>Conditions d'admission</h3>
+        <p>Les candidats doivent être des professionnels de santé ou des personnes intéressées par la santé communautaire. Les conditions spécifiques varient selon le niveau de formation (certificat, licence, master).</p>
+        
+        <!-- Bouton d'inscription -->
+        {% include 'formations/_bouton_inscription.html' %}
+        
+        <!-- Modules du programme -->
+        <div class="competences-finales-section">
+            <h3>📚 Modules du Programme de Santé Communautaire</h3>
+            <p class="competences-intro">Le programme est structuré en modules couvrant les aspects essentiels de la santé communautaire, permettant aux apprenants d'acquérir des compétences complètes pour travailler efficacement avec les communautés.</p>
+            
+            <div class="competences-grid">
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">📖</div>
+                        <h4>Introduction et Fondements</h4>
+                    </div>
+                    <ul>
+                        <li>Concepts et principes de la santé communautaire</li>
+                        <li>Déterminants sociaux de la santé</li>
+                        <li>Éthique et droits humains en santé</li>
+                        <li>Historique et évolution de la santé communautaire</li>
+                        <li>Approches communautaires de la santé</li>
+                    </ul>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">📊</div>
+                        <h4>Épidémiologie et Surveillance</h4>
+                    </div>
+                    <ul>
+                        <li>Notions de base en épidémiologie</li>
+                        <li>Méthodes de collecte et d'analyse des données</li>
+                        <li>Systèmes de surveillance communautaire</li>
+                        <li>Indicateurs de santé communautaire</li>
+                        <li>Diagnostic communautaire</li>
+                    </ul>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">📢</div>
+                        <h4>Promotion et Éducation pour la Santé</h4>
+                    </div>
+                    <ul>
+                        <li>Stratégies de communication en santé</li>
+                        <li>Conception de campagnes de sensibilisation</li>
+                        <li>Approches participatives avec les communautés</li>
+                        <li>Techniques d'animation communautaire</li>
+                        <li>Éducation thérapeutique et prévention</li>
+                    </ul>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">🏢</div>
+                        <h4>Organisation et Gestion des Services</h4>
+                    </div>
+                    <ul>
+                        <li>Planification et gestion des programmes de santé</li>
+                        <li>Leadership communautaire et mobilisation sociale</li>
+                        <li>Gestion des ressources humaines et matérielles</li>
+                        <li>Coordination des interventions communautaires</li>
+                        <li>Évaluation des programmes de santé</li>
+                    </ul>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">👶</div>
+                        <h4>Santé Maternelle, Infantile et Reproductive</h4>
+                    </div>
+                    <ul>
+                        <li>Soins prénatals et postnatals</li>
+                        <li>Nutrition et croissance de l'enfant</li>
+                        <li>Santé sexuelle et reproductive</li>
+                        <li>Planification familiale</li>
+                        <li>Prévention de la mortalité maternelle et infantile</li>
+                    </ul>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">🛡️</div>
+                        <h4>Prévention et Contrôle des Maladies</h4>
+                    </div>
+                    <ul>
+                        <li>Maladies transmissibles (paludisme, VIH, tuberculose...)</li>
+                        <li>Maladies non transmissibles (diabète, hypertension...)</li>
+                        <li>Vaccination et hygiène communautaire</li>
+                        <li>Stratégies de prévention communautaire</li>
+                        <li>Dépistage et prise en charge précoce</li>
+                    </ul>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">🚨</div>
+                        <h4>Urgences et Catastrophes</h4>
+                    </div>
+                    <ul>
+                        <li>Préparation et réponse aux urgences sanitaires</li>
+                        <li>Gestion des épidémies et crises humanitaires</li>
+                        <li>Planification d'urgence communautaire</li>
+                        <li>Coordination des secours en situation de crise</li>
+                        <li>Réhabilitation post-catastrophe</li>
+                    </ul>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">🔬</div>
+                        <h4>Méthodologie de Recherche</h4>
+                    </div>
+                    <ul>
+                        <li>Méthodes qualitatives et quantitatives</li>
+                        <li>Rédaction et présentation de rapports</li>
+                        <li>Évaluation des interventions</li>
+                        <li>Recherche-action participative</li>
+                        <li>Utilisation des données pour la prise de décision</li>
+                    </ul>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">🏥</div>
+                        <h4>Stage Pratique</h4>
+                    </div>
+                    <ul>
+                        <li>Immersion dans une communauté</li>
+                        <li>Diagnostic communautaire</li>
+                        <li>Mise en œuvre d'un mini-projet de santé</li>
+                        <li>Suivi et évaluation des activités</li>
+                        <li>Rapport de stage et présentation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Approche pédagogique -->
+        <div class="approche-pedagogique-section">
+            <h3>💡 Approche Pédagogique</h3>
+            <p class="approche-intro">Le programme utilise une approche pédagogique variée et interactive pour favoriser l'apprentissage et l'acquisition de compétences pratiques.</p>
+            
+            <div class="approche-grid">
+                <div class="approche-item">
+                    <h4>📚 Cours Magistraux</h4>
+                    <p>Enseignements théoriques fondamentaux dispensés par des experts en santé communautaire.</p>
+                </div>
+                
+                <div class="approche-item">
+                    <h4>📋 Études de Cas</h4>
+                    <p>Analyse de situations réelles pour comprendre l'application pratique des concepts.</p>
+                </div>
+                
+                <div class="approche-item">
+                    <h4>👥 Travaux de Groupe</h4>
+                    <p>Collaboration et échange d'expériences entre apprenants pour développer les compétences collectives.</p>
+                </div>
+                
+                <div class="approche-item">
+                    <h4>🎭 Simulations</h4>
+                    <p>Mise en situation pratique pour s'exercer avant les interventions réelles dans les communautés.</p>
+                </div>
+                
+                <div class="approche-item">
+                    <h4>🌍 Terrain</h4>
+                    <p>Stages pratiques dans les communautés pour appliquer les connaissances acquises.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="access-restricted">
+        <p>🔒 <strong>Accès restreint</strong></p>
+        <p>Vous n'avez pas les permissions nécessaires pour accéder à ce contenu.</p>
+    </div>
+    {% endif %}
+{% else %}
+<div class="access-restricted">
+    <p>🔒 <strong>Contenu réservé aux utilisateurs inscrits</strong></p>
+    <p>Pour accéder au contenu complet de cette formation, veuillez <a href="{% url 'login' %}">vous connecter</a> ou <a href="{% url 'inscription' %}">créer un compte</a>.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.access-restricted {
+    background-color: #f8d7da;
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.access-restricted p {
+    margin: 0.5rem 0;
+    color: #721c24;
+}
+
+.access-restricted a {
+    color: #005a9c;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.formation-content {
+    line-height: 1.8;
+}
+
+.formation-content h3 {
+    color: #005a9c;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.formation-content ul {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.formation-content li {
+    margin-bottom: 0.5rem;
+}
+
+.user-info-badge {
+    background-color: #e3f2fd;
+    border: 2px solid #005a9c;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+.user-info-badge p {
+    margin: 0.5rem 0;
+    color: #005a9c;
+}
+
+.acces-complet-badge {
+    background-color: #28a745;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-weight: bold;
+}
+
+/* Styles pour la section des modules */
+.competences-finales-section {
+    background-color: #f8f9fa;
+    border: 2px solid #005a9c;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.competences-finales-section h3 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.competences-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.competences-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.competence-card {
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.competence-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 90, 156, 0.15);
+    border-color: #005a9c;
+}
+
+/* Styles uniformes pour toutes les cartes */
+.competence-header-with-image {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.competence-icon-container {
+    width: 80px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    background-color: #f0f8ff;
+    border: 2px solid #005a9c;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 90, 156, 0.2);
+    flex-shrink: 0;
+}
+
+.competence-card h4 {
+    color: #005a9c;
+    margin: 0;
+    font-size: 1.2rem;
+    border-bottom: none;
+    padding-bottom: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.competence-header-with-image h4 {
+    color: #005a9c;
+    font-size: 1.2rem;
+}
+
+.competence-card ul {
+    margin-left: 1.5rem;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.competence-card li {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+    color: #555;
+}
+
+/* Styles pour la section approche pédagogique */
+.approche-pedagogique-section {
+    background-color: #ffffff;
+    border: 2px solid #28a745;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.approche-pedagogique-section h3 {
+    color: #28a745;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.approche-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.approche-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.approche-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.approche-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
+    border-color: #28a745;
+}
+
+.approche-item h4 {
+    color: #28a745;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.approche-item p {
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .competences-grid,
+    .approche-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .competences-finales-section,
+    .approche-pedagogique-section {
+        padding: 1rem;
+    }
+    
+    .competence-icon-container {
+        width: 60px;
+        height: 45px;
+        font-size: 2rem;
+    }
+    
+    .competence-header-with-image {
+        gap: 0.75rem;
+    }
+    
+    .competence-header-with-image h4 {
+        font-size: 1.1rem;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,681 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Détail Enseignant - {{ enseignant.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <div class="page-header">
+        <a href="{% url 'gestion_enseignants' %}" class="btn-back">← Retour à la liste</a>
+        <h1>👨‍🏫 {{ enseignant.get_full_name|default:enseignant.username }}</h1>
+    </div>
+
+    <!-- Informations personnelles -->
+    <div class="info-section">
+        <h2>📋 Informations personnelles</h2>
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-label">Nom complet</div>
+                <div class="info-value">{{ enseignant.get_full_name|default:enseignant.username }}</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">Email</div>
+                <div class="info-value">
+                    <a href="mailto:{{ enseignant.email }}">{{ enseignant.email }}</a>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">Téléphone</div>
+                <div class="info-value">
+                    {% if enseignant.telephone %}
+                    <a href="tel:{{ enseignant.telephone }}">{{ enseignant.telephone }}</a>
+                    {% else %}
+                    <span class="text-muted">Non renseigné</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">Adresse</div>
+                <div class="info-value">
+                    {% if enseignant.adresse %}
+                    {{ enseignant.adresse }}
+                    {% else %}
+                    <span class="text-muted">Non renseignée</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">Niveau d'accès</div>
+                <div class="info-value">{{ enseignant.get_niveau_acces_display }}</div>
+            </div>
+            {% if enseignant.membre_coordination %}
+            <div class="info-card">
+                <div class="info-label">Statut</div>
+                <div class="info-value">
+                    <span class="badge-coordination">Membre de la coordination</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="action-buttons-top">
+            <a href="{% url 'modifier_enseignant' enseignant.id %}" class="btn-primary">✏️ Modifier les informations</a>
+            <a href="{% url 'assigner_cours_enseignant' enseignant.id %}" class="btn-secondary">📚 Assigner des cours</a>
+        </div>
+    </div>
+
+    <!-- Spécialités -->
+    {% if specialites %}
+    <div class="info-section">
+        <h2>🎯 Spécialités</h2>
+        <div class="specialites-container">
+            {% for specialite in specialites %}
+            <span class="badge-specialite-large">{{ specialite }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Statistiques -->
+    <div class="stats-section">
+        <h2>📊 Statistiques</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ stats.nb_cours_principaux }}</div>
+                    <div class="stat-label">Cours (Principal)</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ stats.nb_cours_co }}</div>
+                    <div class="stat-label">Cours (Co-enseignant)</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📖</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ stats.nb_lecons }}</div>
+                    <div class="stat-label">Leçons</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏫</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ stats.nb_classes }}</div>
+                    <div class="stat-label">Classes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cours où l'enseignant est responsable principal -->
+    {% if cours_principaux %}
+    <div class="info-section">
+        <h2>📚 Cours (Enseignant principal)</h2>
+        <div class="cours-list">
+            {% for cours in cours_principaux %}
+            <div class="cours-card">
+                <div class="cours-header">
+                    <h3>{{ cours.titre }}</h3>
+                    <span class="cours-code">{{ cours.code }}</span>
+                </div>
+                <div class="cours-info">
+                    <div class="cours-info-item">
+                        <strong>Classe:</strong> {{ cours.classe.nom }}
+                    </div>
+                    <div class="cours-info-item">
+                        <strong>Formation:</strong> {{ cours.classe.formation.nom }}
+                    </div>
+                    <div class="cours-info-item">
+                        <strong>Volume horaire:</strong> {{ cours.volume_horaire }}h
+                    </div>
+                    <div class="cours-info-item">
+                        <strong>Période:</strong> {{ cours.date_debut|date:"d/m/Y" }} - {{ cours.date_fin|date:"d/m/Y" }}
+                    </div>
+                    <div class="cours-info-item">
+                        <strong>Leçons:</strong> {{ cours.lecons.count }} leçon{{ cours.lecons.count|pluralize }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Cours où l'enseignant est co-enseignant -->
+    {% if cours_co %}
+    <div class="info-section">
+        <h2>👥 Cours (Co-enseignant)</h2>
+        <div class="cours-list">
+            {% for cours in cours_co %}
+            <div class="cours-card">
+                <div class="cours-header">
+                    <h3>{{ cours.titre }}</h3>
+                    <span class="cours-code">{{ cours.code }}</span>
+                </div>
+                <div class="cours-info">
+                    <div class="cours-info-item">
+                        <strong>Enseignant principal:</strong> 
+                        {% if cours.enseignant %}
+                        {{ cours.enseignant.get_full_name|default:cours.enseignant.username }}
+                        {% else %}
+                        <span class="text-muted">Non assigné</span>
+                        {% endif %}
+                    </div>
+                    <div class="cours-info-item">
+                        <strong>Classe:</strong> {{ cours.classe.nom }}
+                    </div>
+                    <div class="cours-info-item">
+                        <strong>Formation:</strong> {{ cours.classe.formation.nom }}
+                    </div>
+                    <div class="cours-info-item">
+                        <strong>Volume horaire:</strong> {{ cours.volume_horaire }}h
+                    </div>
+                    <div class="cours-info-item">
+                        <strong>Leçons:</strong> {{ cours.lecons.count }} leçon{{ cours.lecons.count|pluralize }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Leçons -->
+    {% if lecons %}
+    <div class="info-section">
+        <h2>📖 Leçons enseignées ({{ lecons.count }})</h2>
+        
+        <!-- Tableau des leçons -->
+        <div class="lecons-table-container">
+            <table class="lecons-table">
+                <thead>
+                    <tr>
+                        <th>Numéro</th>
+                        <th>Titre de la leçon</th>
+                        <th>Type</th>
+                        <th>Cours</th>
+                        <th>Classe</th>
+                        <th>Durée</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% regroup lecons by cours as lecons_par_cours %}
+                    {% for groupe in lecons_par_cours %}
+                        {% for lecon in groupe.list %}
+                        <tr>
+                            <td class="lecon-num-cell">
+                                <span class="lecon-number-badge-table">{{ lecon.numero }}</span>
+                            </td>
+                            <td><strong>{{ lecon.titre }}</strong></td>
+                            <td>
+                                <span class="badge-type-lecon badge-type-{{ lecon.type_lecon }}">
+                                    {{ lecon.get_type_lecon_display }}
+                                </span>
+                            </td>
+                            <td>{{ lecon.cours.titre }}</td>
+                            <td>{{ lecon.cours.classe.nom }}</td>
+                            <td>
+                                {% if lecon.duree_estimee %}
+                                {{ lecon.duree_estimee }} min
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% if not forloop.last %}
+                        <tr class="separator-row">
+                            <td colspan="6"></td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Vue en cartes par cours -->
+        <div class="lecons-cards-view">
+            {% regroup lecons by cours as lecons_par_cours %}
+            {% for groupe in lecons_par_cours %}
+            <div class="cours-lecons-group">
+                <h3 class="cours-lecons-title">
+                    📚 {{ groupe.grouper.titre }} 
+                    <span class="cours-lecons-count">({{ groupe.list|length }} leçon{{ groupe.list|length|pluralize }})</span>
+                </h3>
+                <div class="lecons-grid">
+                    {% for lecon in groupe.list %}
+                    <div class="lecon-card">
+                        <div class="lecon-header-card">
+                            <div class="lecon-number-badge">{{ lecon.numero }}</div>
+                            <span class="badge-type-lecon badge-type-{{ lecon.type_lecon }}">
+                                {{ lecon.get_type_lecon_display }}
+                            </span>
+                        </div>
+                        <h4 class="lecon-title-card">{{ lecon.titre }}</h4>
+                        <div class="lecon-info-card">
+                            <div class="lecon-info-item">
+                                <strong>Classe:</strong> {{ lecon.cours.classe.nom }}
+                            </div>
+                            {% if lecon.duree_estimee %}
+                            <div class="lecon-info-item">
+                                <strong>Durée:</strong> {{ lecon.duree_estimee }} min
+                            </div>
+                            {% endif %}
+                            {% if lecon.ordre %}
+                            <div class="lecon-info-item">
+                                <strong>Ordre:</strong> {{ lecon.ordre }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not cours_principaux and not cours_co %}
+    <div class="empty-state">
+        <p>Cet enseignant n'a pas encore de cours assigné.</p>
+        <a href="{% url 'assigner_cours_enseignant' enseignant.id %}" class="btn-primary">📚 Assigner des cours</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.administration-container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.btn-back {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: #005a9c;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn-back:hover {
+    text-decoration: underline;
+}
+
+.page-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.info-section {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.info-section h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-card {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.info-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.info-value {
+    font-size: 1rem;
+    color: #212529;
+}
+
+.info-value a {
+    color: #005a9c;
+    text-decoration: none;
+}
+
+.info-value a:hover {
+    text-decoration: underline;
+}
+
+.action-buttons-top {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: #005a9c;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #004070;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.specialites-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.badge-specialite-large {
+    display: inline-block;
+    background-color: #005a9c;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.badge-coordination {
+    display: inline-block;
+    background-color: #ffc107;
+    color: #000;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.stats-section {
+    margin-bottom: 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #005a9c;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.cours-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.cours-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    border-left: 4px solid #005a9c;
+}
+
+.cours-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cours-header h3 {
+    color: #005a9c;
+    margin: 0;
+}
+
+.cours-code {
+    background-color: #005a9c;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.cours-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+}
+
+.cours-info-item {
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.lecons-table-container {
+    overflow-x: auto;
+}
+
+.lecons-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.lecons-table thead {
+    background-color: #005a9c;
+    color: white;
+}
+
+.lecons-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+.lecons-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.lecons-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.badge-type-lecon {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.badge-type-lecon {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.empty-state p {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.text-muted {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.cours-lecons-group {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #005a9c;
+}
+
+.cours-lecons-title {
+    color: #005a9c;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cours-lecons-count {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: normal;
+}
+
+.lecons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.lecon-card {
+    background: white;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.lecon-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.lecon-header-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.lecon-number-badge {
+    background-color: #005a9c;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.lecon-title-card {
+    color: #212529;
+    font-size: 1rem;
+    margin: 0.5rem 0;
+    font-weight: 600;
+}
+
+.lecon-info-card {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.lecon-info-item {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+
+.lecon-num-cell {
+    text-align: center;
+}
+
+.lecon-number-badge-table {
+    display: inline-block;
+    background-color: #005a9c;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.separator-row {
+    height: 10px;
+    background-color: #f8f9fa;
+}
+
+.separator-row td {
+    padding: 0;
+    border: none;
+}
+
+.lecons-cards-view {
+    margin-top: 2rem;
+}
+</style>
+{% endblock %}
+

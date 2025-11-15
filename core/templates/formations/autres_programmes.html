@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Autres programmes - Formations - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="formation-minimaliste">
+    <h2>Autres Programmes</h2>
+    
+    <div class="formation-content-minimal">
+        <div class="message-box">
+            <div class="message-icon">📋</div>
+            <h3>Programmes à venir</h3>
+            <p>D'autres formations et programmes de développement professionnel seront bientôt disponibles.</p>
+            <p>Nous travaillons constamment à enrichir notre offre de formation pour répondre aux besoins des professionnels de santé.</p>
+            <p class="info-note">💡 <strong>Restez informé :</strong> Les nouvelles formations seront annoncées sur cette page dès qu'elles seront disponibles.</p>
+        </div>
+        
+        <div class="contact-box">
+            <h3>💬 Suggestions</h3>
+            <p>Si vous souhaitez proposer une formation ou un programme spécifique, n'hésitez pas à <a href="{% url 'contact' %}">nous contacter</a>.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.formation-minimaliste {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.formation-minimaliste h2 {
+    color: #005a9c;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.formation-content-minimal {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.message-box,
+.contact-box {
+    background-color: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.message-box {
+    background-color: #e3f2fd;
+    border-color: #005a9c;
+}
+
+.message-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.message-box h3,
+.contact-box h3 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+}
+
+.message-box p,
+.contact-box p {
+    color: #555;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+.message-box p:last-child {
+    margin-bottom: 0;
+}
+
+.info-note {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 1rem;
+    margin-top: 1.5rem !important;
+    text-align: left;
+    border-radius: 4px;
+}
+
+.info-note strong {
+    color: #856404;
+}
+
+.contact-box a {
+    color: #005a9c;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.contact-box a:hover {
+    text-decoration: none;
+}
+
+@media screen and (max-width: 768px) {
+    .formation-minimaliste {
+        padding: 1rem;
+    }
+    
+    .message-box,
+    .contact-box {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}

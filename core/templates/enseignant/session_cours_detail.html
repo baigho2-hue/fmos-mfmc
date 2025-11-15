@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Session de cours - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="session-container">
+    <div class="session-header">
+        <h1>{{ session.titre }}</h1>
+        <p class="session-meta">Cours : {{ session.cours.titre }} | Classe : {{ session.cours.classe.nom }}</p>
+        <span class="statut-badge statut-{{ session.statut }}">{{ session.get_statut_display }}</span>
+    </div>
+
+    {% if user.est_enseignant and session.enseignant == user %}
+    <div class="session-actions">
+        {% if session.statut == 'planifiee' %}
+        <a href="{% url 'demarrer_session_cours' session.id %}" class="btn-action btn-demarrer">▶️ Démarrer la session</a>
+        {% elif session.statut == 'en_cours' %}
+        <a href="#" class="btn-action btn-terminer">⏹️ Terminer la session</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="session-info">
+        <div class="info-section">
+            <h3>📅 Planning</h3>
+            <div class="info-item">
+                <strong>Début prévu :</strong> {{ session.date_debut_prevue|date:"d/m/Y à H:i" }}
+            </div>
+            <div class="info-item">
+                <strong>Fin prévue :</strong> {{ session.date_fin_prevue|date:"d/m/Y à H:i" }}
+            </div>
+            {% if session.date_debut_reelle %}
+            <div class="info-item">
+                <strong>Début réel :</strong> {{ session.date_debut_reelle|date:"d/m/Y à H:i" }}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if session.lien_session %}
+        <div class="info-section">
+            <h3>🔗 Lien de la session</h3>
+            <a href="{{ session.lien_session }}" target="_blank" class="lien-session">{{ session.lien_session }}</a>
+        </div>
+        {% endif %}
+
+        {% if session.description %}
+        <div class="info-section">
+            <h3>📝 Description</h3>
+            <p>{{ session.description }}</p>
+        </div>
+        {% endif %}
+
+        {% if session.contenu_session %}
+        <div class="info-section">
+            <h3>📚 Contenu de la session</h3>
+            <div class="contenu-session">
+                {{ session.contenu_session|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if user.est_etudiant %}
+    <div class="session-join">
+        {% if session.statut == 'en_cours' %}
+        <a href="{{ session.lien_session|default:'#' }}" target="_blank" class="btn-join">🚀 Rejoindre la session</a>
+        {% else %}
+        <p class="message-attente">La session n'est pas encore démarrée.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.session-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.session-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.session-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.session-meta {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.statut-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.statut-planifiee {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.statut-en_cours {
+    background-color: #28a745;
+    color: white;
+}
+
+.statut-terminee {
+    background-color: #6c757d;
+    color: white;
+}
+
+.session-actions {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.btn-action {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #005a9c;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-action:hover {
+    background-color: #004070;
+}
+
+.btn-demarrer {
+    background-color: #28a745;
+}
+
+.btn-demarrer:hover {
+    background-color: #218838;
+}
+
+.btn-terminer {
+    background-color: #dc3545;
+}
+
+.btn-terminer:hover {
+    background-color: #c82333;
+}
+
+.session-info {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.info-section {
+    margin-bottom: 2rem;
+}
+
+.info-section:last-child {
+    margin-bottom: 0;
+}
+
+.info-section h3 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.info-item {
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.lien-session {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #e3f2fd;
+    color: #005a9c;
+    text-decoration: none;
+    border-radius: 5px;
+    word-break: break-all;
+    transition: background-color 0.3s ease;
+}
+
+.lien-session:hover {
+    background-color: #bbdefb;
+}
+
+.contenu-session {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 5px;
+    line-height: 1.8;
+    color: #333;
+}
+
+.session-join {
+    text-align: center;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.btn-join {
+    display: inline-block;
+    padding: 1.5rem 3rem;
+    background-color: #28a745;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-join:hover {
+    background-color: #218838;
+}
+
+.message-attente {
+    color: #666;
+    font-style: italic;
+}
+
+@media screen and (max-width: 768px) {
+    .session-container {
+        padding: 1rem;
+    }
+}
+</style>
+{% endblock %}
+

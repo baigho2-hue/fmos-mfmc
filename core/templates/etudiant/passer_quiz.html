@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+{% load static %}
+{% load utilisateurs_extras %}
+
+{% block title %}{{ quiz.titre }} - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="quiz-container">
+    <div class="quiz-header">
+        <a href="{% url 'detail_cours' quiz.lecon.cours.id %}" class="btn-back">← Retour au cours</a>
+        <h1>{{ quiz.titre }}</h1>
+        <p class="quiz-info">
+            <span class="quiz-type-badge quiz-type-{{ quiz.type_quiz }}">{{ quiz.get_type_quiz_display }}</span>
+            {% if quiz.duree_minutes %}
+            <span>⏱️ Durée : {{ quiz.duree_minutes }} minutes</span>
+            {% endif %}
+            <span>📊 Note maximale : {{ quiz.note_maximale }}/20</span>
+        </p>
+    </div>
+
+    {% if quiz.description %}
+    <div class="quiz-description">
+        {{ quiz.description|linebreaks }}
+    </div>
+    {% endif %}
+
+    {% if resultat.termine %}
+    <div class="alert alert-info">
+        <strong>Vous avez déjà complété ce quiz.</strong>
+        <a href="{% url 'resultat_quiz' quiz.id %}" class="btn-view-result">Voir les résultats →</a>
+    </div>
+    {% else %}
+    <form method="post" class="quiz-form">
+        {% csrf_token %}
+        
+        {% if quiz.instructions %}
+        <div class="quiz-instructions">
+            <h3>Instructions</h3>
+            <p>{{ quiz.instructions|linebreaks }}</p>
+        </div>
+        {% endif %}
+
+        <div class="questions-list">
+            {% for question in questions %}
+            <div class="question-card">
+                <div class="question-header">
+                    <span class="question-number">Question {{ question.ordre }}</span>
+                    <span class="question-points">{{ question.points }} point{{ question.points|pluralize }}</span>
+                </div>
+                
+                <div class="question-enonce">
+                    {{ question.enonce|linebreaks }}
+                </div>
+
+                <div class="question-reponses">
+                    {% if question.type_reponse == 'choix_unique' %}
+                        {% for reponse in question.reponses_possibles.all %}
+                        <label class="reponse-option">
+                            <input type="radio" name="question_{{ question.id }}" value="{{ reponse.id }}" 
+                                   {% with reponse_etudiant=reponses_dict|get_item:question.id %}
+                                   {% if reponse_etudiant and reponse in reponse_etudiant.reponses_choisies.all %}checked{% endif %}
+                                   {% endwith %}>
+                            <span>{{ reponse.texte }}</span>
+                        </label>
+                        {% endfor %}
+                    
+                    {% elif question.type_reponse == 'choix_multiple' %}
+                        {% for reponse in question.reponses_possibles.all %}
+                        <label class="reponse-option">
+                            <input type="checkbox" name="question_{{ question.id }}" value="{{ reponse.id }}"
+                                   {% with reponse_etudiant=reponses_dict|get_item:question.id %}
+                                   {% if reponse_etudiant and reponse in reponse_etudiant.reponses_choisies.all %}checked{% endif %}
+                                   {% endwith %}>
+                            <span>{{ reponse.texte }}</span>
+                        </label>
+                        {% endfor %}
+                    
+                    {% elif question.type_reponse == 'vrai_faux' %}
+                        {% with reponse_etudiant=reponses_dict|get_item:question.id %}
+                        <label class="reponse-option">
+                            <input type="radio" name="question_{{ question.id }}" value="vrai"
+                                   {% if reponse_etudiant and reponse_etudiant.reponse_texte == 'vrai' %}checked{% endif %}>
+                            <span>Vrai</span>
+                        </label>
+                        <label class="reponse-option">
+                            <input type="radio" name="question_{{ question.id }}" value="faux"
+                                   {% if reponse_etudiant and reponse_etudiant.reponse_texte == 'faux' %}checked{% endif %}>
+                            <span>Faux</span>
+                        </label>
+                        {% endwith %}
+                    
+                    {% elif question.type_reponse == 'texte_libre' %}
+                        <textarea name="question_{{ question.id }}" class="reponse-texte" rows="5" 
+                                  placeholder="Votre réponse...">{% with reponse_etudiant=reponses_dict|get_item:question.id %}{% if reponse_etudiant %}{{ reponse_etudiant.reponse_texte }}{% endif %}{% endwith %}</textarea>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="quiz-actions">
+            <button type="submit" class="btn-submit-quiz">Soumettre le quiz</button>
+        </div>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.quiz-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.quiz-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.quiz-header h1 {
+    color: #005a9c;
+    margin: 1rem 0;
+}
+
+.quiz-info {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    color: #666;
+}
+
+.quiz-type-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+.quiz-type-quiz {
+    background-color: #005a9c;
+    color: white;
+}
+
+.quiz-type-exercice {
+    background-color: #28a745;
+    color: white;
+}
+
+.quiz-type-evaluation {
+    background-color: #dc3545;
+    color: white;
+}
+
+.quiz-description {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 2rem;
+    color: #666;
+}
+
+.quiz-instructions {
+    background-color: #e3f2fd;
+    padding: 1rem;
+    border-left: 4px solid #005a9c;
+    border-radius: 5px;
+    margin-bottom: 2rem;
+}
+
+.questions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.question-card {
+    background: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.question-number {
+    font-weight: bold;
+    color: #005a9c;
+}
+
+.question-points {
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.question-enonce {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+.question-reponses {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.reponse-option {
+    display: flex;
+    align-items: start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.reponse-option:hover {
+    background-color: #e9ecef;
+}
+
+.reponse-option input[type="radio"],
+.reponse-option input[type="checkbox"] {
+    margin-top: 0.25rem;
+    cursor: pointer;
+}
+
+.reponse-texte {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.quiz-actions {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.btn-submit-quiz {
+    padding: 1rem 2rem;
+    background-color: #005a9c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-submit-quiz:hover {
+    background-color: #004070;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 2rem;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-left: 4px solid #17a2b8;
+    color: #0c5460;
+}
+
+.btn-view-result {
+    display: inline-block;
+    margin-left: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #17a2b8;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-view-result:hover {
+    background-color: #138496;
+}
+
+@media screen and (max-width: 768px) {
+    .quiz-container {
+        padding: 1rem;
+    }
+    
+    .question-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
+

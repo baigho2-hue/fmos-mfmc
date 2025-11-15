@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mes cours - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="cours-container">
+    <div class="page-header">
+        <h1>Mes cours</h1>
+        <p class="subtitle">Gérez vos cours et créez des sessions en ligne</p>
+    </div>
+
+    {% if cours_list %}
+    <div class="cours-grid">
+        {% for cours in cours_list %}
+        <div class="cours-card">
+            <div class="cours-header">
+                <h3>{{ cours.titre }}</h3>
+                <span class="cours-code">{{ cours.code }}</span>
+            </div>
+            
+            <p class="cours-description">{{ cours.description|truncatewords:30|default:"Aucune description disponible." }}</p>
+            
+            <div class="cours-meta">
+                <div class="meta-item">
+                    <strong>📚 Classe :</strong> {{ cours.classe.nom }}
+                </div>
+                <div class="meta-item">
+                    <strong>📅 Période :</strong> {{ cours.date_debut|date:"d/m/Y" }} - {{ cours.date_fin|date:"d/m/Y" }}
+                </div>
+                <div class="meta-item">
+                    <strong>⏱️ Volume horaire :</strong> {{ cours.volume_horaire }}h
+                </div>
+            </div>
+            
+            <div class="cours-actions">
+                <a href="{% url 'modifier_cours' cours.id %}" class="btn-action btn-modifier">✏️ Modifier</a>
+                <a href="{% url 'creer_session_cours' cours.id %}" class="btn-action btn-session">💻 Créer session</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-cours">
+        <p>Vous n'avez pas encore de cours assignés.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.cours-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.page-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.cours-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.cours-card {
+    background: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cours-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-color: #005a9c;
+}
+
+.cours-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.cours-header h3 {
+    color: #005a9c;
+    margin: 0;
+    flex: 1;
+}
+
+.cours-code {
+    background: #f0f0f0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 5px;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.cours-description {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.cours-meta {
+    margin-bottom: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.meta-item {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.cours-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.btn-action {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem;
+    border-radius: 5px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-modifier {
+    background-color: #17a2b8;
+    color: #ffffff;
+}
+
+.btn-modifier:hover {
+    background-color: #138496;
+}
+
+.btn-session {
+    background-color: #005a9c;
+    color: #ffffff;
+}
+
+.btn-session:hover {
+    background-color: #004070;
+}
+
+.no-cours {
+    text-align: center;
+    padding: 3rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #666;
+}
+
+@media screen and (max-width: 768px) {
+    .cours-container {
+        padding: 1rem;
+    }
+    
+    .cours-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cours-actions {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}
+

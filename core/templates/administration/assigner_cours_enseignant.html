@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Assigner des cours - {{ enseignant.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <div class="page-header">
+        <a href="{% url 'detail_enseignant' enseignant.id %}" class="btn-back">← Retour au détail</a>
+        <h1>📚 Assigner des cours</h1>
+        <p class="subtitle">{{ enseignant.get_full_name|default:enseignant.username }}</p>
+    </div>
+
+    <!-- Cours actuels -->
+    <div class="info-section">
+        <h2>📋 Cours actuellement assignés</h2>
+        <div class="cours-assignes">
+            <div class="cours-assigne-group">
+                <h3>En tant qu'enseignant principal</h3>
+                {% if cours_principaux %}
+                <ul class="cours-list-assignes">
+                    {% for cours in cours_principaux %}
+                    <li>
+                        <strong>{{ cours.titre }}</strong> ({{ cours.classe.nom }})
+                        <form method="post" style="display: inline;" onsubmit="return confirm('Retirer cet enseignant comme responsable principal ?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="retirer_principal">
+                            <input type="hidden" name="cours_id" value="{{ cours.id }}">
+                            <button type="submit" class="btn-small btn-danger">Retirer</button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">Aucun cours assigné comme enseignant principal</p>
+                {% endif %}
+            </div>
+
+            <div class="cours-assigne-group">
+                <h3>En tant que co-enseignant</h3>
+                {% if cours_co %}
+                <ul class="cours-list-assignes">
+                    {% for cours in cours_co %}
+                    <li>
+                        <strong>{{ cours.titre }}</strong> ({{ cours.classe.nom }})
+                        <form method="post" style="display: inline;" onsubmit="return confirm('Retirer cet enseignant comme co-enseignant ?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="retirer_co">
+                            <input type="hidden" name="cours_id" value="{{ cours.id }}">
+                            <button type="submit" class="btn-small btn-danger">Retirer</button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">Aucun cours assigné comme co-enseignant</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des cours disponibles -->
+    <div class="info-section">
+        <h2>📚 Tous les cours disponibles</h2>
+        <div class="cours-disponibles">
+            {% regroup cours_list by cours.classe as cours_par_classe %}
+            {% for groupe in cours_par_classe %}
+            <div class="classe-group">
+                <h3>{{ groupe.grouper.nom }} - {{ groupe.grouper.formation.nom }}</h3>
+                <div class="cours-grid">
+                    {% for item in groupe.list %}
+                    {% with cours=item.cours %}
+                    <div class="cours-card-assign">
+                        <div class="cours-header-assign">
+                            <h4>{{ cours.titre }}</h4>
+                            <span class="cours-code-small">{{ cours.code }}</span>
+                        </div>
+                        <div class="cours-info-assign">
+                            <p><strong>Volume horaire:</strong> {{ cours.volume_horaire }}h</p>
+                            <p><strong>Période:</strong> {{ cours.date_debut|date:"d/m/Y" }} - {{ cours.date_fin|date:"d/m/Y" }}</p>
+                            {% if cours.enseignant %}
+                            <p><strong>Enseignant principal actuel:</strong> {{ cours.enseignant.get_full_name|default:cours.enseignant.username }}</p>
+                            {% else %}
+                            <p class="text-muted"><strong>Enseignant principal:</strong> Non assigné</p>
+                            {% endif %}
+                        </div>
+                        <div class="cours-actions-assign">
+                            {% if item.est_principal %}
+                            <span class="badge-assigne">Déjà assigné (Principal)</span>
+                            {% elif item.est_co %}
+                            <span class="badge-assigne">Déjà assigné (Co-enseignant)</span>
+                            {% else %}
+                            <form method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="assigner_principal">
+                                <input type="hidden" name="cours_id" value="{{ cours.id }}">
+                                <button type="submit" class="btn-small btn-primary">Assigner (Principal)</button>
+                            </form>
+                            <form method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="assigner_co">
+                                <input type="hidden" name="cours_id" value="{{ cours.id }}">
+                                <button type="submit" class="btn-small btn-secondary">Assigner (Co-enseignant)</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endwith %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">Aucun cours disponible</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.administration-container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.btn-back {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: #005a9c;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn-back:hover {
+    text-decoration: underline;
+}
+
+.page-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 1rem;
+}
+
+.info-section {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.info-section h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.cours-assignes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+.cours-assigne-group h3 {
+    color: #495057;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.cours-list-assignes {
+    list-style: none;
+    padding: 0;
+}
+
+.cours-list-assignes li {
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.classe-group {
+    margin-bottom: 2rem;
+}
+
+.classe-group h3 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.cours-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.cours-card-assign {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    border-left: 4px solid #005a9c;
+}
+
+.cours-header-assign {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cours-header-assign h4 {
+    color: #005a9c;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.cours-code-small {
+    background-color: #005a9c;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.cours-info-assign {
+    margin-bottom: 1rem;
+}
+
+.cours-info-assign p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.cours-actions-assign {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: #005a9c;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #004070;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.badge-assigne {
+    display: inline-block;
+    background-color: #28a745;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.text-muted {
+    color: #6c757d;
+    font-style: italic;
+}
+
+@media screen and (max-width: 768px) {
+    .cours-assignes {
+        grid-template-columns: 1fr;
+    }
+    
+    .cours-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+

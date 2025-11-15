@@ -1,0 +1,866 @@
+{% extends "base.html" %}
+{% load static %}
+{% load utilisateurs_extras %}
+
+{% block title %}{{ cours.titre }} - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="cours-detail-container">
+    <div class="cours-header">
+        <div class="cours-title-section">
+            <h1>{{ cours.titre }}</h1>
+            <span class="cours-code">{{ cours.code }}</span>
+        </div>
+        <a href="{% url 'mes_cours' %}" class="btn-back">← Retour aux cours</a>
+    </div>
+
+    <!-- Informations du cours -->
+    <div class="cours-info-card">
+        <div class="info-grid">
+            <div class="info-item">
+                <strong>📅 Période :</strong>
+                <span>{{ cours.date_debut|date:"d/m/Y" }} - {{ cours.date_fin|date:"d/m/Y" }}</span>
+            </div>
+            <div class="info-item">
+                <strong>⏱️ Volume horaire :</strong>
+                <span>{{ cours.volume_horaire }} heures</span>
+            </div>
+            {% if cours.enseignant %}
+            <div class="info-item">
+                <strong>👨‍🏫 Enseignant :</strong>
+                <span>{{ cours.enseignant.get_full_name|default:cours.enseignant.username }}</span>
+            </div>
+            {% endif %}
+            <div class="info-item">
+                <strong>📚 Nombre de leçons :</strong>
+                <span>{{ lecons.count }} leçon{{ lecons.count|pluralize }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progression -->
+    <div class="progression-card">
+        <div class="progression-header">
+            <h2>Votre progression</h2>
+            <span class="statut-badge statut-{{ progression.statut }}">
+                {{ progression.get_statut_display }}
+            </span>
+        </div>
+        <div class="progression-bar">
+            <div class="progression-fill" style="width: {{ progression.pourcentage_completion }}%"></div>
+        </div>
+        <p class="progression-text">{{ progression.pourcentage_completion }}% complété</p>
+    </div>
+
+    <!-- Description -->
+    {% if cours.description %}
+    <div class="description-card">
+        <h2>Description du cours</h2>
+        <div class="description-content">
+            {{ cours.description|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Leçons -->
+    <div class="lecons-section">
+        <h2>Leçons du cours</h2>
+        {% if lecons_avec_details %}
+        <div class="lecons-list">
+            {% for lecon_data in lecons_avec_details %}
+            {% with lecon=lecon_data.lecon progression=lecon_data.progression quiz_list=lecon_data.quiz commentaires=lecon_data.commentaires %}
+            <div class="lecon-card">
+                <div class="lecon-header">
+                    <div class="lecon-number">
+                        <span class="lecon-type-badge lecon-type-{{ lecon.type_lecon }}">
+                            {{ lecon.get_type_lecon_display }}
+                        </span>
+                        <span class="lecon-num">{{ lecon.numero }}</span>
+                    </div>
+                    <div class="lecon-title-section">
+                        <h3>{{ lecon.titre }}</h3>
+                        {% if progression %}
+                        <div class="lecon-progression">
+                            <span class="statut-badge-mini statut-{{ progression.statut }}">
+                                {{ progression.get_statut_display }}
+                            </span>
+                            <div class="progression-bar-mini">
+                                <div class="progression-fill-mini" style="width: {{ progression.pourcentage_completion }}%"></div>
+                            </div>
+                            <span class="progression-percent-mini">{{ progression.pourcentage_completion }}%</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="lecon-content">
+                    {% if lecon.contenu %}
+                    <div class="lecon-text">
+                        {{ lecon.contenu|linebreaks|truncatewords:50 }}
+                    </div>
+                    {% endif %}
+                    
+                    {% if lecon.fichier_contenu %}
+                    <div class="lecon-file">
+                        <a href="{{ lecon.fichier_contenu.url }}" target="_blank" class="file-link">
+                            📄 Télécharger le contenu ({{ lecon.fichier_contenu.name|slice:"-4:"|upper }})
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    {% if lecon.duree_estimee %}
+                    <div class="lecon-meta">
+                        <span>⏱️ Durée estimée : {{ lecon.duree_estimee }} minutes</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if lecon.ressources %}
+                    <div class="lecon-ressources">
+                        <strong>📚 Ressources :</strong>
+                        <div>{{ lecon.ressources|linebreaks }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {% if lecon.contenu or lecon.fichier_contenu %}
+                <button class="btn-view-lecon" onclick="toggleLecon({{ lecon.id }})">
+                    Voir le contenu complet →
+                </button>
+                {% endif %}
+                
+                <!-- Quiz disponibles -->
+                {% if quiz_list %}
+                <div class="quiz-section">
+                    <h4>Quiz et exercices</h4>
+                    {% for quiz in quiz_list %}
+                    <div class="quiz-item">
+                        <span class="quiz-type-badge quiz-type-{{ quiz.type_quiz }}">{{ quiz.get_type_quiz_display }}</span>
+                        <span class="quiz-title">{{ quiz.titre }}</span>
+                        {% if quiz.duree_minutes %}
+                        <span class="quiz-duree">⏱️ {{ quiz.duree_minutes }} min</span>
+                        {% endif %}
+                        <a href="{% url 'passer_quiz' quiz.id %}" class="btn-quiz">Passer le quiz →</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- Commentaires -->
+                <div class="commentaires-section">
+                    <h4>Commentaires ({{ commentaires.count }})</h4>
+                    <div class="commentaires-list">
+                        {% for commentaire in commentaires %}
+                        <div class="commentaire-item">
+                            <div class="commentaire-header">
+                                <strong>{{ commentaire.auteur.get_full_name|default:commentaire.auteur.username }}</strong>
+                                <span class="commentaire-date">{{ commentaire.date_creation|date:"d/m/Y H:i" }}</span>
+                            </div>
+                            <div class="commentaire-contenu">{{ commentaire.contenu|linebreaks }}</div>
+                        </div>
+                        {% empty %}
+                        <p class="no-commentaires">Aucun commentaire pour le moment.</p>
+                        {% endfor %}
+                    </div>
+                    <form method="post" action="{% url 'ajouter_commentaire_lecon' lecon.id %}" class="form-commentaire">
+                        {% csrf_token %}
+                        <textarea name="contenu" placeholder="Ajouter un commentaire..." required></textarea>
+                        <button type="submit" class="btn-commenter">Commenter</button>
+                    </form>
+                </div>
+                
+                <!-- Bouton pour marquer comme vue -->
+                <div class="lecon-actions">
+                    <button class="btn-marquer-vue" onclick="marquerLeconVue({{ lecon.id }})">
+                        ✓ Marquer comme vue
+                    </button>
+                </div>
+            </div>
+            {% endwith %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-lecons">
+            <p>Aucune leçon disponible pour le moment.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Ressources pédagogiques -->
+    {% if cours.ressources_pedagogiques %}
+    <div class="ressources-card">
+        <h2>Ressources pédagogiques</h2>
+        <div class="ressources-content">
+            {{ cours.ressources_pedagogiques|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modales pour afficher le contenu complet des leçons -->
+{% for lecon_data in lecons_avec_details %}
+{% with lecon=lecon_data.lecon %}
+{% if lecon.contenu or lecon.fichier_contenu %}
+<div id="lecon-modal-{{ lecon.id }}" class="lecon-modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeLecon({{ lecon.id }})">&times;</span>
+        <h2>{{ lecon.get_type_lecon_display }} {{ lecon.numero }}: {{ lecon.titre }}</h2>
+        {% if lecon.contenu %}
+        <div class="modal-body">
+            {{ lecon.contenu|linebreaks }}
+        </div>
+        {% endif %}
+        {% if lecon.fichier_contenu %}
+        <div class="modal-file">
+            <a href="{{ lecon.fichier_contenu.url }}" target="_blank" class="file-link-large">
+                📄 Télécharger le fichier complet
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endwith %}
+{% endfor %}
+
+<script>
+function toggleLecon(leconId) {
+    const modal = document.getElementById('lecon-modal-' + leconId);
+    if (modal) {
+        modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function closeLecon(leconId) {
+    const modal = document.getElementById('lecon-modal-' + leconId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function marquerLeconVue(leconId) {
+    fetch(`/lecon/${leconId}/marquer-vue/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `pourcentage=100&temps_passe=0`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Erreur: ' + (data.error || 'Une erreur est survenue'));
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue');
+    });
+}
+
+// Fermer la modale en cliquant en dehors
+window.onclick = function(event) {
+    if (event.target.classList.contains('lecon-modal')) {
+        event.target.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.cours-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.cours-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.cours-title-section {
+    flex: 1;
+}
+
+.cours-title-section h1 {
+    color: #005a9c;
+    margin: 0 0 0.5rem 0;
+}
+
+.cours-code {
+    background: #f0f0f0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 5px;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.btn-back {
+    padding: 0.5rem 1rem;
+    background-color: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-back:hover {
+    background-color: #5a6268;
+}
+
+.cours-info-card, .progression-card, .description-card, .ressources-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.info-item strong {
+    color: #005a9c;
+}
+
+.progression-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.progression-header h2 {
+    margin: 0;
+    color: #005a9c;
+}
+
+.statut-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+.statut-non_commence {
+    background-color: #e0e0e0;
+    color: #666;
+}
+
+.statut-en_cours {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.statut-termine {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.statut-valide {
+    background-color: #28a745;
+    color: white;
+}
+
+.progression-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progression-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #005a9c 0%, #28a745 100%);
+    transition: width 0.3s ease;
+}
+
+.progression-text {
+    margin: 0;
+    color: #666;
+    font-weight: bold;
+}
+
+.description-content, .ressources-content {
+    color: #666;
+    line-height: 1.8;
+}
+
+.lecons-section {
+    margin-bottom: 2rem;
+}
+
+.lecons-section h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+}
+
+.lecons-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.lecon-card {
+    background: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.lecon-card:hover {
+    border-color: #005a9c;
+    box-shadow: 0 2px 8px rgba(0, 90, 156, 0.1);
+}
+
+.lecon-header {
+    display: flex;
+    align-items: start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.lecon-number {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 80px;
+}
+
+.lecon-type-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.lecon-type-lecon {
+    background-color: #005a9c;
+    color: white;
+}
+
+.lecon-type-atelier {
+    background-color: #28a745;
+    color: white;
+}
+
+.lecon-type-tp {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.lecon-type-td {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.lecon-num {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #005a9c;
+}
+
+.lecon-header h3 {
+    margin: 0;
+    color: #333;
+    flex: 1;
+}
+
+.lecon-content {
+    margin-bottom: 1rem;
+}
+
+.lecon-text {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.lecon-file {
+    margin-bottom: 1rem;
+}
+
+.file-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #f0f0f0;
+    color: #005a9c;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.file-link:hover {
+    background-color: #e0e0e0;
+}
+
+.lecon-meta {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.lecon-ressources {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+    color: #666;
+}
+
+.btn-view-lecon {
+    padding: 0.75rem 1.5rem;
+    background-color: #005a9c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-view-lecon:hover {
+    background-color: #004070;
+}
+
+.no-lecons {
+    text-align: center;
+    padding: 3rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #666;
+}
+
+/* Modal */
+.lecon-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+.modal-body {
+    margin-top: 1rem;
+    color: #666;
+    line-height: 1.8;
+}
+
+.file-link-large {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.file-link-large:hover {
+    background-color: #004070;
+}
+
+.lecon-title-section {
+    flex: 1;
+}
+
+.lecon-progression {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.statut-badge-mini {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.statut-non_commence {
+    background-color: #e0e0e0;
+    color: #666;
+}
+
+.statut-en_cours {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.statut-termine {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.statut-valide {
+    background-color: #28a745;
+    color: white;
+}
+
+.progression-bar-mini {
+    flex: 1;
+    height: 6px;
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progression-fill-mini {
+    height: 100%;
+    background: linear-gradient(90deg, #005a9c 0%, #28a745 100%);
+    transition: width 0.3s ease;
+}
+
+.progression-percent-mini {
+    font-size: 0.75rem;
+    color: #666;
+    min-width: 40px;
+}
+
+.quiz-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.quiz-section h4 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.quiz-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+}
+
+.quiz-type-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.quiz-type-quiz {
+    background-color: #005a9c;
+    color: white;
+}
+
+.quiz-type-exercice {
+    background-color: #28a745;
+    color: white;
+}
+
+.quiz-type-evaluation {
+    background-color: #dc3545;
+    color: white;
+}
+
+.quiz-title {
+    flex: 1;
+    font-weight: bold;
+}
+
+.quiz-duree {
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.btn-quiz {
+    padding: 0.5rem 1rem;
+    background-color: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 0.875rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-quiz:hover {
+    background-color: #004070;
+}
+
+.commentaires-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.commentaires-section h4 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.commentaires-list {
+    margin-bottom: 1rem;
+}
+
+.commentaire-item {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    margin-bottom: 0.75rem;
+}
+
+.commentaire-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.commentaire-date {
+    color: #999;
+    font-size: 0.875rem;
+}
+
+.commentaire-contenu {
+    color: #666;
+    line-height: 1.6;
+}
+
+.no-commentaires {
+    color: #999;
+    font-style: italic;
+    padding: 1rem;
+    text-align: center;
+}
+
+.form-commentaire {
+    margin-top: 1rem;
+}
+
+.form-commentaire textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    margin-bottom: 0.5rem;
+}
+
+.btn-commenter {
+    padding: 0.5rem 1rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-commenter:hover {
+    background-color: #218838;
+}
+
+.lecon-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.btn-marquer-vue {
+    padding: 0.75rem 1.5rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-marquer-vue:hover {
+    background-color: #218838;
+}
+
+@media screen and (max-width: 768px) {
+    .cours-detail-container {
+        padding: 1rem;
+    }
+    
+    .cours-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .lecon-header {
+        flex-direction: column;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        padding: 1rem;
+    }
+    
+    .quiz-item {
+        flex-direction: column;
+        align-items: start;
+    }
+}
+</style>
+{% endblock %}
+

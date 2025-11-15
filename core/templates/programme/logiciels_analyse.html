@@ -1,0 +1,649 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Formation Logiciels d'Analyse - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="formation-content">
+    <h2>Formation Certifiante en Logiciels d'Analyse</h2>
+    
+    <h3>Description du programme</h3>
+    <p>La formation certifiante en Logiciels d'Analyse est conçue pour former des professionnels capables d'utiliser efficacement les outils logiciels essentiels pour l'analyse statistique et qualitative dans le domaine de la recherche en santé. Cette formation pratique permet d'acquérir des compétences opérationnelles sur les principaux logiciels utilisés en recherche médicale et en santé publique.</p>
+    
+    <h3>Objectifs de la formation</h3>
+    <ul>
+        <li>Maîtriser les logiciels d'analyse statistique quantitative</li>
+        <li>Utiliser efficacement les logiciels d'analyse qualitative</li>
+        <li>Gérer et analyser des données de recherche en santé</li>
+        <li>Interpréter et présenter les résultats d'analyse</li>
+        <li>Obtenir une certification reconnue en logiciels d'analyse</li>
+    </ul>
+    
+    <h3>Durée et structure</h3>
+    <p>La formation s'étend sur <strong>3 mois</strong> avec des sessions pratiques intensives. Elle comprend des cours théoriques sur les concepts statistiques, des ateliers pratiques sur chaque logiciel, des exercices pratiques avec des données réelles, et une évaluation finale pour l'obtention de la certification.</p>
+    
+    <h3>Conditions d'admission</h3>
+    <p><strong>Niveau requis :</strong> Baccalauréat</p>
+    <p>La formation est ouverte aux professionnels de santé, chercheurs, étudiants en sciences de la santé et toute personne intéressée par l'analyse de données en santé.</p>
+    
+    <!-- Coût et modalités de paiement -->
+    {% if cout_formation %}
+    <div class="cout-formation-section">
+        <h3>💰 Coût et Modalités de Paiement</h3>
+        <div class="cout-info-box">
+            <p><strong>Coût de la formation :</strong> 
+                {% if montant_converti and montant_converti.devise != 'FCFA' %}
+                    <span class="cout-montant">{{ montant_converti.montant|floatformat:0 }} {{ montant_converti.symbole }}</span>
+                    <span class="cout-original">(≈ {{ cout_formation.cout_principal|floatformat:0 }} FCFA)</span>
+                {% else %}
+                    <span class="cout-montant">{{ cout_formation.cout_principal|floatformat:0 }} FCFA</span>
+                {% endif %}
+            </p>
+            <p style="margin-top: 1.5rem;"><strong>Modalité de paiement :</strong> {{ cout_formation.get_modalite_paiement_display }}.{% if cout_formation.conditions_paiement %} {{ cout_formation.conditions_paiement }}{% endif %}</p>
+        </div>
+        
+        {% if cout_formation.informations_supplementaires %}
+        <div class="conditions-paiement-box">
+            <h4>ℹ️ Informations supplémentaires :</h4>
+            <div>{{ cout_formation.informations_supplementaires|linebreaks }}</div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <!-- Bouton d'inscription -->
+    {% include 'formations/_bouton_inscription.html' %}
+    
+    <!-- Logiciels enseignés -->
+    <div class="logiciels-section">
+        <h3>💻 Logiciels et Outils d'Analyse Enseignés</h3>
+        <p class="logiciels-intro">Le programme couvre une gamme complète de logiciels essentiels pour l'analyse quantitative et qualitative des données de recherche en santé.</p>
+        
+        <div class="logiciels-grid">
+            <div class="logiciel-item">
+                <div class="logiciel-header">
+                    <h4>📊 SPSS</h4>
+                </div>
+                <p><strong>Logiciel d'analyse statistique</strong> pour les données quantitatives. Formation sur les analyses descriptives, tests statistiques, régressions, et analyses multivariées.</p>
+                <ul class="logiciel-features">
+                    <li>Gestion et préparation des données</li>
+                    <li>Statistiques descriptives et inférentielles</li>
+                    <li>Analyses de régression</li>
+                    <li>Visualisation des données</li>
+                </ul>
+            </div>
+            
+            <div class="logiciel-item">
+                <div class="logiciel-header">
+                    <h4>📈 R / RStudio</h4>
+                </div>
+                <p><strong>Environnement de programmation statistique</strong> open-source pour l'analyse de données avancées. Formation sur la programmation R et l'utilisation de RStudio.</p>
+                <ul class="logiciel-features">
+                    <li>Programmation statistique</li>
+                    <li>Analyses statistiques avancées</li>
+                    <li>Création de graphiques personnalisés</li>
+                    <li>Packages spécialisés en santé publique</li>
+                </ul>
+            </div>
+            
+            <div class="logiciel-item">
+                <div class="logiciel-header">
+                    <h4>🔍 EpiInfo</h4>
+                </div>
+                <p><strong>Logiciel gratuit développé par le CDC</strong> pour l'épidémiologie et l'analyse de données de santé publique. Formation sur la création de formulaires, la saisie et l'analyse épidémiologique.</p>
+                <ul class="logiciel-features">
+                    <li>Création de formulaires électroniques</li>
+                    <li>Saisie et validation des données</li>
+                    <li>Analyses épidémiologiques</li>
+                    <li>Cartographie et visualisation</li>
+                </ul>
+            </div>
+            
+            <div class="logiciel-item">
+                <div class="logiciel-header">
+                    <h4>📝 QDAminer</h4>
+                </div>
+                <p><strong>Logiciel d'analyse qualitative</strong> pour l'analyse de contenu et la recherche qualitative. Formation sur les techniques d'analyse qualitative et de codage.</p>
+                <ul class="logiciel-features">
+                    <li>Analyse de contenu textuel</li>
+                    <li>Codage et catégorisation</li>
+                    <li>Recherche et extraction de thèmes</li>
+                    <li>Visualisation des données qualitatives</li>
+                </ul>
+            </div>
+            
+            <div class="logiciel-item">
+                <div class="logiciel-header">
+                    <h4>🌳 NVivo</h4>
+                </div>
+                <p><strong>Logiciel d'analyse qualitative avancé</strong> pour la recherche qualitative et mixte. Formation sur les analyses qualitatives complexes et les méthodes mixtes.</p>
+                <ul class="logiciel-features">
+                    <li>Gestion de données qualitatives complexes</li>
+                    <li>Analyses thématiques avancées</li>
+                    <li>Méthodes mixtes (qualitatif-quantitatif)</li>
+                    <li>Visualisation et modélisation</li>
+                </ul>
+            </div>
+            
+            <div class="logiciel-item">
+                <div class="logiciel-header">
+                    <h4>📚 EndNote / Zotero</h4>
+                </div>
+                <p><strong>Gestionnaires de références bibliographiques</strong> pour la recherche documentaire. Formation sur la gestion des références et la rédaction scientifique.</p>
+                <ul class="logiciel-features">
+                    <li>Collecte et organisation des références</li>
+                    <li>Insertion de citations dans les documents</li>
+                    <li>Formats de citation multiples</li>
+                    <li>Collaboration et partage</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modules de formation -->
+    <div class="competences-finales-section">
+        <h3>📚 Modules de la Formation</h3>
+        <p class="competences-intro">La formation est organisée en modules progressifs permettant d'acquérir des compétences pratiques sur chaque logiciel et de maîtriser les méthodes d'analyse correspondantes.</p>
+        
+        <div class="competences-grid">
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">📊</div>
+                    <h4>Module 1 : Analyse Statistique Quantitative</h4>
+                </div>
+                <ul>
+                    <li>Introduction aux statistiques descriptives et inférentielles</li>
+                    <li>Formation pratique sur SPSS</li>
+                    <li>Formation pratique sur R / RStudio</li>
+                    <li>Formation pratique sur EpiInfo</li>
+                    <li>Exercices pratiques avec données réelles</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">📝</div>
+                    <h4>Module 2 : Analyse Qualitative</h4>
+                </div>
+                <ul>
+                    <li>Introduction aux méthodes d'analyse qualitative</li>
+                    <li>Formation pratique sur QDAminer</li>
+                    <li>Formation pratique sur NVivo</li>
+                    <li>Techniques de codage et catégorisation</li>
+                    <li>Analyse thématique et interprétation</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">📚</div>
+                    <h4>Module 3 : Gestion Bibliographique</h4>
+                </div>
+                <ul>
+                    <li>Stratégies de recherche documentaire</li>
+                    <li>Formation pratique sur EndNote</li>
+                    <li>Formation pratique sur Zotero</li>
+                    <li>Insertion de citations et bibliographie</li>
+                    <li>Gestion collaborative des références</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">🔗</div>
+                    <h4>Module 4 : Méthodes Mixtes</h4>
+                </div>
+                <ul>
+                    <li>Intégration des analyses quantitatives et qualitatives</li>
+                    <li>Utilisation combinée des logiciels</li>
+                    <li>Triangulation des données</li>
+                    <li>Présentation des résultats mixtes</li>
+                    <li>Cas pratiques de recherche mixte</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">📈</div>
+                    <h4>Module 5 : Visualisation et Présentation</h4>
+                </div>
+                <ul>
+                    <li>Création de graphiques et tableaux professionnels</li>
+                    <li>Visualisation des données quantitatives</li>
+                    <li>Visualisation des données qualitatives</li>
+                    <li>Présentation des résultats d'analyse</li>
+                    <li>Rapports et présentations scientifiques</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">🎯</div>
+                    <h4>Module 6 : Projet Pratique et Certification</h4>
+                </div>
+                <ul>
+                    <li>Réalisation d'un projet d'analyse complet</li>
+                    <li>Application des compétences acquises</li>
+                    <li>Encadrement et suivi personnalisé</li>
+                    <li>Évaluation des compétences</li>
+                    <li>Délivrance de la certification</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Approche pédagogique -->
+    <div class="approche-pedagogique-section">
+        <h3>💡 Approche Pédagogique</h3>
+        <p class="approche-intro">La formation privilégie une approche pratique et interactive pour garantir une maîtrise opérationnelle des logiciels.</p>
+        
+        <div class="approche-grid">
+            <div class="approche-item">
+                <h4>💻 Ateliers Pratiques</h4>
+                <p>Sessions pratiques intensives sur chaque logiciel avec des exercices guidés.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>📋 Exercices avec Données Réelles</h4>
+                <p>Travaux pratiques sur des jeux de données réels de recherche en santé.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>👥 Travaux de Groupe</h4>
+                <p>Collaboration sur des projets d'analyse pour développer les compétences collectives.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>🎓 Encadrement Personnalisé</h4>
+                <p>Suivi individuel et assistance pour garantir la maîtrise de chaque logiciel.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>📊 Projet Final</h4>
+                <p>Réalisation d'un projet d'analyse complet pour valider les compétences acquises.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>🏆 Certification</h4>
+                <p>Évaluation finale et délivrance d'une certification reconnue en logiciels d'analyse.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.formation-content {
+    line-height: 1.8;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.formation-content h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.formation-content h3 {
+    color: #005a9c;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.formation-content ul {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.formation-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Section coût et modalités de paiement */
+.cout-formation-section {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.cout-formation-section h3 {
+    color: #856404;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.cout-info-box {
+    background-color: #ffffff;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.cout-info-box p {
+    margin: 0.75rem 0;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+}
+
+.cout-montant {
+    color: #005a9c;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.cout-original {
+    color: #666;
+    font-size: 1rem;
+    font-weight: normal;
+    font-style: italic;
+    margin-left: 0.5rem;
+}
+
+.conditions-paiement-box {
+    background-color: #ffffff;
+    border: 2px solid #17a2b8;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.conditions-paiement-box h4 {
+    color: #17a2b8;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.conditions-paiement-box div {
+    color: #333;
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+/* Styles pour la section des logiciels */
+.logiciels-section {
+    background-color: #ffffff;
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.logiciels-section h3 {
+    color: #ffc107;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.logiciels-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.logiciels-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.logiciel-item {
+    background-color: #fffbf0;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.logiciel-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+    border-color: #ff9800;
+}
+
+.logiciel-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #ffc107;
+}
+
+.logiciel-item h4 {
+    color: #ff9800;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.3rem;
+}
+
+.logiciel-item p {
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+.logiciel-item p strong {
+    color: #ff9800;
+    font-weight: bold;
+}
+
+.logiciel-features {
+    margin-left: 1.5rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.logiciel-features li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+/* Styles pour la section des modules */
+.competences-finales-section {
+    background-color: #f8f9fa;
+    border: 2px solid #005a9c;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.competences-finales-section h3 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.competences-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.competences-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.competence-card {
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.competence-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 90, 156, 0.15);
+    border-color: #005a9c;
+}
+
+/* Styles uniformes pour toutes les cartes */
+.competence-header-with-image {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.competence-icon-container {
+    width: 80px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    background-color: #f0f8ff;
+    border: 2px solid #005a9c;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 90, 156, 0.2);
+    flex-shrink: 0;
+}
+
+.competence-card h4 {
+    color: #005a9c;
+    margin: 0;
+    font-size: 1.2rem;
+    border-bottom: none;
+    padding-bottom: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.competence-header-with-image h4 {
+    color: #005a9c;
+    font-size: 1.2rem;
+}
+
+.competence-card ul {
+    margin-left: 1.5rem;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.competence-card li {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+    color: #555;
+}
+
+/* Styles pour la section approche pédagogique */
+.approche-pedagogique-section {
+    background-color: #ffffff;
+    border: 2px solid #28a745;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.approche-pedagogique-section h3 {
+    color: #28a745;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.approche-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.approche-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.approche-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.approche-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
+    border-color: #28a745;
+}
+
+.approche-item h4 {
+    color: #28a745;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.approche-item p {
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .competences-grid,
+    .logiciels-grid,
+    .approche-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .competences-finales-section,
+    .logiciels-section,
+    .approche-pedagogique-section {
+        padding: 1rem;
+    }
+    
+    .formation-content {
+        padding: 1rem;
+    }
+    
+    .competence-icon-container {
+        width: 60px;
+        height: 45px;
+        font-size: 2rem;
+    }
+    
+    .competence-header-with-image {
+        gap: 0.75rem;
+    }
+    
+    .competence-header-with-image h4 {
+        font-size: 1.1rem;
+    }
+}
+</style>
+{% endblock %}
+

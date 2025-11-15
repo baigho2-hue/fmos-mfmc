@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulletins de Notes - {{ classe.nom }}</title>
+    {% load utilisateurs_extras %}
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Times New Roman', serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            color: #000;
+            background: #fff;
+        }
+        
+        .bulletin {
+            page-break-after: always;
+            width: 100%;
+            min-height: 27.7cm; /* Hauteur A4 moins marges */
+            padding: 0;
+            margin-bottom: 2cm;
+        }
+        
+        .bulletin:last-child {
+            page-break-after: auto;
+        }
+        
+        /* En-tête */
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 18pt;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        
+        .header h2 {
+            font-size: 14pt;
+            font-weight: normal;
+            margin-bottom: 5px;
+        }
+        
+        .header .subtitle {
+            font-size: 11pt;
+            font-style: italic;
+        }
+        
+        /* Informations étudiant */
+        .student-info {
+            margin-bottom: 20px;
+            border: 1px solid #000;
+            padding: 10px;
+        }
+        
+        .student-info table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .student-info td {
+            padding: 5px;
+            vertical-align: top;
+        }
+        
+        .student-info td:first-child {
+            font-weight: bold;
+            width: 30%;
+        }
+        
+        /* Tableau des notes */
+        .notes-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 10pt;
+        }
+        
+        .notes-table th,
+        .notes-table td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: left;
+        }
+        
+        .notes-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .notes-table td {
+            text-align: center;
+        }
+        
+        .notes-table .cours-name {
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .notes-table .moyenne-cours {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+        
+        /* Résumé */
+        .summary {
+            margin-top: 20px;
+            border: 2px solid #000;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+        
+        .summary h3 {
+            font-size: 12pt;
+            margin-bottom: 10px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        
+        .summary table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .summary td {
+            padding: 8px;
+            border: 1px solid #000;
+        }
+        
+        .summary td:first-child {
+            font-weight: bold;
+            width: 70%;
+        }
+        
+        .summary .moyenne-generale {
+            font-size: 14pt;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        /* Pied de page */
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 2px solid #000;
+            text-align: center;
+            font-size: 9pt;
+        }
+        
+        .footer .signature {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .footer .signature-block {
+            width: 40%;
+            text-align: center;
+        }
+        
+        .footer .signature-line {
+            border-top: 1px solid #000;
+            margin-top: 50px;
+            padding-top: 5px;
+        }
+        
+        /* Impression */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .bulletin {
+                page-break-after: always;
+            }
+            
+            .no-print {
+                display: none;
+            }
+        }
+        
+        /* Bouton d'impression */
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14pt;
+            z-index: 1000;
+        }
+        
+        .print-button:hover {
+            background-color: #0056b3;
+        }
+        
+        /* Note d'information */
+        .info-note {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            font-size: 10pt;
+        }
+    </style>
+</head>
+<body>
+    <button class="print-button no-print" onclick="window.print()">🖨️ Imprimer</button>
+    
+    {% for bulletin in bulletins_data %}
+    <div class="bulletin">
+        <!-- En-tête -->
+        <div class="header">
+            <h1>BULLETIN DE NOTES</h1>
+            <h2>{{ classe.formation.nom|default:"Formation" }}</h2>
+            <div class="subtitle">Année scolaire {{ annee_scolaire }}</div>
+        </div>
+        
+        <!-- Informations étudiant -->
+        <div class="student-info">
+            <table>
+                <tr>
+                    <td>Nom et Prénom :</td>
+                    <td><strong>{{ bulletin.etudiant.get_full_name|default:bulletin.etudiant.username }}</strong></td>
+                </tr>
+                <tr>
+                    <td>Classe :</td>
+                    <td>{{ classe.nom }}</td>
+                </tr>
+                <tr>
+                    <td>Année :</td>
+                    <td>{{ classe.formation.nom|default:"N/A" }}</td>
+                </tr>
+                <tr>
+                    <td>Date d'émission :</td>
+                    <td>{{ date_emission|date:"d/m/Y" }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- Tableau des notes -->
+        {% if bulletin.cours_moyennes %}
+        <table class="notes-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%;">N°</th>
+                    <th style="width: 35%;">Cours</th>
+                    <th style="width: 15%;">Code</th>
+                    <th style="width: 10%;">Coeff.</th>
+                    <th style="width: 15%;">Évaluations</th>
+                    <th style="width: 10%;">Moyenne</th>
+                    <th style="width: 10%;">Moy. × Coeff.</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cours_data in bulletin.cours_moyennes %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td class="cours-name">{{ cours_data.cours.titre }}</td>
+                    <td>{{ cours_data.cours.code|default:"-" }}</td>
+                    <td>{{ cours_data.coefficient|floatformat:1 }}</td>
+                    <td>
+                        {% for eval_data in cours_data.evaluations %}
+                            {{ eval_data.note|floatformat:2 }}/{{ eval_data.note_sur|floatformat:0 }}
+                            {% if not forloop.last %}<br>{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td class="moyenne-cours">
+                        {% if cours_data.moyenne %}
+                            {{ cours_data.moyenne|floatformat:2 }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if cours_data.moyenne %}
+                            {{ cours_data.moyenne|mul:cours_data.coefficient|floatformat:2 }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="info-note">
+            <p>Aucune évaluation finale enregistrée pour cet étudiant.</p>
+        </div>
+        {% endif %}
+        
+        <!-- Résumé -->
+        <div class="summary">
+            <h3>Résumé des résultats</h3>
+            <table>
+                <tr>
+                    <td>Nombre d'évaluations :</td>
+                    <td>{{ bulletin.nb_evaluations }}</td>
+                </tr>
+                <tr>
+                    <td>Total des coefficients :</td>
+                    <td>{{ bulletin.total_coefficient|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td class="moyenne-generale">MOYENNE GÉNÉRALE :</td>
+                    <td class="moyenne-generale">
+                        {% if bulletin.moyenne_generale %}
+                            {{ bulletin.moyenne_generale|floatformat:2 }}/20
+                        {% else %}
+                            Non calculable
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- Pied de page -->
+        <div class="footer">
+            <div class="signature">
+                <div class="signature-block">
+                    <div class="signature-line">
+                        Le Responsable Pédagogique
+                    </div>
+                </div>
+                <div class="signature-block">
+                    <div class="signature-line">
+                        Le Directeur
+                    </div>
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-size: 8pt;">
+                Document généré le {{ date_emission|date:"d/m/Y à H:i" }}
+            </p>
+        </div>
+    </div>
+    {% empty %}
+    <div class="bulletin">
+        <div class="header">
+            <h1>BULLETIN DE NOTES</h1>
+            <h2>{{ classe.nom }}</h2>
+        </div>
+        <div class="info-note">
+            <p>Aucun étudiant trouvé dans cette classe ou aucune évaluation enregistrée.</p>
+        </div>
+    </div>
+    {% endfor %}
+    
+    <script>
+        // Auto-impression optionnelle (décommenter si nécessaire)
+        // window.onload = function() {
+        //     setTimeout(function() {
+        //         window.print();
+        //     }, 500);
+        // };
+    </script>
+</body>
+</html>
+

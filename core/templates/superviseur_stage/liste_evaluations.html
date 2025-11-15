@@ -1,0 +1,379 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Évaluations de Stages - Superviseur{% endblock %}
+
+{% block content %}
+{% if not user.is_authenticated %}
+<div class="alert alert-warning">
+    <strong>⚠️ Accès restreint :</strong> Vous devez être connecté pour accéder à cette page.
+    <a href="{% url 'login' %}?next={{ request.path }}">Se connecter</a>
+</div>
+{% elif not user.est_enseignant %}
+<div class="alert alert-danger">
+    <strong>❌ Accès refusé :</strong> Cette page est réservée aux enseignants.
+</div>
+{% elif not user.est_superviseur_cec %}
+<div class="alert alert-danger">
+    <strong>❌ Accès refusé :</strong> Cette page est réservée aux superviseurs cliniques et CEC. Veuillez contacter l'administration pour obtenir ce statut.
+</div>
+{% else %}
+<div class="administration-container">
+    <div class="page-header">
+        <div class="header-top">
+            <div>
+                <h1>📋 Évaluations de Stages</h1>
+                <p class="subtitle">Remplir les évaluations de stage selon la répartition, le lieu et les étudiants affectés</p>
+            </div>
+        </div>
+        {% if filtre_automatique_centre and centre_superviseur %}
+        <div class="alert alert-info" style="margin-top: 1rem;">
+            <strong>ℹ️ Filtre automatique actif :</strong> Affichage des évaluations pour votre centre de supervision : <strong>{{ centre_superviseur.nom }}</strong> ({{ centre_superviseur.get_type_centre_display }})
+        </div>
+        {% endif %}
+        
+        {% if periode_actuelle %}
+        <div class="alert alert-success" style="margin-top: 1rem;">
+            <strong>📅 Période actuelle :</strong> 
+            {% if periode_actuelle == 1 %}
+                <strong>Période 1 (janvier-avril)</strong>
+            {% elif periode_actuelle == 2 %}
+                <strong>Période 2 (mai-août)</strong>
+            {% endif %}
+            - Année scolaire <strong>{{ annee_scolaire_actuelle }}</strong>
+            <br><small>Les évaluations sont automatiquement filtrées selon la période définie depuis le début de l'année scolaire.</small>
+        </div>
+        {% else %}
+        <div class="alert alert-warning" style="margin-top: 1rem;">
+            <strong>⚠️ Hors période de stage :</strong> Nous sommes actuellement en dehors des périodes de stage définies (septembre-décembre). Année scolaire <strong>{{ annee_scolaire_actuelle }}</strong>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Filtres -->
+    <div class="filter-section">
+        <form method="get" action="{% url 'liste_evaluations_superviseur' %}" class="filter-form">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="repartition">Filtrer par répartition de stage :</label>
+                    <select name="repartition" id="repartition" class="form-control" onchange="this.form.submit()">
+                        <option value="">Toutes les répartitions</option>
+                        {% for repartition in repartitions_stages %}
+                        <option value="{{ repartition.id }}" {% if repartition_selected and repartition_selected.id == repartition.id %}selected{% endif %}>
+                            {{ repartition.etudiant.get_full_name|default:repartition.etudiant.username }} - Année {{ repartition.annee }} - {{ repartition.get_periode_display }} - {{ repartition.centre.nom }} ({{ repartition.centre.get_type_centre_display }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="centre">Filtrer par centre/lieu :</label>
+                    <select name="centre" id="centre" class="form-control" onchange="this.form.submit()">
+                        <option value="">Tous les centres</option>
+                        {% for centre in centres_cscom %}
+                        <option value="{{ centre.id }}" {% if centre_selected and centre_selected.id == centre.id %}selected{% endif %}>
+                            {{ centre.nom }} ({{ centre.get_type_centre_display }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="classe">Filtrer par classe :</label>
+                    <select name="classe" id="classe" class="form-control" onchange="this.form.submit()">
+                        <option value="">Toutes les classes</option>
+                        {% for classe in classes_desmfmc %}
+                        <option value="{{ classe.id }}" {% if classe_selected and classe_selected.id == classe.id %}selected{% endif %}>
+                            {{ classe.nom }} ({{ classe.formation.nom }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Liste des évaluations -->
+    {% if evaluations %}
+    <div class="evaluations-list">
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Étudiant</th>
+                        <th>Année</th>
+                        <th>Type de stage</th>
+                        <th>Lieu/Centre</th>
+                        <th>Répartition</th>
+                        <th>Période</th>
+                        <th>Note</th>
+                        <th>Évalué par</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evaluation in evaluations %}
+                    <tr>
+                        <td>
+                            <strong>{{ evaluation.carnet.etudiant.get_full_name|default:evaluation.carnet.etudiant.username }}</strong><br>
+                            <small>{{ evaluation.carnet.etudiant.email }}</small>
+                        </td>
+                        <td>{{ evaluation.annee }}ème année</td>
+                        <td>{{ evaluation.get_type_stage_display }}</td>
+                        <td>
+                            {% if evaluation.stage_rotation and evaluation.stage_rotation.centre %}
+                                <strong>{{ evaluation.stage_rotation.centre.nom }}</strong><br>
+                                <small>{{ evaluation.stage_rotation.centre.get_type_centre_display }}</small>
+                            {% else %}
+                                {{ evaluation.lieu_stage }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if evaluation.stage_rotation %}
+                                <strong>Année {{ evaluation.stage_rotation.annee }}</strong><br>
+                                <small>{{ evaluation.stage_rotation.get_periode_display }}</small><br>
+                                {% if evaluation.stage_rotation.date_debut %}
+                                <small>{{ evaluation.stage_rotation.date_debut|date:"d/m/Y" }} - {{ evaluation.stage_rotation.date_fin|date:"d/m/Y" }}</small>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge badge-info">Non lié</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if evaluation.date_debut %}
+                                {{ evaluation.date_debut|date:"d/m/Y" }}<br>
+                                <small>au {{ evaluation.date_fin|date:"d/m/Y" }}</small>
+                            {% else %}
+                                <span class="badge badge-warning">Non défini</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if evaluation.note_globale %}
+                                <strong>{{ evaluation.note_globale }}/20</strong>
+                            {% else %}
+                                <span class="badge badge-warning">Non noté</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if evaluation.evalue_par_superviseur %}
+                                <span class="badge badge-success">✓ Rempli</span><br>
+                                <small>{{ evaluation.evalue_par_superviseur.get_full_name }}</small>
+                            {% else %}
+                                <span class="badge badge-danger">À remplir</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'remplir_evaluation_stage' evaluation.id %}" class="btn-primary btn-sm">
+                                {% if evaluation.evalue_par_superviseur %}Modifier{% else %}Remplir{% endif %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if evaluations.has_other_pages %}
+        <div class="pagination">
+            {% if evaluations.has_previous %}
+            <a href="?page={{ evaluations.previous_page_number }}{% if repartition_selected %}&repartition={{ repartition_selected.id }}{% endif %}{% if centre_selected %}&centre={{ centre_selected.id }}{% endif %}{% if classe_selected %}&classe={{ classe_selected.id }}{% endif %}" class="btn-pagination">← Précédent</a>
+            {% endif %}
+            
+            <span class="page-info">
+                Page {{ evaluations.number }} sur {{ evaluations.paginator.num_pages }}
+            </span>
+            
+            {% if evaluations.has_next %}
+            <a href="?page={{ evaluations.next_page_number }}{% if repartition_selected %}&repartition={{ repartition_selected.id }}{% endif %}{% if centre_selected %}&centre={{ centre_selected.id }}{% endif %}{% if classe_selected %}&classe={{ classe_selected.id }}{% endif %}" class="btn-pagination">Suivant →</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="no-data">
+        <p>
+            {% if repartition_selected %}
+                Aucune évaluation trouvée pour cette répartition de stage.
+            {% elif centre_selected %}
+                Aucune évaluation trouvée pour le centre {{ centre_selected.nom }}.
+            {% elif classe_selected %}
+                Aucune évaluation trouvée pour la classe {{ classe_selected.nom }}.
+            {% else %}
+                Sélectionnez un filtre (répartition, centre ou classe) pour voir les évaluations.
+            {% endif %}
+        </p>
+    </div>
+    {% endif %}
+</div>
+
+{% block extra_css %}
+<style>
+.filter-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.filter-form select,
+.filter-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.evaluations-list {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    background: #005a9c;
+    color: white;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.data-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.btn-pagination {
+    padding: 0.5rem 1rem;
+    background: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.btn-pagination:hover {
+    background: #004070;
+}
+
+.page-info {
+    font-weight: 600;
+    color: #666;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.badge-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.badge-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.badge-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.badge-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.no-data {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.no-data p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffc107;
+    color: #856404;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #ffc107;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+    color: #721c24;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #dc3545;
+}
+</style>
+{% endblock %}
+{% endif %}
+{% endblock %}
+

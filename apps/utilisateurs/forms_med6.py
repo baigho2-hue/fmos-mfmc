@@ -1,0 +1,91 @@
+# apps/utilisateurs/forms_med6.py
+"""
+Formulaires pour l'authentification des étudiants Med 6
+"""
+from django import forms
+from django.core.exceptions import ValidationError
+from .models_med6 import EtudiantMed6
+
+
+class LoginMed6Form(forms.Form):
+    """
+    Formulaire de connexion pour les étudiants de Médecine 6
+    """
+    matricule = forms.CharField(
+        max_length=50,
+        label="Matricule",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'autofocus': True,
+            'placeholder': 'Votre numéro de matricule'
+        })
+    )
+    
+    nom = forms.CharField(
+        max_length=100,
+        label="Nom",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Votre nom'
+        })
+    )
+    
+    prenom = forms.CharField(
+        max_length=100,
+        label="Prénom",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Votre prénom'
+        })
+    )
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        matricule = cleaned_data.get('matricule', '').strip()
+        prenom = cleaned_data.get('prenom', '').strip()
+        nom = cleaned_data.get('nom', '').strip()
+        
+        if not matricule or not prenom or not nom:
+            raise ValidationError("Veuillez remplir tous les champs (matricule, nom et prénom).")
+        
+        # VALIDATION STRICTE: Chercher l'étudiant actif avec une liste valide
+        # La méthode get_etudiant_actif vérifie déjà que le matricule, nom ET prénom correspondent
+        etudiant = EtudiantMed6.get_etudiant_actif(matricule, prenom, nom)
+        
+        if not etudiant:
+            raise ValidationError(
+                "❌ Aucun étudiant de 6ème année de médecine trouvé avec ces informations dans la liste Excel active. "
+                "Ce cours est réservé UNIQUEMENT aux étudiants en 6ème année de médecine.\n\n"
+                "Veuillez vérifier :\n"
+                "- Votre matricule\n"
+                "- Votre nom (exactement comme dans la liste officielle)\n"
+                "- Votre prénom (exactement comme dans la liste officielle)\n\n"
+                "Si vous êtes bien un étudiant de 6ème année de médecine et que vos informations sont correctes "
+                "mais que vous ne pouvez pas vous connecter, contactez l'administration.\n\n"
+                "Note: Les listes expirent 3 mois après la clôture de l'année universitaire."
+            )
+        
+        # Vérification supplémentaire (redondante mais sécurisée)
+        if not etudiant.verifier_identite(matricule, prenom, nom):
+            raise ValidationError(
+                "❌ Les informations fournies ne correspondent pas exactement à celles de la liste Excel. "
+                "Vérifiez votre matricule, votre nom et votre prénom."
+            )
+        
+        # Vérifier que la liste n'est pas expirée
+        if etudiant.liste.est_expiree():
+            raise ValidationError(
+                f"❌ La liste Med 6 pour l'année {etudiant.liste.annee_universitaire} est expirée. "
+                "Contactez l'administration pour mettre à jour la liste."
+            )
+        
+        # Vérifier que la liste est active
+        if not etudiant.liste.active:
+            raise ValidationError(
+                f"❌ La liste Med 6 pour l'année {etudiant.liste.annee_universitaire} n'est plus active. "
+                "Contactez l'administration."
+            )
+        
+        cleaned_data['etudiant'] = etudiant
+        return cleaned_data
+

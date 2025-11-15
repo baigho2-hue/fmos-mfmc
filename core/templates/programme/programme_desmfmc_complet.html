@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+{% load static %}
+{% load programme_tags %}
+
+{% block title %}Programme DESMFMC Complet - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="programme-container">
+    <div class="programme-header">
+        <h1>Programme DESMFMC - Vue d'ensemble</h1>
+        <p class="formation-name">{{ formation.nom }}</p>
+        <div class="stats-programme">
+            <div class="stat-item">
+                <strong>{{ stats_programme.total_jalons }}</strong> Jalons
+            </div>
+            <div class="stat-item">
+                <strong>{{ stats_programme.total_modules }}</strong> Modules
+            </div>
+            <div class="stat-item">
+                <strong>{{ stats_programme.total_heures }}</strong> heures totales
+            </div>
+        </div>
+    </div>
+
+    {% if user.est_etudiant %}
+    <div class="progression-globale">
+        <a href="{% url 'ma_progression_programme' %}" class="btn-progression">📊 Voir ma progression détaillée</a>
+    </div>
+    {% endif %}
+
+    <!-- Programme par année -->
+    {% for annee, jalons in programme_par_annee.items %}
+    <div class="annee-section">
+        <div class="annee-header">
+            <h2>Année {{ annee }}</h2>
+            {% if user.est_etudiant %}
+            {% with progression_annee=progression_par_annee|get_item:annee %}
+            {% if progression_annee %}
+            <div class="progression-annee">
+                <div class="progression-bar-annee">
+                    <div class="progression-fill-annee" style="width: {{ progression_annee.pourcentage }}%"></div>
+                </div>
+                <span>{{ progression_annee.pourcentage }}% complété</span>
+            </div>
+            {% endif %}
+            {% endwith %}
+            {% endif %}
+        </div>
+
+        <div class="jalons-grid">
+            {% for jalon in jalons %}
+            <div class="jalon-card">
+                <div class="jalon-header">
+                    <h3>{{ jalon.nom }}</h3>
+                    {% if jalon.semestre %}
+                    <span class="badge-semestre">Semestre {{ jalon.semestre }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="jalon-meta">
+                    <div class="meta-item">
+                        <strong>📅 Période :</strong> {{ jalon.date_debut|date:"d/m/Y" }} - {{ jalon.date_fin|date:"d/m/Y" }}
+                    </div>
+                    <div class="meta-item">
+                        <strong>⏱️ Volume horaire :</strong> {{ jalon.volume_horaire_total }}h
+                    </div>
+                    <div class="meta-item">
+                        <strong>📚 Modules :</strong> {{ jalon.modules.count }}
+                    </div>
+                </div>
+
+                {% if jalon.description %}
+                <p class="jalon-description">{{ jalon.description|truncatewords:30 }}</p>
+                {% endif %}
+
+                {% if user.est_etudiant %}
+                {% with progression=progression_dict|get_item:jalon.id %}
+                <div class="progression-jalon">
+                    <div class="progression-bar-small">
+                        <div class="progression-fill" style="width: {{ progression.pourcentage_completion|default:0 }}%"></div>
+                    </div>
+                    <span class="progression-text">{{ progression.pourcentage_completion|default:0 }}%</span>
+                    <span class="statut-badge statut-{{ progression.statut|default:'non_commence' }}">
+                        {{ progression.get_statut_display|default:'Non commencé' }}
+                    </span>
+                </div>
+                {% endwith %}
+                {% endif %}
+
+                <div class="jalon-actions">
+                    <a href="{% url 'detail_jalon' jalon.id %}" class="btn-detail">Voir le détail →</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.programme-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.programme-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 3px solid #005a9c;
+}
+
+.programme-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+}
+
+.formation-name {
+    font-size: 1.3rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+.stats-programme {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem 2rem;
+    background-color: #e3f2fd;
+    border-radius: 8px;
+    border: 2px solid #005a9c;
+}
+
+.stat-item strong {
+    display: block;
+    font-size: 2rem;
+    color: #005a9c;
+    margin-bottom: 0.25rem;
+}
+
+.progression-globale {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.btn-progression {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-progression:hover {
+    background-color: #218838;
+}
+
+.annee-section {
+    margin-bottom: 4rem;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    border: 2px solid #005a9c;
+}
+
+.annee-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.annee-header h2 {
+    color: #005a9c;
+    font-size: 2rem;
+    margin: 0;
+}
+
+.progression-annee {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.progression-bar-annee {
+    width: 200px;
+    height: 20px;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progression-fill-annee {
+    height: 100%;
+    background-color: #28a745;
+    transition: width 0.5s ease;
+}
+
+.jalons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.jalon-card {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 2px solid #e0e0e0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.jalon-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 90, 156, 0.15);
+    border-color: #005a9c;
+}
+
+.jalon-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.jalon-header h3 {
+    color: #005a9c;
+    margin: 0;
+    flex: 1;
+}
+
+.badge-semestre {
+    background-color: #ffc107;
+    color: #333;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+.jalon-meta {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.meta-item {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.jalon-description {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.progression-jalon {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.progression-bar-small {
+    flex: 1;
+    height: 10px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progression-fill {
+    height: 100%;
+    background-color: #005a9c;
+    transition: width 0.5s ease;
+}
+
+.progression-text {
+    font-size: 0.875rem;
+    font-weight: bold;
+    color: #333;
+    min-width: 45px;
+}
+
+.statut-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.statut-non_commence {
+    background-color: #6c757d;
+    color: white;
+}
+
+.statut-en_cours {
+    background-color: #007bff;
+    color: white;
+}
+
+.statut-termine {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.statut-valide {
+    background-color: #28a745;
+    color: white;
+}
+
+.jalon-actions {
+    text-align: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.btn-detail {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-detail:hover {
+    background-color: #004070;
+}
+
+@media screen and (max-width: 768px) {
+    .programme-container {
+        padding: 1rem;
+    }
+    
+    .stats-programme {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .annee-header {
+        flex-direction: column;
+        align-items: start;
+        gap: 1rem;
+    }
+    
+    .jalons-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .progression-jalon {
+        flex-wrap: wrap;
+    }
+}
+</style>
+{% endblock %}
+

@@ -1,0 +1,622 @@
+{% extends "base.html" %}
+{% load static %}
+{% load dict_filters %}
+
+{% block title %}Mon Carnet de Stage - DESMFMC{% endblock %}
+
+{% block content %}
+<div class="carnet-container">
+    <div class="carnet-header">
+        <h1>📋 Mon Carnet de Stage</h1>
+        <p class="carnet-info">
+            <strong>Étudiant :</strong> {{ carnet.etudiant.get_full_name|default:carnet.etudiant.username }}<br>
+            <strong>Année scolaire :</strong> {{ carnet.annee_scolaire }}
+        </p>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-section">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_stages }}</div>
+            <div class="stat-label">Stages totaux</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ stages_valides }}</div>
+            <div class="stat-label">Stages validés</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ tableaux.count }}</div>
+            <div class="stat-label">Tableaux d'évaluation</div>
+        </div>
+    </div>
+
+    <!-- Stages par année -->
+    <div class="stages-section">
+        <h2>Stages par année</h2>
+        
+        <!-- Année 1 -->
+        <div class="annee-section">
+            <h3>1ère Année</h3>
+            {% if stages_annee_1 %}
+                <div class="stages-list">
+                    {% for stage in stages_annee_1 %}
+                    <div class="stage-card">
+                        <div class="stage-header">
+                            <h4>{{ stage.get_type_stage_display }}</h4>
+                            {% if stage.valide %}
+                                <span class="badge badge-success">✓ Validé</span>
+                            {% else %}
+                                <span class="badge badge-warning">En attente</span>
+                            {% endif %}
+                        </div>
+                        <div class="stage-body">
+                            <p><strong>Lieu :</strong> {{ stage.lieu_stage }}</p>
+                            <p><strong>Période :</strong> {{ stage.date_debut|date:"d/m/Y" }} - {{ stage.date_fin|date:"d/m/Y" }}</p>
+                            {% if stage.note_globale %}
+                                <p><strong>Note :</strong> {{ stage.note_globale }}/20</p>
+                            {% endif %}
+                        </div>
+                        <div class="stage-footer">
+                            <a href="{% url 'detail_evaluation_stage' stage.id %}" class="btn-view">Voir détails</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-data">Aucun stage enregistré pour la 1ère année.</p>
+            {% endif %}
+        </div>
+
+        <!-- Année 2 -->
+        <div class="annee-section">
+            <h3>2ème Année</h3>
+            
+            <!-- Stages rotation (urbains et ruraux) -->
+            {% if stages_urbains_annee_2 or stages_ruraux_annee_2 %}
+                <div class="rotation-stages">
+                    <h4>Stages CSCom-U (Rotation)</h4>
+                    <div class="stages-list">
+                        {% for stage_rot in stages_urbains_annee_2 %}
+                        <div class="stage-card stage-urbain">
+                            <div class="stage-header">
+                                <h4>Stage Urbain - {{ stage_rot.get_periode_display }}</h4>
+                                <span class="badge badge-info">Urbain</span>
+                            </div>
+                            <div class="stage-body">
+                                <p><strong>CSCom-U :</strong> {{ stage_rot.centre.nom }}</p>
+                                <p><strong>Localisation :</strong> {{ stage_rot.centre.localisation|default:"-" }}</p>
+                                {% if stage_rot.date_debut %}
+                                    <p><strong>Période :</strong> {{ stage_rot.date_debut|date:"d/m/Y" }} - {{ stage_rot.date_fin|date:"d/m/Y" }}</p>
+                                {% endif %}
+                                {% if stage_rot.commentaire %}
+                                    <p><strong>Commentaire :</strong> {{ stage_rot.commentaire|truncatewords:10 }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="stage-footer">
+                                {% if evaluations_stage_rotation_map|get_item:stage_rot.id %}
+                                    <a href="{% url 'detail_evaluation_stage' evaluations_stage_rotation_map|get_item:stage_rot.id %}" class="btn-view">Voir évaluation</a>
+                                {% else %}
+                                    <a href="{% url 'ajouter_evaluation_stage' carnet.id %}?stage_rotation={{ stage_rot.id }}" class="btn-add">Créer évaluation</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        {% for stage_rot in stages_ruraux_annee_2 %}
+                        <div class="stage-card stage-rural">
+                            <div class="stage-header">
+                                <h4>Stage Rural - {{ stage_rot.get_periode_display }}</h4>
+                                <span class="badge badge-success">Rural</span>
+                            </div>
+                            <div class="stage-body">
+                                <p><strong>CSCom-U :</strong> {{ stage_rot.centre.nom }}</p>
+                                <p><strong>Localisation :</strong> {{ stage_rot.centre.localisation|default:"-" }}</p>
+                                {% if stage_rot.date_debut %}
+                                    <p><strong>Période :</strong> {{ stage_rot.date_debut|date:"d/m/Y" }} - {{ stage_rot.date_fin|date:"d/m/Y" }}</p>
+                                {% endif %}
+                                {% if stage_rot.commentaire %}
+                                    <p><strong>Commentaire :</strong> {{ stage_rot.commentaire|truncatewords:10 }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="stage-footer">
+                                {% if evaluations_stage_rotation_map|get_item:stage_rot.id %}
+                                    <a href="{% url 'detail_evaluation_stage' evaluations_stage_rotation_map|get_item:stage_rot.id %}" class="btn-view">Voir évaluation</a>
+                                {% else %}
+                                    <a href="{% url 'ajouter_evaluation_stage' carnet.id %}?stage_rotation={{ stage_rot.id }}" class="btn-add">Créer évaluation</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Autres stages (évaluations manuelles) -->
+            {% if stages_annee_2 %}
+                <div class="other-stages">
+                    <h4>Autres stages</h4>
+                    <div class="stages-list">
+                        {% for stage in stages_annee_2 %}
+                            {% if not stage.stage_rotation %}
+                            <div class="stage-card">
+                                <div class="stage-header">
+                                    <h4>{{ stage.get_type_stage_display }}</h4>
+                                    {% if stage.valide %}
+                                        <span class="badge badge-success">✓ Validé</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">En attente</span>
+                                    {% endif %}
+                                </div>
+                                <div class="stage-body">
+                                    <p><strong>Lieu :</strong> {{ stage.lieu_stage }}</p>
+                                    <p><strong>Période :</strong> {{ stage.date_debut|date:"d/m/Y" }} - {{ stage.date_fin|date:"d/m/Y" }}</p>
+                                    {% if stage.note_globale %}
+                                        <p><strong>Note :</strong> {{ stage.note_globale }}/20</p>
+                                    {% endif %}
+                                </div>
+                                <div class="stage-footer">
+                                    <a href="{% url 'detail_evaluation_stage' stage.id %}" class="btn-view">Voir détails</a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            
+            {% if not stages_annee_2 and not stages_urbains_annee_2 and not stages_ruraux_annee_2 %}
+                <p class="no-data">Aucun stage enregistré pour la 2ème année.</p>
+            {% endif %}
+        </div>
+
+        <!-- Année 3 -->
+        <div class="annee-section">
+            <h3>3ème Année</h3>
+            
+            <!-- Stages rotation (urbains et ruraux) -->
+            {% if stages_urbains_annee_3 or stages_ruraux_annee_3 %}
+                <div class="rotation-stages">
+                    <h4>Stages CSCom-U (Rotation)</h4>
+                    <div class="stages-list">
+                        {% for stage_rot in stages_urbains_annee_3 %}
+                        <div class="stage-card stage-urbain">
+                            <div class="stage-header">
+                                <h4>Stage Urbain - {{ stage_rot.get_periode_display }}</h4>
+                                <span class="badge badge-info">Urbain</span>
+                            </div>
+                            <div class="stage-body">
+                                <p><strong>CSCom-U :</strong> {{ stage_rot.centre.nom }}</p>
+                                <p><strong>Localisation :</strong> {{ stage_rot.centre.localisation|default:"-" }}</p>
+                                {% if stage_rot.date_debut %}
+                                    <p><strong>Période :</strong> {{ stage_rot.date_debut|date:"d/m/Y" }} - {{ stage_rot.date_fin|date:"d/m/Y" }}</p>
+                                {% endif %}
+                                {% if stage_rot.commentaire %}
+                                    <p><strong>Commentaire :</strong> {{ stage_rot.commentaire|truncatewords:10 }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="stage-footer">
+                                {% if evaluations_stage_rotation_map|get_item:stage_rot.id %}
+                                    <a href="{% url 'detail_evaluation_stage' evaluations_stage_rotation_map|get_item:stage_rot.id %}" class="btn-view">Voir évaluation</a>
+                                {% else %}
+                                    <a href="{% url 'ajouter_evaluation_stage' carnet.id %}?stage_rotation={{ stage_rot.id }}" class="btn-add">Créer évaluation</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        {% for stage_rot in stages_ruraux_annee_3 %}
+                        <div class="stage-card stage-rural">
+                            <div class="stage-header">
+                                <h4>Stage Rural - {{ stage_rot.get_periode_display }}</h4>
+                                <span class="badge badge-success">Rural</span>
+                            </div>
+                            <div class="stage-body">
+                                <p><strong>CSCom-U :</strong> {{ stage_rot.centre.nom }}</p>
+                                <p><strong>Localisation :</strong> {{ stage_rot.centre.localisation|default:"-" }}</p>
+                                {% if stage_rot.date_debut %}
+                                    <p><strong>Période :</strong> {{ stage_rot.date_debut|date:"d/m/Y" }} - {{ stage_rot.date_fin|date:"d/m/Y" }}</p>
+                                {% endif %}
+                                {% if stage_rot.commentaire %}
+                                    <p><strong>Commentaire :</strong> {{ stage_rot.commentaire|truncatewords:10 }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="stage-footer">
+                                {% if evaluations_stage_rotation_map|get_item:stage_rot.id %}
+                                    <a href="{% url 'detail_evaluation_stage' evaluations_stage_rotation_map|get_item:stage_rot.id %}" class="btn-view">Voir évaluation</a>
+                                {% else %}
+                                    <a href="{% url 'ajouter_evaluation_stage' carnet.id %}?stage_rotation={{ stage_rot.id }}" class="btn-add">Créer évaluation</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Autres stages (évaluations manuelles) -->
+            {% if stages_annee_3 %}
+                <div class="other-stages">
+                    <h4>Autres stages</h4>
+                    <div class="stages-list">
+                        {% for stage in stages_annee_3 %}
+                            {% if not stage.stage_rotation %}
+                            <div class="stage-card">
+                                <div class="stage-header">
+                                    <h4>{{ stage.get_type_stage_display }}</h4>
+                                    {% if stage.valide %}
+                                        <span class="badge badge-success">✓ Validé</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">En attente</span>
+                                    {% endif %}
+                                </div>
+                                <div class="stage-body">
+                                    <p><strong>Lieu :</strong> {{ stage.lieu_stage }}</p>
+                                    <p><strong>Période :</strong> {{ stage.date_debut|date:"d/m/Y" }} - {{ stage.date_fin|date:"d/m/Y" }}</p>
+                                    {% if stage.note_globale %}
+                                        <p><strong>Note :</strong> {{ stage.note_globale }}/20</p>
+                                    {% endif %}
+                                </div>
+                                <div class="stage-footer">
+                                    <a href="{% url 'detail_evaluation_stage' stage.id %}" class="btn-view">Voir détails</a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            
+            {% if not stages_annee_3 and not stages_urbains_annee_3 and not stages_ruraux_annee_3 %}
+                <p class="no-data">Aucun stage enregistré pour la 3ème année.</p>
+            {% endif %}
+        </div>
+
+        <!-- Année 4 -->
+        <div class="annee-section">
+            <h3>4ème Année</h3>
+            {% if stages_annee_4 %}
+                <div class="stages-list">
+                    {% for stage in stages_annee_4 %}
+                    <div class="stage-card">
+                        <div class="stage-header">
+                            <h4>{{ stage.get_type_stage_display }}</h4>
+                            {% if stage.valide %}
+                                <span class="badge badge-success">✓ Validé</span>
+                            {% else %}
+                                <span class="badge badge-warning">En attente</span>
+                            {% endif %}
+                        </div>
+                        <div class="stage-body">
+                            <p><strong>Lieu :</strong> {{ stage.lieu_stage }}</p>
+                            <p><strong>Période :</strong> {{ stage.date_debut|date:"d/m/Y" }} - {{ stage.date_fin|date:"d/m/Y" }}</p>
+                            {% if stage.note_globale %}
+                                <p><strong>Note :</strong> {{ stage.note_globale }}/20</p>
+                            {% endif %}
+                        </div>
+                        <div class="stage-footer">
+                            <a href="{% url 'detail_evaluation_stage' stage.id %}" class="btn-view">Voir détails</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-data">Aucun stage enregistré pour la 4ème année.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Message sur la proclamation des résultats -->
+    {% if not resultats_proclames %}
+    <div class="alert alert-info">
+        <strong>ℹ️ Information importante :</strong> Les résultats n'ont pas encore été proclamés pour votre classe. 
+        Vous pouvez consulter les grilles d'évaluation ci-dessous pour connaître les compétences à acquérir, 
+        mais vous n'avez pas encore accès aux données de vos évaluations finales.
+    </div>
+    {% else %}
+    <div class="alert alert-success">
+        <strong>✓ Résultats proclamés :</strong> Vous pouvez maintenant consulter toutes vos évaluations de stage.
+    </div>
+    {% endif %}
+
+    <!-- Tableaux d'évaluation -->
+    {% if tableaux %}
+    <div class="tableaux-section">
+        <h2>Tableaux d'évaluation par classe</h2>
+        <p class="section-description">
+            Consultez les grilles d'évaluation pour connaître les compétences à acquérir selon votre classe.
+        </p>
+        <div class="tableaux-list">
+            {% for tableau in tableaux %}
+            <div class="tableau-card">
+                <div class="tableau-header">
+                    <h4>{{ tableau.classe.nom }}</h4>
+                    {% if tableau.jalon %}
+                        <span class="badge badge-info">Jalon: {{ tableau.jalon.nom }}</span>
+                    {% endif %}
+                </div>
+                <div class="tableau-body">
+                    <p><strong>Année :</strong> {{ tableau.annee }}ème année</p>
+                    <p><strong>Nombre de compétences :</strong> {{ tableau.evaluations_competences_tableau.count }}</p>
+                </div>
+                <div class="tableau-footer">
+                    <a href="{% url 'tableau_evaluation_classe' tableau.id %}" class="btn-view">Voir le tableau</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="actions-section">
+        <a href="{% url 'ajouter_evaluation_stage' carnet.id %}" class="btn-primary">➕ Ajouter une évaluation de stage</a>
+        <a href="{% url 'ajouter_tableau_evaluation' carnet.id %}" class="btn-primary">➕ Ajouter un tableau d'évaluation</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.carnet-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.carnet-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.carnet-header h1 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.carnet-info {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.stages-section {
+    margin-bottom: 3rem;
+}
+
+.stages-section h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.annee-section {
+    margin-bottom: 2rem;
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.annee-section h3 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.stages-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.stage-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.stage-header h4 {
+    margin: 0;
+    color: #005a9c;
+}
+
+.stage-body p {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.stage-footer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-view {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.btn-view:hover {
+    background-color: #004070;
+}
+
+.btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #004070;
+}
+
+.no-data {
+    color: #999;
+    font-style: italic;
+    padding: 1rem;
+    text-align: center;
+}
+
+.tableaux-section {
+    margin-bottom: 3rem;
+}
+
+.tableaux-section h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.tableaux-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.tableau-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tableau-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.tableau-header h4 {
+    margin: 0;
+    color: #005a9c;
+}
+
+.tableau-body p {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.tableau-footer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.actions-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #005a9c;
+    text-align: center;
+}
+
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border-left: 4px solid;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #17a2b8;
+    color: #0c5460;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #28a745;
+    color: #155724;
+}
+
+.section-description {
+    color: #666;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.btn-view.disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+    pointer-events: none;
+}
+</style>
+{% endblock %}
+

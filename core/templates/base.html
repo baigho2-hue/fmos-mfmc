@@ -1,0 +1,386 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
+  <meta name="description" content="FMOS MFMC - Plateforme de formation médicale continue" />
+  <title>{% block title %}FMOS MFMC{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <style>
+    /* Styles inline pour garantir l'application */
+    .header-buttons {
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.75rem !important;
+      margin-right: 0.5rem !important;
+    }
+    .btn-inscription,
+    .btn-connexion {
+      padding: 0.75rem 1.25rem !important;
+      border-radius: 4px !important;
+      font-weight: 700 !important;
+      text-decoration: none !important;
+      transition: all 0.2s ease !important;
+      font-size: 0.95rem !important;
+      white-space: nowrap !important;
+      cursor: pointer !important;
+      border: 3px solid #495057 !important;
+      display: inline-block !important;
+      text-align: center !important;
+      width: auto !important;
+      background-color: #6c757d !important;
+      color: #ffffff !important;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3) !important;
+      box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    }
+    .btn-inscription {
+      background-image: linear-gradient(to bottom, #7d8489 0%, #6c757d 50%, #5a6268 100%) !important;
+      border-color: #495057 !important;
+    }
+    .btn-inscription:hover {
+      background-image: linear-gradient(to bottom, #6c757d 0%, #5a6268 50%, #495057 100%) !important;
+      border-color: #343a40 !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    }
+    .btn-inscription:active {
+      transform: translateY(0) !important;
+      background-image: linear-gradient(to bottom, #5a6268 0%, #495057 100%) !important;
+      box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4) !important;
+      border-color: #343a40 !important;
+    }
+    .btn-connexion {
+      background-image: linear-gradient(to bottom, #7d8489 0%, #6c757d 50%, #5a6268 100%) !important;
+      border-color: #495057 !important;
+    }
+    .btn-connexion:hover {
+      background-image: linear-gradient(to bottom, #6c757d 0%, #5a6268 50%, #495057 100%) !important;
+      border-color: #343a40 !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    }
+    .btn-connexion:active {
+      transform: translateY(0) !important;
+      background-image: linear-gradient(to bottom, #5a6268 0%, #495057 100%) !important;
+      box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4) !important;
+      border-color: #343a40 !important;
+    }
+    .usttb-header {
+      background: linear-gradient(135deg, #87ceeb 0%, #6bb6ff 100%) !important;
+      color: #333333 !important;
+      padding: 1.5rem 0 !important;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2) !important;
+      border-bottom: 4px solid #4a9eff !important;
+      position: relative !important;
+    }
+    .usttb-header-content {
+      max-width: 100% !important;
+      margin: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+      gap: 1rem !important;
+      padding: 0 !important;
+    }
+    .usttb-logo-left {
+      flex-shrink: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+      position: absolute !important;
+      left: 0 !important;
+    }
+    .usttb-logo-right {
+      flex-shrink: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-end !important;
+      margin-right: 0 !important;
+      padding-right: 0 !important;
+      position: absolute !important;
+      right: 0 !important;
+    }
+    .usttb-logo-circle {
+      height: 100px !important;
+      width: 100px !important;
+      object-fit: cover !important;
+      background-color: rgba(255, 255, 255, 0.95) !important;
+      padding: 4px !important;
+      border-radius: 50% !important;
+      transition: all 0.3s ease !important;
+      display: block !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    }
+    .usttb-logo-circle:hover {
+      opacity: 0.95 !important;
+      transform: scale(1.05) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    }
+    .usttb-text-container {
+      text-align: center !important;
+      flex: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 auto !important;
+    }
+    @media screen and (max-width: 768px) {
+      .usttb-header-content {
+        flex-direction: column !important;
+        justify-content: center !important;
+      }
+      .usttb-logo-left,
+      .usttb-logo-right {
+        order: -1 !important;
+      }
+      .usttb-logo-right {
+        order: 1 !important;
+      }
+      .usttb-text-container {
+        order: 0 !important;
+        width: 100% !important;
+      }
+    }
+    .usttb-title {
+      color: #1e3a8a !important;
+      font-size: 1.5rem !important;
+      font-weight: 700 !important;
+      margin: 0 auto 0.5rem auto !important;
+      padding: 0.75rem 1.5rem !important;
+      text-align: center !important;
+      display: block !important;
+      border: 4px solid #4a9eff !important;
+      border-radius: 8px !important;
+      max-width: fit-content !important;
+      width: auto !important;
+      background-color: #ffffff !important;
+      background: #ffffff !important;
+      text-transform: uppercase !important;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+    }
+    .usttb-subtitle {
+      color: #1e3a8a !important;
+      font-size: 1rem !important;
+      margin: 0.5rem auto 0 auto !important;
+      padding: 0.5rem 1rem !important;
+      font-weight: 700 !important;
+      text-align: center !important;
+      display: block !important;
+      border: 4px solid #4a9eff !important;
+      border-radius: 8px !important;
+      max-width: fit-content !important;
+      width: auto !important;
+      background-color: #ffffff !important;
+      background: #ffffff !important;
+      text-transform: uppercase !important;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <!-- Header USTTB -->
+  <div class="usttb-header">
+    <div class="usttb-header-content">
+      <div class="usttb-logo-left">
+        <img src="{% static 'images/logo USTTB.png' %}" alt="Logo USTTB" class="usttb-logo-circle" onerror="this.style.display='none'">
+      </div>
+      <div class="usttb-text-container">
+        <h1 class="usttb-title">Université des Sciences, des Techniques et des Technologies de Bamako - Mali</h1>
+        <p class="usttb-subtitle">Faculté de Médecine et d'Odonto-Stomatologie (FMOS) - Médecine de Famille et Médecine Communautaire (MFMC)</p>
+      </div>
+      <div class="usttb-logo-right">
+        <img src="{% static 'images/logo USTTB.png' %}" alt="Logo USTTB" class="usttb-logo-circle" onerror="this.style.display='none'">
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="header-left">
+      <h1>FMOS MFMC</h1>
+    </div>
+    <div class="header-center">
+      <nav class="main-menu" role="navigation" aria-label="Menu principal">
+      <ul class="menu">
+        {% if not user.is_authenticated %}
+        <li><a href="{% url 'accueil' %}">Accueil</a></li>
+        <li><a href="{% url 'activites' %}">Activités</a></li>
+        <li class="has-submenu">
+          <a href="{% url 'formations' %}">Formations</a>
+          <ul class="submenu">
+            <li>
+              <a href="{% url 'formations' %}#certifiantes">Certifiantes</a>
+              <ul class="subsubmenu">
+                <li><a href="{% url 'programme_desmfmc' %}">DESMFMC</a></li>
+                <li><a href="{% url 'programme_sante_communautaire' %}">Santé Communautaire</a></li>
+                <li><a href="{% url 'programme_recherche' %}">Recherche</a></li>
+                <li><a href="{% url 'programme_logiciels_analyse' %}">Logiciels d'analyse</a></li>
+                <li><a href="{% url 'echographie_base' %}">Échographie de base</a></li>
+                <li><a href="{% url 'programme_pedagogie_sante' %}">Pédagogie en santé</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="{% url 'formations' %}#non-certifiantes">Non Certifiantes</a>
+              <ul class="subsubmenu">
+                <li><a href="{% url 'cours_med6' %}">Cours Médecine 6</a></li>
+                <li><a href="{% url 'habilites_cliniques' %}">Habilités Cliniques</a></li>
+                <li><a href="{% url 'logiciels_analyse_noncertif' %}">Logiciels d'analyse</a></li>
+                <li><a href="{% url 'base_pedagogie' %}">Base en pédagogie</a></li>
+                <li><a href="{% url 'autres_programmes' %}">Autres</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        {% endif %}
+        {% if not user.is_superuser %}
+        <li class="has-submenu">
+          <a href="{% url 'programmes' %}">Programmes</a>
+          <ul class="submenu">
+            <li><a href="{% url 'programme_desmfmc' %}">Programme DES</a></li>
+            <li><a href="{% url 'programme_sante_communautaire' %}">Programme Santé Communautaire</a></li>
+            <li><a href="{% url 'programme_recherche' %}">Programme Recherche</a></li>
+            <li><a href="{% url 'programme_logiciels_analyse' %}">Programme Logiciels d'Analyse</a></li>
+            <li><a href="{% url 'programme_pedagogie_sante' %}">Programme Pédagogie</a></li>
+          </ul>
+        </li>
+        {% endif %}
+        {% if not user.is_authenticated %}
+        <li class="has-submenu">
+          <a href="{% url 'cours' %}">Ma page</a>
+          <ul class="submenu">
+            <li><a href="{% url 'login' %}?next=dashboard_enseignant">Enseignants</a></li>
+            <li><a href="{% url 'login' %}?next=dashboard_etudiant">Étudiants</a></li>
+          </ul>
+        </li>
+        {% endif %}
+              {% if user.is_authenticated %}
+                <li>
+                  <a href="{% url 'mes_formations' %}">📚 Mes Formations</a>
+                </li>
+                {% if user.est_membre_coordination %}
+                <li class="has-submenu">
+                  <a href="{% url 'dashboard_administration' %}">Administration</a>
+                  <ul class="submenu">
+                    <li class="menu-header"><a href="{% url 'dashboard_administration' %}">📊 Tableau de bord</a></li>
+                    <li class="menu-separator"></li>
+                    <li class="menu-category">📅 Planning & Agenda</li>
+                    <li><a href="{% url 'agenda_administration' %}">Agenda</a></li>
+                    <li><a href="{% url 'alertes_agenda' %}">Alertes</a></li>
+                    <li class="menu-separator"></li>
+                    <li class="menu-category">👥 Gestion des personnes</li>
+                    <li><a href="{% url 'gestion_enseignants' %}">Gestion enseignants</a></li>
+                    <li><a href="{% url 'gestion_inscriptions' %}">Gestion inscriptions</a></li>
+                    <li class="menu-separator"></li>
+                    <li class="menu-category">📚 Pédagogie & Évaluations</li>
+                    <li><a href="{% url 'notes_classes' %}">Notes des classes</a></li>
+                    <li><a href="{% url 'resultats_evaluations' %}">Résultats évaluations</a></li>
+                    <li><a href="{% url 'upload_cours_lecons' %}">Téléverser cours/leçons</a></li>
+                    <li class="menu-separator"></li>
+                    <li class="menu-category">🏥 Stages & Évaluations</li>
+                    <li><a href="{% url 'gestion_stages_cscom' %}">Stages CSCom-U</a></li>
+                    <li><a href="{% url 'evaluations_stages_coordination' %}">Évaluations de stages</a></li>
+                    <li class="menu-separator"></li>
+                    <li class="menu-category">⚙️ Configuration</li>
+                    <li><a href="{% url 'gestion_signature_coordination' %}">Signature coordination</a></li>
+                  </ul>
+                </li>
+                {% endif %}
+                {% if user.is_superuser %}
+                <li>
+                  <a href="{% url 'admin:index' %}" target="_blank">Admin</a>
+                </li>
+                {% endif %}
+                {% if user.is_superuser or user.email_verifie and user.est_etudiant %}
+                <li>
+                  <a href="{% url 'dashboard_etudiant' %}">Espace Étudiant</a>
+                </li>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    {% if user.is_superuser or user.email_verifie and user.est_enseignant %}
+                    <li class="has-submenu">
+                      <a href="{% url 'dashboard_enseignant' %}">Espace Enseignant</a>
+                      <ul class="submenu">
+                        <li><a href="{% url 'dashboard_enseignant' %}">Tableau de bord</a></li>
+                        {% if user.est_superviseur_cec %}
+                        <li><a href="{% url 'liste_evaluations_superviseur' %}">📋 Évaluations de stages</a></li>
+                        {% endif %}
+                        {% if user.est_enseignant %}
+                        <li><a href="{% url 'activer_2fa' %}">🔐 Double authentification</a></li>
+                        {% endif %}
+                      </ul>
+                    </li>
+                    {% endif %}
+                {% endif %}
+                {% if user.is_superuser or user.email_verifie and user.est_etudiant or user.email_verifie and user.est_enseignant %}
+                <li>
+                  <a href="{% if user.est_etudiant %}{% url 'dashboard_etudiant' %}{% elif user.est_enseignant %}{% url 'dashboard_enseignant' %}{% else %}{% url 'dashboard_enseignant' %}{% endif %}">
+                    Mon espace
+                  </a>
+                </li>
+                {% endif %}
+              <li><a href="{% url 'logout' %}">Déconnexion</a></li>
+              {% endif %}
+      </ul>
+      </nav>
+    </div>
+    <div class="header-right">
+      {% if not user.is_authenticated %}
+      <div class="header-buttons">
+        <a href="{% url 'login' %}" class="btn-connexion">Connexion</a>
+      </div>
+      {% endif %}
+      <img src="{% static 'images/logo_adobe_express.png' %}" alt="Logo FMOS" class="header-logo" onerror="this.style.display='none'">
+    </div>
+    <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+  </header>
+
+  <main class="main">
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block news_ticker %}
+  <!-- Bande news roulante -->
+  <div class="news-ticker">
+    <div class="news-ticker-label">Actualités</div>
+    <div class="news-ticker-content">
+      <div class="news-item">📢 Inscriptions ouvertes pour la session 2025 du DESMFMC</div>
+      <div class="news-item">🎓 Nouveau programme de formation en santé communautaire disponible</div>
+      <div class="news-item">📅 Conférence internationale sur la médecine de famille - 15 mars 2025</div>
+      <div class="news-item">🏥 Ouverture de nouveaux CSCom-U dans les régions</div>
+      <div class="news-item">📚 Nouveaux modules de formation en ligne disponibles</div>
+      <div class="news-item">🔬 Projets de recherche en santé communautaire en cours</div>
+      <div class="news-item">👨‍⚕️ Recrutement de nouveaux enseignants pour le programme MFMC</div>
+      <div class="news-item">💡 Atelier sur les innovations en médecine de famille - Inscriptions ouvertes</div>
+    </div>
+  </div>
+  {% endblock %}
+
+  <footer>
+    <p>&copy; 2025 FMOS MFMC - Tous droits réservés</p>
+    <p>Contact : +223 79 27 64 70</p>
+  </footer>
+  
+  <script src="{% static 'js/menu.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
+

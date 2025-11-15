@@ -1,0 +1,509 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Programme Échographie de première ligne - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="formation-content">
+    <h2>Programme Échographie de première ligne</h2>
+    
+    <h3>Description du programme</h3>
+    <p>Formation certifiante en échographie de première ligne pour la pratique médicale en soins primaires et en médecine de famille. Cette formation permet d'acquérir les compétences essentielles pour réaliser et interpréter des échographies de base dans un contexte de soins primaires.</p>
+    
+    <h3>Objectifs de la formation</h3>
+    <ul>
+        <li>Maîtriser les bases de l'échographie médicale</li>
+        <li>Apprendre à utiliser les équipements d'échographie</li>
+        <li>Interpréter les images échographiques de base</li>
+        <li>Intégrer l'échographie dans la pratique clinique de première ligne</li>
+        <li>Développer les compétences pratiques nécessaires pour une utilisation autonome</li>
+    </ul>
+    
+    <h3>Durée et structure</h3>
+    <p>La formation s'étend sur <strong>6 mois</strong> et comprend une alternance théorie/pratique avec des cours magistraux, des ateliers pratiques sur simulateurs et équipements réels, des stages pratiques en milieu clinique, et une évaluation finale pour l'obtention de la certification.</p>
+    
+    <h3>Conditions d'admission</h3>
+    <p><strong>Niveau requis :</strong> Minimum Diplôme de technicien supérieur en Santé ou équivalent.</p>
+    <p>La formation est ouverte aux professionnels de santé travaillant en soins primaires, médecins généralistes, techniciens de santé, et toute personne ayant les prérequis nécessaires.</p>
+    
+    <!-- Coût et modalités de paiement -->
+    {% if cout_formation %}
+    <div class="cout-formation-section">
+        <h3>💰 Coût et Modalités de Paiement</h3>
+        <div class="cout-info-box">
+            <p><strong>Coût de la formation :</strong> 
+                {% if montant_converti and montant_converti.devise != 'FCFA' %}
+                    <span class="cout-montant">{{ montant_converti.montant|floatformat:0 }} {{ montant_converti.symbole }}</span>
+                    <span class="cout-original">(≈ {{ cout_formation.cout_principal|floatformat:0 }} FCFA)</span>
+                {% else %}
+                    <span class="cout-montant">{{ cout_formation.cout_principal|floatformat:0 }} FCFA</span>
+                {% endif %}
+            </p>
+            <p style="margin-top: 1.5rem;"><strong>Modalité de paiement :</strong> {{ cout_formation.get_modalite_paiement_display }}.{% if cout_formation.conditions_paiement %} {{ cout_formation.conditions_paiement }}{% endif %}</p>
+        </div>
+        
+        {% if cout_formation.informations_supplementaires %}
+        <div class="conditions-paiement-box">
+            <h4>ℹ️ Informations supplémentaires :</h4>
+            <div>{{ cout_formation.informations_supplementaires|linebreaks }}</div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <!-- Bouton d'inscription -->
+    {% if user.is_authenticated %}
+    <div class="inscription-section">
+        {% if est_inscrit %}
+        <a href="{% url 'mes_formations' %}" class="btn-formation btn-ma-page">
+            📚 Ma page de formation
+        </a>
+        {% else %}
+        <a href="{% url 'inscrire_formation' formation_slug %}" class="btn-formation btn-inscription">
+            ✍️ S'inscrire à cette formation
+        </a>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="inscription-section">
+        <a href="{% url 'login' %}" class="btn-formation btn-inscription">
+            🔐 Connectez-vous pour vous inscrire
+        </a>
+    </div>
+    {% endif %}
+    
+    <!-- Modules du programme -->
+    <div class="competences-finales-section">
+        <h3>📚 Modules du Programme</h3>
+        <p class="competences-intro">Le programme est structuré en modules progressifs permettant d'acquérir les compétences théoriques et pratiques nécessaires à la maîtrise de l'échographie de première ligne.</p>
+        
+        <div class="competences-grid">
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">🔬</div>
+                    <h4>Module 1 : Principes de base de l'échographie</h4>
+                </div>
+                <ul>
+                    <li>Physique des ultrasons</li>
+                    <li>Fonctionnement des équipements d'échographie</li>
+                    <li>Réglages et optimisation des images</li>
+                    <li>Sécurité et précautions d'usage</li>
+                    <li>Anatomie échographique de base</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">🫀</div>
+                    <h4>Module 2 : Échographie abdominale</h4>
+                </div>
+                <ul>
+                    <li>Échographie du foie et de la vésicule biliaire</li>
+                    <li>Échographie rénale et vésicale</li>
+                    <li>Échographie de la rate et du pancréas</li>
+                    <li>Détection de pathologies courantes</li>
+                    <li>Interprétation des images</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">👶</div>
+                    <h4>Module 3 : Échographie obstétricale de base</h4>
+                </div>
+                <ul>
+                    <li>Échographie de grossesse précoce</li>
+                    <li>Évaluation de la vitalité fœtale</li>
+                    <li>Mesures biométriques de base</li>
+                    <li>Détection de grossesses extra-utérines</li>
+                    <li>Limites et indications de référence</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">🫁</div>
+                    <h4>Module 4 : Échographie thoracique et cardiaque</h4>
+                </div>
+                <ul>
+                    <li>Échographie pleurale</li>
+                    <li>Échographie cardiaque de base (écho FAST)</li>
+                    <li>Détection d'épanchements</li>
+                    <li>Évaluation de la fonction cardiaque basique</li>
+                    <li>Cas d'urgence</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">🦴</div>
+                    <h4>Module 5 : Échographie musculo-squelettique</h4>
+                </div>
+                <ul>
+                    <li>Échographie des tendons et muscles</li>
+                    <li>Détection de fractures</li>
+                    <li>Échographie des articulations</li>
+                    <li>Pathologies courantes</li>
+                    <li>Guided procedures</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">🎯</div>
+                    <h4>Module 6 : Pratique clinique et certification</h4>
+                </div>
+                <ul>
+                    <li>Stages pratiques en milieu clinique</li>
+                    <li>Cas cliniques réels</li>
+                    <li>Supervision et encadrement</li>
+                    <li>Évaluation des compétences</li>
+                    <li>Délivrance de la certification</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Approche pédagogique -->
+    <div class="approche-pedagogique-section">
+        <h3>💡 Approche Pédagogique</h3>
+        <p class="approche-intro">La formation privilégie une approche pratique et progressive pour garantir une maîtrise opérationnelle de l'échographie de première ligne.</p>
+        
+        <div class="approche-grid">
+            <div class="approche-item">
+                <h4>📚 Cours Théoriques</h4>
+                <p>Enseignements fondamentaux sur les principes de l'échographie et l'anatomie échographique.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>💻 Ateliers Pratiques</h4>
+                <p>Sessions pratiques intensives sur simulateurs et équipements réels avec encadrement.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>🏥 Stages Cliniques</h4>
+                <p>Immersion en milieu clinique pour une pratique réelle sous supervision.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>👥 Travaux Pratiques</h4>
+                <p>Exercices pratiques avec des cas réels pour développer les compétences.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>🎓 Encadrement Personnalisé</h4>
+                <p>Suivi individuel et assistance pour garantir la maîtrise des techniques.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>🏆 Certification</h4>
+                <p>Évaluation finale et délivrance d'une certification reconnue en échographie de première ligne.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.formation-content {
+    line-height: 1.8;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.formation-content h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.formation-content h3 {
+    color: #005a9c;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.formation-content ul {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.formation-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Section coût et modalités de paiement */
+.cout-formation-section {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.cout-formation-section h3 {
+    color: #856404;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.cout-info-box {
+    background-color: #ffffff;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.cout-info-box p {
+    margin: 0.75rem 0;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+}
+
+.cout-montant {
+    color: #005a9c;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.cout-original {
+    color: #666;
+    font-size: 1rem;
+    font-weight: normal;
+    font-style: italic;
+    margin-left: 0.5rem;
+}
+
+.conditions-paiement-box {
+    background-color: #ffffff;
+    border: 2px solid #17a2b8;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.conditions-paiement-box h4 {
+    color: #17a2b8;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.conditions-paiement-box div {
+    color: #333;
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+/* Styles pour la section des modules */
+.competences-finales-section {
+    background-color: #f8f9fa;
+    border: 2px solid #005a9c;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.competences-finales-section h3 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.competences-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.competences-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.competence-card {
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.competence-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 90, 156, 0.15);
+    border-color: #005a9c;
+}
+
+.competence-header-with-image {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.competence-icon-container {
+    width: 80px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    background-color: #f0f8ff;
+    border: 2px solid #005a9c;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 90, 156, 0.2);
+    flex-shrink: 0;
+}
+
+.competence-card h4 {
+    color: #005a9c;
+    margin: 0;
+    font-size: 1.2rem;
+    border-bottom: none;
+    padding-bottom: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.competence-card ul {
+    margin-left: 1.5rem;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.competence-card li {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+    color: #555;
+}
+
+/* Styles pour la section approche pédagogique */
+.approche-pedagogique-section {
+    background-color: #ffffff;
+    border: 2px solid #28a745;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.approche-pedagogique-section h3 {
+    color: #28a745;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.approche-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.approche-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.approche-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.approche-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
+    border-color: #28a745;
+}
+
+.approche-item h4 {
+    color: #28a745;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.approche-item p {
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.inscription-section {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.btn-formation {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #005a9c;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-formation:hover {
+    background-color: #004080;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .competences-grid,
+    .approche-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .competences-finales-section,
+    .approche-pedagogique-section {
+        padding: 1rem;
+    }
+    
+    .formation-content {
+        padding: 1rem;
+    }
+    
+    .competence-icon-container {
+        width: 60px;
+        height: 45px;
+        font-size: 2rem;
+    }
+    
+    .competence-header-with-image {
+        gap: 0.75rem;
+    }
+    
+    .competence-header-with-image h4 {
+        font-size: 1.1rem;
+    }
+}
+</style>
+{% endblock %}

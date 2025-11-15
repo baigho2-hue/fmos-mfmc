@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+{% load static %}
+{% load utilisateurs_extras %}
+
+{% block title %}Résultat - {{ quiz.titre }} - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="resultat-container">
+    <div class="resultat-header">
+        <a href="{% url 'detail_cours' quiz.lecon.cours.id %}" class="btn-back">← Retour au cours</a>
+        <h1>Résultat du quiz</h1>
+        <h2>{{ quiz.titre }}</h2>
+    </div>
+
+    <div class="resultat-summary">
+        <div class="resultat-card">
+            <h3>Votre résultat</h3>
+            <div class="resultat-note">
+                <span class="note-value">{{ resultat.note_finale }}</span>
+                <span class="note-max">/ {{ quiz.note_maximale }}</span>
+            </div>
+            <div class="resultat-pourcentage">
+                <div class="pourcentage-bar">
+                    <div class="pourcentage-fill" style="width: {{ resultat.pourcentage }}%"></div>
+                </div>
+                <span class="pourcentage-text">{{ resultat.pourcentage }}%</span>
+            </div>
+            {% if resultat.pourcentage >= 50 %}
+            <p class="resultat-message success">✅ Excellent travail !</p>
+            {% elif resultat.pourcentage >= 40 %}
+            <p class="resultat-message warning">⚠️ Bon effort, continuez !</p>
+            {% else %}
+            <p class="resultat-message error">❌ Réessayez pour améliorer votre score</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="questions-correction">
+        <h3>Correction détaillée</h3>
+        {% for question in questions %}
+        <div class="question-correction">
+            <div class="question-header-correction">
+                <span class="question-num">Question {{ question.ordre }}</span>
+                <span class="question-points-correction">
+                    {% with reponse=reponses_dict|get_item:question.id %}
+                    {% if reponse %}
+                        {{ reponse.points_obtenus|floatformat:2 }} / {{ question.points }} point{{ question.points|pluralize }}
+                    {% else %}
+                        0 / {{ question.points }} point{{ question.points|pluralize }}
+                    {% endif %}
+                    {% endwith %}
+                </span>
+            </div>
+            
+            <div class="question-enonce-correction">
+                {{ question.enonce|linebreaks }}
+            </div>
+
+            {% with reponse=reponses_dict|get_item:question.id %}
+            <div class="reponse-etudiant">
+                <strong>Votre réponse :</strong>
+                {% if question.type_reponse == 'texte_libre' %}
+                    <p>{{ reponse.reponse_texte|default:"Aucune réponse" }}</p>
+                {% elif question.type_reponse == 'vrai_faux' %}
+                    <p>{{ reponse.reponse_texte|default:"Aucune réponse" }}</p>
+                {% else %}
+                    <ul>
+                        {% for reponse_choisie in reponse.reponses_choisies.all %}
+                        <li>{{ reponse_choisie.texte }}</li>
+                        {% empty %}
+                        <li>Aucune réponse</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="reponse-correcte">
+                <strong>Réponse(s) correcte(s) :</strong>
+                <ul>
+                    {% for reponse_correcte in question.reponses_possibles.all %}
+                    {% if reponse_correcte.est_correcte %}
+                    <li class="correct-answer">✓ {{ reponse_correcte.texte }}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+
+            {% if question.explication %}
+            <div class="explication">
+                <strong>Explication :</strong>
+                <p>{{ question.explication|linebreaks }}</p>
+            </div>
+            {% endif %}
+
+            <div class="question-status">
+                {% if reponse and reponse.points_obtenus == question.points %}
+                <span class="status-correct">✓ Correct</span>
+                {% elif reponse and reponse.points_obtenus > 0 %}
+                <span class="status-partial">⚠ Partiellement correct</span>
+                {% else %}
+                <span class="status-incorrect">✗ Incorrect</span>
+                {% endif %}
+            </div>
+            {% endwith %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="resultat-actions">
+        <a href="{% url 'detail_cours' quiz.lecon.cours.id %}" class="btn-back-course">Retour au cours</a>
+        {% if not resultat.termine %}
+        <a href="{% url 'passer_quiz' quiz.id %}" class="btn-retry">Réessayer</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.resultat-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.resultat-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.resultat-header h1 {
+    color: #005a9c;
+    margin: 1rem 0 0.5rem 0;
+}
+
+.resultat-header h2 {
+    color: #666;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.resultat-summary {
+    margin-bottom: 3rem;
+}
+
+.resultat-card {
+    background: linear-gradient(135deg, #005a9c 0%, #004070 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.resultat-card h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+}
+
+.resultat-note {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 1rem 0;
+}
+
+.note-value {
+    font-size: 4rem;
+}
+
+.note-max {
+    font-size: 2rem;
+    opacity: 0.8;
+}
+
+.resultat-pourcentage {
+    margin: 1.5rem 0;
+}
+
+.pourcentage-bar {
+    width: 100%;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.pourcentage-fill {
+    height: 100%;
+    background-color: #28a745;
+    transition: width 0.5s ease;
+}
+
+.pourcentage-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.resultat-message {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.resultat-message.success {
+    color: #28a745;
+}
+
+.resultat-message.warning {
+    color: #ffc107;
+}
+
+.resultat-message.error {
+    color: #dc3545;
+}
+
+.questions-correction {
+    margin-bottom: 2rem;
+}
+
+.questions-correction h3 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+}
+
+.question-correction {
+    background: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.question-header-correction {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.question-num {
+    font-weight: bold;
+    color: #005a9c;
+}
+
+.question-points-correction {
+    color: #666;
+}
+
+.question-enonce-correction {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+.reponse-etudiant {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.reponse-etudiant ul {
+    margin: 0.5rem 0 0 1.5rem;
+    padding: 0;
+}
+
+.reponse-correcte {
+    background-color: #d4edda;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.reponse-correcte ul {
+    margin: 0.5rem 0 0 1.5rem;
+    padding: 0;
+}
+
+.correct-answer {
+    color: #155724;
+    font-weight: bold;
+}
+
+.explication {
+    background-color: #e3f2fd;
+    padding: 1rem;
+    border-left: 4px solid #005a9c;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.question-status {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.status-correct {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.status-partial {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.status-incorrect {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.resultat-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.btn-back-course,
+.btn-retry {
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-back-course {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-back-course:hover {
+    background-color: #5a6268;
+}
+
+.btn-retry {
+    background-color: #005a9c;
+    color: white;
+}
+
+.btn-retry:hover {
+    background-color: #004070;
+}
+
+@media screen and (max-width: 768px) {
+    .resultat-container {
+        padding: 1rem;
+    }
+    
+    .resultat-note {
+        font-size: 2rem;
+    }
+    
+    .note-value {
+        font-size: 3rem;
+    }
+    
+    .resultat-actions {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}
+

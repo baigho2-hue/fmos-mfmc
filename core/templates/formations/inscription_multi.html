@@ -1,0 +1,542 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Inscription aux Formations - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="inscription-container">
+    <div class="inscription-header">
+        <h1>Inscription aux Formations</h1>
+        <p class="subtitle">Sélectionnez une ou plusieurs formations et consultez le coût total</p>
+    </div>
+
+    <div class="info-box">
+        <h3>ℹ️ Informations importantes</h3>
+        <ul>
+            <li>Vous pouvez sélectionner plusieurs formations en même temps</li>
+            <li>Le coût total est calculé automatiquement selon vos sélections</li>
+            <li>Votre demande d'inscription sera soumise à validation par l'administration</li>
+            <li>Vous serez notifié une fois votre inscription validée</li>
+            <li>Le paiement se fera après validation de votre inscription</li>
+        </ul>
+    </div>
+
+    <form method="post" class="inscription-form" id="inscriptionForm">
+        {% csrf_token %}
+        
+        <div class="form-section formations-section">
+            <h3>📚 Formations disponibles</h3>
+            <div class="formations-list">
+                {% for formation in formations %}
+                <div class="formation-item" data-formation-id="{{ formation.id }}" data-prix="{{ formation.prix }}">
+                    <label class="formation-label">
+                        <input 
+                            type="checkbox" 
+                            name="formations" 
+                            value="{{ formation.id }}" 
+                            class="formation-checkbox"
+                            data-prix="{{ formation.prix }}"
+                            data-titre="{{ formation.titre }}"
+                        >
+                        <div class="formation-info">
+                            <div class="formation-header">
+                                <span class="formation-titre">{{ formation.titre }}</span>
+                                <span class="formation-type">{{ formation.get_type_formation_display }}</span>
+                            </div>
+                            <div class="formation-details">
+                                <p class="formation-description">{{ formation.description|truncatewords:20 }}</p>
+                                <div class="formation-prix">
+                                    {% if formation.tarification == 'gratuite' or formation.prix == 0 %}
+                                    <span class="prix-gratuit">Gratuite</span>
+                                    {% else %}
+                                    <span class="prix-montant">{{ formation.prix|floatformat:0 }} FCFA</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                {% empty %}
+                <p class="no-formations">Aucune formation disponible pour le moment.</p>
+                {% endfor %}
+            </div>
+            
+            {% if form.formations.errors %}
+            <div class="error-message">{{ form.formations.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="cost-summary" id="costSummary" style="display: none;">
+            <div class="summary-card">
+                <h3>💰 Récapitulatif</h3>
+                <div class="selected-formations" id="selectedFormations">
+                    <!-- Rempli dynamiquement par JavaScript -->
+                </div>
+                <div class="total-cost">
+                    <strong>Coût total : <span id="totalCost">0</span> FCFA</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section payment-section" id="paymentSection" style="display: none;">
+            <h3>💳 Informations de paiement</h3>
+            <p class="payment-note">
+                <em>Note : Le mode de paiement sera demandé après validation de votre inscription par l'administration.</em>
+            </p>
+            
+            <div class="form-group">
+                <label for="{{ form.mode_paiement.id_for_label }}">{{ form.mode_paiement.label }}</label>
+                {{ form.mode_paiement }}
+                {% if form.mode_paiement.errors %}
+                <div class="error-message">{{ form.mode_paiement.errors }}</div>
+                {% endif %}
+                {% if form.mode_paiement.help_text %}
+                <small class="form-help">{{ form.mode_paiement.help_text }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.reference_paiement.id_for_label }}">{{ form.reference_paiement.label }}</label>
+                {{ form.reference_paiement }}
+                {% if form.reference_paiement.errors %}
+                <div class="error-message">{{ form.reference_paiement.errors }}</div>
+                {% endif %}
+                {% if form.reference_paiement.help_text %}
+                <small class="form-help">{{ form.reference_paiement.help_text }}</small>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                    {{ form.confirmation }}
+                    <span>{{ form.confirmation.label }}</span>
+                </label>
+                {% if form.confirmation.errors %}
+                <div class="error-message">{{ form.confirmation.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit" id="submitBtn" disabled>
+                ✍️ Soumettre ma demande d'inscription
+            </button>
+            <a href="{% url 'formations' %}" class="btn-cancel">
+                Annuler
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+// Données des formations pour le calcul JavaScript
+const formationsData = {{ formations_data|safe }};
+
+// Fonction pour calculer le coût total
+function calculerCoutTotal() {
+    const checkboxes = document.querySelectorAll('.formation-checkbox:checked');
+    let total = 0;
+    const formationsSelectionnees = [];
+    
+    checkboxes.forEach(checkbox => {
+        const prix = parseFloat(checkbox.dataset.prix) || 0;
+        const titre = checkbox.dataset.titre;
+        total += prix;
+        if (prix > 0) {
+            formationsSelectionnees.push({
+                titre: titre,
+                prix: prix
+            });
+        }
+    });
+    
+    // Afficher/masquer le récapitulatif
+    const costSummary = document.getElementById('costSummary');
+    const paymentSection = document.getElementById('paymentSection');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (checkboxes.length > 0) {
+        costSummary.style.display = 'block';
+        if (total > 0) {
+            paymentSection.style.display = 'block';
+        } else {
+            paymentSection.style.display = 'none';
+        }
+        submitBtn.disabled = false;
+        
+        // Mettre à jour le récapitulatif
+        const selectedFormationsDiv = document.getElementById('selectedFormations');
+        const totalCostSpan = document.getElementById('totalCost');
+        
+        let html = '<ul class="formations-list-summary">';
+        checkboxes.forEach(checkbox => {
+            const titre = checkbox.dataset.titre;
+            const prix = parseFloat(checkbox.dataset.prix) || 0;
+            html += `<li>${titre} - ${prix > 0 ? prix.toLocaleString('fr-FR') + ' FCFA' : 'Gratuite'}</li>`;
+        });
+        html += '</ul>';
+        
+        selectedFormationsDiv.innerHTML = html;
+        totalCostSpan.textContent = total.toLocaleString('fr-FR');
+    } else {
+        costSummary.style.display = 'none';
+        paymentSection.style.display = 'none';
+        submitBtn.disabled = true;
+    }
+}
+
+// Écouter les changements sur les checkboxes
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.formation-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', calculerCoutTotal);
+    });
+    
+    // Calcul initial
+    calculerCoutTotal();
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.inscription-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.inscription-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 3px solid #005a9c;
+}
+
+.inscription-header h1 {
+    color: #005a9c;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.info-box {
+    background-color: #e7f3ff;
+    border-left: 4px solid #005a9c;
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-box h3 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.info-box ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: #555;
+}
+
+.info-box li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section h3 {
+    color: #005a9c;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.formations-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.formation-item {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+}
+
+.formation-item:hover {
+    border-color: #005a9c;
+    box-shadow: 0 2px 8px rgba(0, 90, 156, 0.1);
+}
+
+.formation-item input[type="checkbox"]:checked + .formation-info {
+    background-color: #f0f8ff;
+}
+
+.formation-label {
+    display: block;
+    cursor: pointer;
+    margin: 0;
+}
+
+.formation-checkbox {
+    margin-right: 1rem;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.formation-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.formation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.formation-titre {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #005a9c;
+}
+
+.formation-type {
+    background-color: #005a9c;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.formation-description {
+    color: #666;
+    margin: 0.5rem 0;
+    line-height: 1.5;
+}
+
+.formation-prix {
+    text-align: right;
+}
+
+.prix-gratuit {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.prix-montant {
+    color: #005a9c;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.cost-summary {
+    margin: 2rem 0;
+}
+
+.summary-card {
+    background: linear-gradient(135deg, #005a9c 0%, #004070 100%);
+    color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.summary-card h3 {
+    color: white;
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 1rem;
+}
+
+.formations-list-summary {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.formations-list-summary li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.total-cost {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.payment-note {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    color: #856404;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.form-group select,
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group select:focus,
+.form-group input[type="text"]:focus {
+    outline: none;
+    border-color: #005a9c;
+    box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.1);
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-top: 0.25rem;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.checkbox-label span {
+    flex: 1;
+    line-height: 1.5;
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e0e0e0;
+}
+
+.btn-submit {
+    background-color: #005a9c;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background-color: #004070;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 90, 156, 0.3);
+}
+
+.btn-submit:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-cancel {
+    background-color: #6c757d;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.btn-cancel:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+.no-formations {
+    text-align: center;
+    color: #666;
+    padding: 2rem;
+    font-style: italic;
+}
+
+@media screen and (max-width: 768px) {
+    .inscription-container {
+        padding: 0 1rem;
+    }
+
+    .formation-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+

@@ -1,0 +1,464 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Formations - FMOS MFMC{% endblock %}
+
+{% block content %}
+<h2>Formations</h2>
+{% if not user.is_authenticated %}
+<div class="alert-message">
+    <p>⚠️ <strong>Accès restreint :</strong> Vous devez être connecté pour accéder au contenu détaillé des formations. <a href="{% url 'login' %}">Connectez-vous</a> ou <a href="{% url 'inscription' %}">créez un compte</a> pour continuer.</p>
+</div>
+{% else %}
+<div class="inscription-link-box">
+    <a href="{% url 'inscription_formations' %}" class="btn-inscription-principal">
+        ✍️ S'inscrire aux formations
+    </a>
+</div>
+{% endif %}
+<p class="intro-text">Découvrez nos programmes de formation en médecine de famille et médecine communautaire. Nous proposons des formations certifiantes et non certifiantes adaptées à vos besoins professionnels.</p>
+
+<!-- Section Formations Certifiantes -->
+<section id="certifiantes" class="formations-section">
+    <h3 class="section-title">Formations Certifiantes</h3>
+    <p class="section-description">Ces formations délivrent un diplôme ou une certification reconnue à l'issue de la formation.</p>
+    
+    <div class="formations-grid">
+        <!-- DESMFMC -->
+        <div class="formation-card">
+            {% if not user.is_authenticated %}
+            <div class="formation-card-buttons">
+                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
+            </div>
+            {% endif %}
+            <div class="formation-icon">🎓</div>
+            <h4><a href="{% url 'programme_desmfmc' %}" class="formation-title-link">DESMFMC</a></h4>
+            <p>Diplôme d'Études Spécialisées en Médecine de Famille et Médecine Communautaire. Programme de 4 ans pour devenir spécialiste en médecine de famille.</p>
+            <a href="{% url 'programme_desmfmc' %}" class="formation-link">En savoir plus →</a>
+        </div>
+
+        <!-- Santé Communautaire -->
+        <div class="formation-card">
+            {% if not user.is_authenticated %}
+            <div class="formation-card-buttons">
+                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
+            </div>
+            {% endif %}
+            <div class="formation-icon">🏥</div>
+            <h4><a href="{% url 'programme_sante_communautaire' %}" class="formation-title-link">Santé Communautaire</a></h4>
+            <p>Formation approfondie en santé communautaire pour améliorer la santé des populations à travers des approches préventives et communautaires.</p>
+            <a href="{% url 'programme_sante_communautaire' %}" class="formation-link">En savoir plus →</a>
+        </div>
+
+        <!-- Recherche -->
+        <div class="formation-card">
+            {% if not user.is_authenticated %}
+            <div class="formation-card-buttons">
+                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
+            </div>
+            {% endif %}
+            <div class="formation-icon">🔬</div>
+            <h4><a href="{% url 'programme_recherche' %}" class="formation-title-link">Recherche</a></h4>
+            <p>Formation en méthodologie de recherche et en conduite de projets de recherche en santé communautaire et médecine de famille.</p>
+            <a href="{% url 'programme_recherche' %}" class="formation-link">En savoir plus →</a>
+        </div>
+
+        <!-- Logiciels d'analyse (Certifiant) -->
+        <div class="formation-card">
+            {% if not user.is_authenticated %}
+            <div class="formation-card-buttons">
+                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
+            </div>
+            {% endif %}
+            <div class="formation-icon">💻</div>
+            <h4><a href="{% url 'programme_logiciels_analyse' %}" class="formation-title-link">Logiciels d'analyse</a></h4>
+            <p>Formation certifiante sur les logiciels d'analyse statistique et de gestion de données pour la recherche médicale.</p>
+            <a href="{% url 'programme_logiciels_analyse' %}" class="formation-link">En savoir plus →</a>
+        </div>
+
+        <!-- Échographie de base -->
+        <div class="formation-card">
+            {% if not user.is_authenticated %}
+            <div class="formation-card-buttons">
+                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
+            </div>
+            {% endif %}
+            <div class="formation-icon">📡</div>
+            <h4><a href="{% url 'echographie_base' %}" class="formation-title-link">Échographie de base</a></h4>
+            <p>Formation certifiante en échographie de base pour la pratique médicale en soins primaires et en médecine de famille.</p>
+            <a href="{% url 'echographie_base' %}" class="formation-link">En savoir plus →</a>
+        </div>
+
+        <!-- Pédagogie en santé -->
+        <div class="formation-card">
+            {% if not user.is_authenticated %}
+            <div class="formation-card-buttons">
+                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
+            </div>
+            {% endif %}
+            <div class="formation-icon">📚</div>
+            <h4><a href="{% url 'programme_pedagogie_sante' %}" class="formation-title-link">Pédagogie en santé</a></h4>
+            <p>Formation certifiante en pédagogie médicale pour développer les compétences d'enseignement et de formation en santé.</p>
+            <a href="{% url 'programme_pedagogie_sante' %}" class="formation-link">En savoir plus →</a>
+        </div>
+    </div>
+</section>
+
+<!-- Section Formations Non Certifiantes -->
+<section id="non-certifiantes" class="formations-section">
+    <h3 class="section-title">Formations Non Certifiantes</h3>
+    <p class="section-description">Ces formations permettent d'acquérir des compétences spécifiques sans délivrer de diplôme officiel.</p>
+    
+    <div class="formations-grid">
+        <!-- Cours Médecine 6 -->
+        <div class="formation-card">
+            {% if not user.is_authenticated %}
+            <div class="formation-card-buttons">
+                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
+            </div>
+            {% endif %}
+            <div class="formation-icon">📖</div>
+            <h4><a href="{% url 'cours_med6' %}" class="formation-title-link">Cours Médecine 6</a></h4>
+            <p>Cours de renforcement pour les étudiants en 6ème année de médecine, couvrant les aspects essentiels de la pratique clinique.</p>
+            <a href="{% url 'cours_med6' %}" class="formation-link">En savoir plus →</a>
+        </div>
+
+        <!-- Habilités Cliniques -->
+        <div class="formation-card">
+            {% if not user.is_authenticated %}
+            <div class="formation-card-buttons">
+                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
+            </div>
+            {% endif %}
+            <div class="formation-icon">⚕️</div>
+            <h4><a href="{% url 'habilites_cliniques' %}" class="formation-title-link">Habilités Cliniques</a></h4>
+            <p>Formation pratique pour développer et renforcer les habilités cliniques essentielles en médecine de famille.</p>
+            <a href="{% url 'habilites_cliniques' %}" class="formation-link">En savoir plus →</a>
+        </div>
+
+        <!-- Logiciels d'analyse (Non certifiant) -->
+        <div class="formation-card">
+            {% if not user.is_authenticated %}
+            <div class="formation-card-buttons">
+                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
+            </div>
+            {% endif %}
+            <div class="formation-icon">💻</div>
+            <h4><a href="{% url 'logiciels_analyse_noncertif' %}" class="formation-title-link">Logiciels d'analyse</a></h4>
+            <p>Formation non certifiante sur les outils et logiciels d'analyse de données pour la pratique médicale quotidienne.</p>
+            <a href="{% url 'logiciels_analyse_noncertif' %}" class="formation-link">En savoir plus →</a>
+        </div>
+
+        <!-- Base en pédagogie -->
+        <div class="formation-card">
+            {% if not user.is_authenticated %}
+            <div class="formation-card-buttons">
+                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
+            </div>
+            {% endif %}
+            <div class="formation-icon">🎯</div>
+            <h4><a href="{% url 'base_pedagogie' %}" class="formation-title-link">Base en pédagogie</a></h4>
+            <p>Formation de base en pédagogie pour améliorer les compétences d'enseignement et de transmission des connaissances.</p>
+            <a href="{% url 'base_pedagogie' %}" class="formation-link">En savoir plus →</a>
+        </div>
+
+        <!-- Autres programmes -->
+        <div class="formation-card">
+            {% if not user.is_authenticated %}
+            <div class="formation-card-buttons">
+                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
+            </div>
+            {% endif %}
+            <div class="formation-icon">📋</div>
+            <h4><a href="{% url 'autres_programmes' %}" class="formation-title-link">Autres programmes</a></h4>
+            <p>Découvrez nos autres programmes de formation continue et de développement professionnel.</p>
+            <a href="{% url 'autres_programmes' %}" class="formation-link">En savoir plus →</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.alert-message {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    color: #856404;
+}
+
+.alert-message a {
+    color: #005a9c;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.alert-message a:hover {
+    color: #004070;
+}
+
+.access-restricted {
+    background-color: #f8d7da;
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.access-restricted p {
+    margin: 0.5rem 0;
+    color: #721c24;
+}
+
+.access-restricted a {
+    color: #005a9c;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.formation-content {
+    line-height: 1.8;
+}
+
+.formation-content h3 {
+    color: #005a9c;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.formation-content ul {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.formation-content li {
+    margin-bottom: 0.5rem;
+}
+
+.inscription-link-box {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.btn-inscription-principal {
+    display: inline-block;
+    background-color: #005a9c;
+    color: white;
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 90, 156, 0.2);
+}
+
+.btn-inscription-principal:hover {
+    background-color: #004070;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 90, 156, 0.3);
+}
+
+.intro-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    color: #555;
+    text-align: center;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.formations-section {
+    margin-bottom: 4rem;
+    scroll-margin-top: 100px; /* Compensation pour le header fixe lors du scroll */
+}
+
+.section-title {
+    color: #005a9c;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid #005a9c;
+}
+
+.section-description {
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.formations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.formation-card {
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.formation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px rgba(0, 90, 156, 0.2);
+    border-color: #005a9c;
+}
+
+.formation-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.formation-card h4 {
+    color: #005a9c;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    margin-top: 0;
+}
+
+.formation-title-link {
+    color: #005a9c;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.formation-title-link:hover {
+    color: #004070;
+    text-decoration: underline;
+}
+
+.formation-card p {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.formation-link {
+    color: #005a9c;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    transition: color 0.3s ease;
+    margin-top: auto;
+}
+
+.formation-link:hover {
+    color: #004070;
+    text-decoration: underline;
+}
+
+.formation-card-buttons {
+    position: absolute;
+    top: 0.75rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0.75rem;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.formation-card-buttons a {
+    pointer-events: auto;
+}
+
+.btn-inscription-small,
+.btn-connexion-small {
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 4px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+    font-size: 0.75rem !important;
+    white-space: nowrap !important;
+    cursor: pointer !important;
+    border: 2px solid #495057 !important;
+    display: inline-block !important;
+    text-align: center !important;
+    width: auto !important;
+    background-color: #6c757d !important;
+    background-image: linear-gradient(to bottom, #7d8489 0%, #6c757d 50%, #5a6268 100%) !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+.btn-inscription-small:hover,
+.btn-connexion-small:hover {
+    background-image: linear-gradient(to bottom, #6c757d 0%, #5a6268 50%, #495057 100%) !important;
+    border-color: #343a40 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+.btn-inscription-small:active,
+.btn-connexion-small:active {
+    transform: translateY(0) !important;
+    background-image: linear-gradient(to bottom, #5a6268 0%, #495057 100%) !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+    border-color: #343a40 !important;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+    .formations-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.75rem;
+    }
+    
+    .formation-card {
+        padding: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .intro-text {
+        font-size: 1rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .formation-card {
+        padding: 1rem;
+    }
+    
+    .formation-icon {
+        font-size: 2.5rem;
+    }
+}
+</style>
+{% endblock %}

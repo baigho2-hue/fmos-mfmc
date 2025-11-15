@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Lettre d'Information</title>
+</head>
+<body>
+    <div class="header">
+        <h1>📧 {{ lettre.titre }}</h1>
+        <p><strong>Type:</strong> {{ lettre.get_type_lettre_display }}</p>
+        <p><strong>Date d'envoi:</strong> {{ lettre.date_envoi|date:"d/m/Y à H:i" }}</p>
+        {% if lettre.auteur %}
+        <p><strong>Auteur:</strong> {{ lettre.auteur.get_full_name|default:lettre.auteur.username }}</p>
+        {% endif %}
+    </div>
+
+    <div class="content">
+        <div class="lettre-contenu">
+            {{ lettre.contenu|linebreaks }}
+        </div>
+    </div>
+
+    {% if destinataires %}
+    <div class="destinataires">
+        <h2>Destinataires</h2>
+        <ul>
+            {% for destinataire in destinataires %}
+            <li>{% if destinataire.get_full_name %}{{ destinataire.get_full_name }}{% else %}{{ destinataire.username }}{% endif %} ({{ destinataire.email|default:"-" }})</li>
+            {% endfor %}
+        </ul>
+        <p><strong>Total:</strong> {% if destinataires.count %}{{ destinataires.count }}{% else %}{{ destinataires|length }}{% endif %} destinataire{% if destinataires.count > 1 or destinataires|length > 1 %}s{% endif %}</p>
+    </div>
+    {% endif %}
+
+    <div class="footer">
+        <p>Document généré le {{ date_emission|date:"d/m/Y à H:i" }} - FMOS MFMC</p>
+    </div>
+
+    {% if signature_coordination %}
+    <div class="signature-section">
+        <div class="signature-content">
+            {% if signature_coordination.cachet %}
+            <img src="{{ signature_coordination.cachet.url }}" alt="Cachet" class="cachet-image">
+            {% endif %}
+            <div class="signature-name">{{ signature_coordination.get_nom_complet }}</div>
+            <div class="signature-title">{{ signature_coordination.titre_signataire }}</div>
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>
+

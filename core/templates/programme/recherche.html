@@ -1,0 +1,578 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Programme de Recherche - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="formation-content">
+    <h2>Programme d'Enseignement en Recherche</h2>
+    
+    <h3>Description du programme</h3>
+    <p>Le programme d'enseignement en Recherche est conçu pour former des professionnels capables de concevoir, conduire et diffuser des projets de recherche scientifique en santé communautaire et médecine de famille. Ce programme offre une formation progressive, allant des bases méthodologiques aux compétences avancées en recherche.</p>
+    
+    <h3>Objectifs de la formation</h3>
+    <ul>
+        <li>Maîtriser les méthodes de recherche en santé (quantitative et qualitative)</li>
+        <li>Concevoir et conduire des projets de recherche rigoureux</li>
+        <li>Analyser et interpréter les données de recherche</li>
+        <li>Rédiger et publier des articles scientifiques</li>
+        <li>Communiquer efficacement les résultats de recherche</li>
+    </ul>
+    
+    <h3>Durée et structure</h3>
+    <p>Le programme s'étend sur <strong>6 mois</strong> et comprend une alternance théorie/pratique avec des cours magistraux, ateliers pratiques, études de cas réels, et la réalisation d'un mini-projet de recherche encadré.</p>
+    
+    <h3>Conditions d'admission</h3>
+    <p><strong>Prérequis :</strong></p>
+    <ul>
+        <li>Minimum un diplôme de licence</li>
+        <li>Maîtrise de l'informatique de base (Word, Excel)</li>
+    </ul>
+    
+    <!-- Coût et modalités de paiement -->
+    {% if cout_formation %}
+    <div class="cout-formation-section">
+        <h3>💰 Coût et Modalités de Paiement</h3>
+        <div class="cout-info-box">
+            <p><strong>Coût de la formation :</strong> 
+                {% if montant_converti and montant_converti.devise != 'FCFA' %}
+                    <span class="cout-montant">{{ montant_converti.montant|floatformat:0 }} {{ montant_converti.symbole }}</span>
+                    <span class="cout-original">(≈ {{ cout_formation.cout_principal|floatformat:0 }} FCFA)</span>
+                {% else %}
+                    <span class="cout-montant">{{ cout_formation.cout_principal|floatformat:0 }} FCFA</span>
+                {% endif %}
+            </p>
+            <p style="margin-top: 1.5rem;"><strong>Modalité de paiement :</strong> {{ cout_formation.get_modalite_paiement_display }}.{% if cout_formation.conditions_paiement %} {{ cout_formation.conditions_paiement }}{% endif %}</p>
+        </div>
+        
+        {% if cout_formation.informations_supplementaires %}
+        <div class="conditions-paiement-box">
+            <h4>ℹ️ Informations supplémentaires :</h4>
+            <div>{{ cout_formation.informations_supplementaires|linebreaks }}</div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <!-- Bouton d'inscription -->
+    {% include 'formations/_bouton_inscription.html' %}
+    
+    <!-- Modules du programme -->
+    <div class="competences-finales-section">
+        <h3>📚 Modules du Programme de Recherche</h3>
+        <p class="competences-intro">Le programme est structuré en modules couvrant tous les aspects essentiels de la recherche scientifique, permettant aux apprenants d'acquérir des compétences complètes pour mener des projets de recherche de qualité.</p>
+        
+        <div class="competences-grid">
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">🔬</div>
+                    <h4>Introduction à la Recherche Scientifique</h4>
+                </div>
+                <ul>
+                    <li>Définition et objectifs de la recherche</li>
+                    <li>Types de recherche : fondamentale, appliquée, expérimentale</li>
+                    <li>Recherche qualitative et quantitative</li>
+                    <li>Éthique et intégrité scientifique</li>
+                    <li>Réglementation et comités d'éthique</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">📋</div>
+                    <h4>Méthodologie de Recherche</h4>
+                </div>
+                <ul>
+                    <li>Formulation d'une problématique claire</li>
+                    <li>Revue de littérature et recherche documentaire</li>
+                    <li>Élaboration d'hypothèses et objectifs</li>
+                    <li>Choix du design de recherche</li>
+                    <li>Planification et organisation du projet</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">📊</div>
+                    <h4>Collecte et Analyse des Données</h4>
+                </div>
+                <ul>
+                    <li>Techniques de collecte (questionnaires, entretiens, observations, expériences)</li>
+                    <li>Échantillonnage et représentativité</li>
+                    <li>Introduction aux statistiques descriptives et inférentielles</li>
+                    <li>Analyse qualitative des données</li>
+                    <li>Utilisation de logiciels d'analyse (SPSS, R, EpiInfo, QDAminer, NVivo)</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">✍️</div>
+                    <h4>Rédaction Scientifique</h4>
+                </div>
+                <ul>
+                    <li>Structure d'un rapport ou article scientifique</li>
+                    <li>Normes de citation (APA, MLA, Chicago, Vancouver)</li>
+                    <li>Présentation des résultats et discussion</li>
+                    <li>Préparation à la publication</li>
+                    <li>Révision et amélioration du manuscrit</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">📢</div>
+                    <h4>Communication et Diffusion</h4>
+                </div>
+                <ul>
+                    <li>Présentation orale et posters scientifiques</li>
+                    <li>Vulgarisation scientifique pour le grand public</li>
+                    <li>Participation à des colloques et séminaires</li>
+                    <li>Techniques de communication efficace</li>
+                    <li>Gestion de la visibilité scientifique</li>
+                </ul>
+            </div>
+            
+            <div class="competence-card">
+                <div class="competence-header-with-image">
+                    <div class="competence-icon-container">🎯</div>
+                    <h4>Projet Pratique</h4>
+                </div>
+                <ul>
+                    <li>Réalisation d'un mini-projet de recherche en groupe ou individuel</li>
+                    <li>Encadrement et suivi par un enseignant-chercheur</li>
+                    <li>Application des méthodes apprises</li>
+                    <li>Rédaction du rapport de recherche</li>
+                    <li>Soutenance finale devant un jury</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Logiciels utilisés -->
+    <div class="logiciels-section">
+        <h3>💻 Logiciels et Outils de Recherche</h3>
+        <p class="logiciels-intro">Le programme inclut une formation pratique sur les logiciels essentiels pour la recherche en santé.</p>
+        
+        <div class="logiciels-grid">
+            <div class="logiciel-item">
+                <h4>📊 SPSS</h4>
+                <p>Logiciel d'analyse statistique pour les données quantitatives.</p>
+            </div>
+            
+            <div class="logiciel-item">
+                <h4>📈 R / RStudio</h4>
+                <p>Environnement de programmation statistique open-source pour l'analyse de données.</p>
+            </div>
+            
+            <div class="logiciel-item">
+                <h4>🔍 EpiInfo</h4>
+                <p>Logiciel gratuit développé par le CDC pour l'épidémiologie et l'analyse de données de santé publique.</p>
+            </div>
+            
+            <div class="logiciel-item">
+                <h4>📝 QDAminer</h4>
+                <p>Logiciel d'analyse qualitative pour l'analyse de contenu et la recherche qualitative.</p>
+            </div>
+            
+            <div class="logiciel-item">
+                <h4>🌳 NVivo</h4>
+                <p>Logiciel d'analyse qualitative avancé pour la recherche qualitative et mixte.</p>
+            </div>
+            
+            <div class="logiciel-item">
+                <h4>📚 EndNote / Zotero</h4>
+                <p>Gestionnaires de références bibliographiques pour la recherche documentaire.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Approche pédagogique -->
+    <div class="approche-pedagogique-section">
+        <h3>💡 Approche Pédagogique</h3>
+        <p class="approche-intro">Le programme utilise une approche pédagogique variée et interactive pour favoriser l'apprentissage pratique et l'acquisition de compétences en recherche.</p>
+        
+        <div class="approche-grid">
+            <div class="approche-item">
+                <h4>📚 Cours Magistraux</h4>
+                <p>Enseignements théoriques fondamentaux dispensés par des chercheurs expérimentés.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>🔧 Ateliers Pratiques</h4>
+                <p>Sessions pratiques sur l'utilisation des logiciels et méthodes d'analyse.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>📋 Études de Cas Réels</h4>
+                <p>Analyse de projets de recherche réels pour comprendre l'application pratique.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>👥 Travaux de Groupe</h4>
+                <p>Collaboration sur des projets de recherche pour développer les compétences collectives.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>🎓 Invités Experts</h4>
+                <p>Interventions de chercheurs et experts pour partager leurs expériences.</p>
+            </div>
+            
+            <div class="approche-item">
+                <h4>🔬 Projet de Recherche</h4>
+                <p>Réalisation d'un mini-projet encadré pour mettre en pratique toutes les compétences acquises.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.formation-content {
+    line-height: 1.8;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.formation-content h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.formation-content h3 {
+    color: #005a9c;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.formation-content ul {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.formation-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Section coût et modalités de paiement */
+.cout-formation-section {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.cout-formation-section h3 {
+    color: #856404;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.cout-info-box {
+    background-color: #ffffff;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.cout-info-box p {
+    margin: 0.75rem 0;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+}
+
+.cout-montant {
+    color: #005a9c;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.cout-original {
+    color: #666;
+    font-size: 1rem;
+    font-weight: normal;
+    font-style: italic;
+    margin-left: 0.5rem;
+}
+
+.conditions-paiement-box {
+    background-color: #ffffff;
+    border: 2px solid #17a2b8;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.conditions-paiement-box h4 {
+    color: #17a2b8;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.conditions-paiement-box div {
+    color: #333;
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+/* Styles pour la section des modules */
+.competences-finales-section {
+    background-color: #f8f9fa;
+    border: 2px solid #005a9c;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.competences-finales-section h3 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.competences-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.competences-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.competence-card {
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.competence-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 90, 156, 0.15);
+    border-color: #005a9c;
+}
+
+/* Styles uniformes pour toutes les cartes */
+.competence-header-with-image {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.competence-icon-container {
+    width: 80px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    background-color: #f0f8ff;
+    border: 2px solid #005a9c;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 90, 156, 0.2);
+    flex-shrink: 0;
+}
+
+.competence-card h4 {
+    color: #005a9c;
+    margin: 0;
+    font-size: 1.2rem;
+    border-bottom: none;
+    padding-bottom: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.competence-header-with-image h4 {
+    color: #005a9c;
+    font-size: 1.2rem;
+}
+
+.competence-card ul {
+    margin-left: 1.5rem;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.competence-card li {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+    color: #555;
+}
+
+/* Styles pour la section logiciels */
+.logiciels-section {
+    background-color: #ffffff;
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.logiciels-section h3 {
+    color: #ffc107;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.logiciels-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.logiciels-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.logiciel-item {
+    background-color: #fffbf0;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.logiciel-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+    border-color: #ffc107;
+}
+
+.logiciel-item h4 {
+    color: #ff9800;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.logiciel-item p {
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Styles pour la section approche pédagogique */
+.approche-pedagogique-section {
+    background-color: #ffffff;
+    border: 2px solid #28a745;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.approche-pedagogique-section h3 {
+    color: #28a745;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.approche-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.approche-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.approche-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.approche-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
+    border-color: #28a745;
+}
+
+.approche-item h4 {
+    color: #28a745;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.approche-item p {
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .competences-grid,
+    .logiciels-grid,
+    .approche-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .competences-finales-section,
+    .logiciels-section,
+    .approche-pedagogique-section {
+        padding: 1rem;
+    }
+    
+    .formation-content {
+        padding: 1rem;
+    }
+    
+    .competence-icon-container {
+        width: 60px;
+        height: 45px;
+        font-size: 2rem;
+    }
+    
+    .competence-header-with-image {
+        gap: 0.75rem;
+    }
+    
+    .competence-header-with-image h4 {
+        font-size: 1.1rem;
+    }
+}
+</style>
+{% endblock %}

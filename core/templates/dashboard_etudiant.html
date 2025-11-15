@@ -1,0 +1,664 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tableau de bord Étudiant - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Tableau de bord - Étudiant</h1>
+        <p class="welcome-message">Bienvenue, {{ user.get_full_name|default:user.username }} !</p>
+        {% if classe_obj %}
+        <p class="classe-info">📚 {{ classe_obj.formation.nom }} - {{ classe_obj.nom }}</p>
+        {% endif %}
+    </div>
+
+    <div class="dashboard-info">
+        <div class="info-card">
+            <h3>Informations personnelles</h3>
+            <div class="info-item">
+                <strong>Nom complet :</strong> {{ user.get_full_name|default:"Non renseigné" }}
+            </div>
+            <div class="info-item">
+                <strong>Email :</strong> {{ user.email }}
+            </div>
+            <div class="info-item">
+                <strong>Classe :</strong> {{ user.classe|default:"Non renseignée" }}
+            </div>
+            <div class="info-item">
+                <strong>Statut email :</strong> 
+                {% if user.email_verifie %}
+                    <span class="badge badge-success">Vérifié</span>
+                {% else %}
+                    <span class="badge badge-warning">Non vérifié</span>
+                {% endif %}
+            </div>
+            <div class="info-item" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                <a href="{% url 'etudiant_download_bulletin' %}" class="btn-download-bulletin">
+                    📥 Télécharger mon bulletin
+                </a>
+            </div>
+        </div>
+        
+        {% if classe_obj %}
+        <div class="progress-card">
+            <h3>Progression globale</h3>
+            <div class="progress-info">
+                <div class="progress-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">{{ cours_termines }}</span>
+                        <span class="stat-label">Cours terminés</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{{ total_cours }}</span>
+                        <span class="stat-label">Total cours</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{{ pourcentage_global }}%</span>
+                        <span class="stat-label">Complétion</span>
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: {{ pourcentage_global }}%"></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if cours_infos %}
+    <div class="courses-overview">
+        <h2>📘 Cours de l'année</h2>
+        <p>Retrouvez vos cours de l'année avec les dates clés : présentation et évaluation.</p>
+        <div class="courses-table-wrapper">
+            <table class="courses-table">
+                <thead>
+                    <tr>
+                        <th>Cours</th>
+                        <th>Date de présentation</th>
+                        <th>Date d'évaluation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for info in cours_infos %}
+                    <tr>
+                        <td class="course-title">
+                            <span class="course-name">{{ info.cours.titre }}</span>
+                            {% if info.cours.code %}
+                            <span class="course-code">{{ info.cours.code }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if info.planif_presentation %}
+                                {{ info.planif_presentation.date_debut|date:"d/m/Y" }}
+                            {% else %}
+                                <span class="badge badge-warning">Non planifiée</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if info.planif_evaluation %}
+                                {{ info.planif_evaluation.date_debut|date:"d/m/Y" }}
+                            {% else %}
+                                <span class="badge badge-warning">Non planifiée</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="dashboard-sections">
+        <div class="section-card">
+            <h2>📚 Mes cours</h2>
+            {% if classe_obj %}
+            <p>Accédez aux cours de votre classe : <strong>{{ classe_obj.nom }}</strong></p>
+            <p class="cours-count">{{ total_cours }} cours disponibles</p>
+            <a href="{% url 'mes_cours' %}" class="btn-primary">Voir mes cours</a>
+            {% else %}
+            <p>Aucune classe associée à votre compte.</p>
+            {% endif %}
+        </div>
+
+        <div class="section-card">
+            <h2>📊 Ma progression</h2>
+            <p>Suivez votre progression dans les cours de votre classe</p>
+            <a href="{% url 'ma_progression' %}" class="btn-primary">Voir ma progression</a>
+        </div>
+
+        <div class="section-card">
+            <h2>📅 Ma planification</h2>
+            <p>Consultez l'emploi du temps et les activités de votre classe</p>
+            <a href="{% url 'ma_planification' %}" class="btn-primary">Voir ma planification</a>
+        </div>
+
+        <div class="section-card">
+            <h2>📝 Formations</h2>
+            <p>Découvrez toutes les formations disponibles</p>
+            <a href="{% url 'formations' %}" class="btn-primary">Voir les formations</a>
+        </div>
+
+        {% if user.type_utilisateur == 'etudiant' %}
+        <div class="section-card">
+            <h2>📋 Carnet de Stage</h2>
+            <p>Suivez et évaluez vos stages du DESMFMC</p>
+            <a href="{% url 'mon_carnet_stage' %}" class="btn-primary">Voir mon carnet de stage</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Lettres d'informations -->
+    {% if lettres_information %}
+    <div class="section-main">
+        <h2>📧 Lettres d'informations</h2>
+        <div class="lettres-list">
+            {% for lettre in lettres_information %}
+            <div class="lettre-card">
+                <div class="lettre-header">
+                    <h3>{{ lettre.titre }}</h3>
+                    <span class="badge-type">{{ lettre.get_type_lettre_display }}</span>
+                </div>
+                <div class="lettre-body">
+                    <p class="lettre-date">📅 {{ lettre.date_envoi|date:"d/m/Y à H:i" }}</p>
+                    <p class="lettre-preview">{{ lettre.contenu|truncatewords:30 }}</p>
+                </div>
+                <div class="lettre-footer">
+                    <a href="{% url 'etudiant_download_lettre' lettre.id %}" class="btn-download-small">
+                        📥 Télécharger PDF
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if planifications %}
+    <div class="upcoming-events">
+        <h2>📅 Prochaines activités</h2>
+        <div class="events-list">
+            {% for planif in planifications|slice:":5" %}
+            <div class="event-item">
+                <div class="event-date">
+                    <span class="event-day">{{ planif.date_debut|date:"d" }}</span>
+                    <span class="event-month">{{ planif.date_debut|date:"M" }}</span>
+                </div>
+                <div class="event-details">
+                    <h4>{{ planif.titre }}</h4>
+                    <p class="event-type">{{ planif.get_type_activite_display }}</p>
+                    <p class="event-time">{{ planif.date_debut|date:"H:i" }} - {{ planif.date_fin|date:"H:i" }}</p>
+                    {% if planif.lieu %}<p class="event-location">📍 {{ planif.lieu }}</p>{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'ma_planification' %}" class="btn-link">Voir toutes les activités →</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.dashboard-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-message {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.classe-info {
+    font-size: 1.1rem;
+    color: #005a9c;
+    font-weight: bold;
+}
+
+.dashboard-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-card, .progress-card {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.info-card h3, .progress-card h3 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.info-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.progress-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #005a9c;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 0.25rem;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #005a9c 0%, #28a745 100%);
+    transition: width 0.3s ease;
+}
+
+.dashboard-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.courses-overview {
+    margin-top: 2rem;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.courses-overview h2 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.courses-overview p {
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+.courses-table-wrapper {
+    overflow-x: auto;
+}
+
+.courses-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 320px;
+}
+
+.courses-table thead {
+    background: #005a9c;
+    color: #ffffff;
+}
+
+.courses-table th,
+.courses-table td {
+    padding: 0.85rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.courses-table tbody tr:hover {
+    background: rgba(0, 90, 156, 0.08);
+}
+
+.course-title {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.course-name {
+    font-weight: 600;
+    color: #003c6a;
+}
+
+.course-code {
+    display: inline-block;
+    font-size: 0.85rem;
+    color: #666;
+    background: #eef4fb;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    align-self: flex-start;
+}
+
+.courses-table .badge-warning {
+    font-size: 0.75rem;
+}
+
+.section-card {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.section-card h2 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.section-card p {
+    color: #666;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.cours-count {
+    font-weight: bold;
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+}
+
+.btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #005a9c;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #004070;
+}
+
+.upcoming-events {
+    margin-top: 3rem;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.upcoming-events h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+}
+
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.event-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease;
+}
+
+.event-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.event-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    background: #005a9c;
+    color: white;
+    border-radius: 8px;
+    padding: 0.5rem;
+}
+
+.event-day {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.event-month {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.event-details {
+    flex: 1;
+}
+
+.event-details h4 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.event-type {
+    color: #666;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.event-time {
+    color: #666;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.event-location {
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.btn-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: #005a9c;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.btn-link:hover {
+    color: #004070;
+}
+
+@media screen and (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+    
+    .dashboard-sections {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .progress-stats {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .courses-overview {
+        padding: 1.5rem;
+    }
+
+    .courses-table th,
+    .courses-table td {
+        padding: 0.75rem;
+    }
+}
+
+.btn-download-bulletin {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.btn-download-bulletin:hover {
+    background: #004080;
+}
+
+.section-main {
+    margin-top: 2rem;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.section-main h2 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.lettres-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.lettre-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.lettre-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #005a9c;
+    padding-bottom: 10px;
+}
+
+.lettre-header h3 {
+    margin: 0;
+    color: #005a9c;
+    font-size: 1.1em;
+}
+
+.badge-type {
+    background: #005a9c;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85em;
+}
+
+.lettre-body {
+    flex-grow: 1;
+    margin-bottom: 15px;
+}
+
+.lettre-date {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+.lettre-preview {
+    color: #555;
+    line-height: 1.6;
+}
+
+.lettre-footer {
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.btn-download-small {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 0.9em;
+    transition: background 0.3s;
+}
+
+.btn-download-small:hover {
+    background: #004080;
+}
+</style>
+{% endblock %}

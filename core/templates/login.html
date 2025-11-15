@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Connexion - FMOS MFMC{% endblock %}
+
+{% block content %}
+<h2>Connexion</h2>
+
+{% if etape_verification %}
+    <!-- Étape 2 : Vérification du code -->
+    <p class="intro-login">Un code de vérification a été envoyé à votre adresse email <strong>{{ user.email }}</strong>. Veuillez l'entrer ci-dessous.</p>
+    
+    <form method="POST" class="login-form">
+        {% csrf_token %}
+        
+        {% if code_form.errors %}
+        <div class="alert alert-error">
+            {% for field, errors in code_form.errors.items %}
+                {% for error in errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="form-group">
+            <label for="id_code">Code de vérification *</label>
+            <input type="text" name="code" id="id_code" class="form-control code-input" required autofocus maxlength="6" pattern="[0-9]{6}" placeholder="000000">
+            <small class="form-help">Entrez le code à 6 chiffres envoyé à votre adresse email</small>
+        </div>
+        
+        <button type="submit" class="btn-submit">Vérifier le code</button>
+        
+        <div class="form-actions">
+            <a href="{% url 'login' %}?resend=1" class="btn-link">Renvoyer le code</a>
+            <span class="separator">|</span>
+            <a href="{% url 'login' %}?restart=1" class="btn-link">Recommencer</a>
+        </div>
+    </form>
+{% else %}
+    <!-- Étape 1 : Authentification username/password -->
+    <p class="intro-login">Connectez-vous avec votre nom d'utilisateur ou votre adresse email et votre mot de passe. Un code de vérification vous sera envoyé par email.</p>
+    
+    <form method="POST" class="login-form">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+        <div class="alert alert-error">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="form-group">
+            <label for="id_username">Nom d'utilisateur ou Email *</label>
+            <input type="text" name="username" id="id_username" class="form-control" required autofocus placeholder="Entrez votre nom d'utilisateur ou email">
+        </div>
+        
+        <div class="form-group">
+            <label for="id_password">Mot de passe *</label>
+            <input type="password" name="password" id="id_password" class="form-control" required>
+        </div>
+        
+        <button type="submit" class="btn-submit">Se connecter</button>
+    </form>
+{% endif %}
+
+<div class="login-links">
+    <p><a href="{% url 'login_med6' %}">👨‍⚕️ Connexion Étudiant Médecine 6 (Accès gratuit)</a></p>
+    <p class="inscription-link"><a href="{% url 'inscription' %}">Créer un compte</a></p>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.intro-login {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #666;
+}
+
+.login-form {
+    max-width: 500px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #005a9c;
+    box-shadow: 0 0 0 2px rgba(0, 90, 156, 0.1);
+}
+
+.code-input {
+    text-align: center;
+    font-size: 1.5rem;
+    letter-spacing: 0.5rem;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 1rem;
+    background-color: #005a9c;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+}
+
+.btn-submit:hover {
+    background-color: #004070;
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.btn-link {
+    color: #005a9c;
+    text-decoration: underline;
+    font-size: 0.9rem;
+}
+
+.btn-link:hover {
+    color: #004070;
+}
+
+.separator {
+    margin: 0 0.5rem;
+    color: #999;
+}
+
+.inscription-link {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.inscription-link a {
+    color: #005a9c;
+    text-decoration: underline;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    border: 1px solid #dc3545;
+    color: #721c24;
+}
+
+@media screen and (max-width: 768px) {
+    .login-form {
+        padding: 1.5rem;
+    }
+    
+    .code-input {
+        font-size: 1.2rem;
+        letter-spacing: 0.3rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Limiter le champ code à 6 chiffres uniquement
+document.addEventListener('DOMContentLoaded', function() {
+    const codeInput = document.getElementById('id_code');
+    if (codeInput) {
+        codeInput.addEventListener('input', function(e) {
+            // Ne garder que les chiffres
+            this.value = this.value.replace(/[^0-9]/g, '');
+            // Limiter à 6 chiffres
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
+            }
+        });
+        
+        codeInput.addEventListener('keypress', function(e) {
+            // Ne permettre que les chiffres
+            if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Enter'].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

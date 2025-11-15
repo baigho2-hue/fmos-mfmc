@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Administration - Tableau de bord{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <h1>📊 Tableau de bord Administration</h1>
+    <p class="subtitle">Coordination DESMFMC</p>
+
+    <!-- Statistiques générales -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-content">
+                <h3>{{ total_etudiants }}</h3>
+                <p>Étudiants actifs</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">👨‍🏫</div>
+            <div class="stat-content">
+                <h3>{{ total_enseignants }}</h3>
+                <p>Enseignants actifs</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-content">
+                <h3>{{ total_formations }}</h3>
+                <p>Formations actives</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🏫</div>
+            <div class="stat-content">
+                <h3>{{ total_classes }}</h3>
+                <p>Classes actives</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertes agenda -->
+    {% if alertes_agenda %}
+    <div class="alertes-section">
+        <h2>⚠️ Alertes - Activités à venir (7 prochains jours)</h2>
+        <div class="alertes-list">
+            {% for alerte in alertes_agenda %}
+            <div class="alerte-item">
+                <div class="alerte-date">{{ alerte.date_debut|date:"d/m/Y à H:i" }}</div>
+                <div class="alerte-content">
+                    <h4>{{ alerte.titre }}</h4>
+                    <p>{{ alerte.classe.nom }} - {{ alerte.cours_lie.titre|default:"Activité" }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Liens rapides -->
+    <div class="quick-links">
+        <h2>🔗 Accès rapide</h2>
+        <div class="links-grid">
+            <a href="{% url 'agenda_administration' %}" class="quick-link-card">
+                <div class="link-icon">📅</div>
+                <h3>Agenda</h3>
+                <p>Voir toutes les activités planifiées</p>
+            </a>
+            <a href="{% url 'notes_classes' %}" class="quick-link-card">
+                <div class="link-icon">📝</div>
+                <h3>Notes des classes</h3>
+                <p>Consulter les notes et progressions</p>
+            </a>
+            <a href="{% url 'alertes_agenda' %}" class="quick-link-card">
+                <div class="link-icon">⚠️</div>
+                <h3>Alertes</h3>
+                <p>Voir les alertes de l'agenda</p>
+            </a>
+            <a href="{% url 'resultats_evaluations' %}" class="quick-link-card">
+                <div class="link-icon">📊</div>
+                <h3>Résultats évaluations</h3>
+                <p>Consulter les résultats</p>
+            </a>
+            <a href="{% url 'gestion_inscriptions' %}" class="quick-link-card">
+                <div class="link-icon">✏️</div>
+                <h3>Gestion inscriptions</h3>
+                <p>Gérer les inscriptions aux formations</p>
+            </a>
+            <a href="{% url 'gestion_enseignants' %}" class="quick-link-card">
+                <div class="link-icon">👨‍🏫</div>
+                <h3>Gestion enseignants</h3>
+                <p>Gérer les enseignants, cours et leçons</p>
+            </a>
+            <a href="{% url 'gestion_signature_coordination' %}" class="quick-link-card">
+                <div class="link-icon">✍️</div>
+                <h3>Signature coordination</h3>
+                <p>Configurer la signature pour les documents PDF</p>
+            </a>
+            <a href="{% url 'upload_cours_lecons' %}" class="quick-link-card">
+                <div class="link-icon">📤</div>
+                <h3>Téléverser cours/leçons</h3>
+                <p>Uploader des fichiers de cours et leçons directement</p>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.administration-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+}
+
+.stat-content h3 {
+    font-size: 2rem;
+    margin: 0;
+    color: #005a9c;
+}
+
+.stat-content p {
+    margin: 0.5rem 0 0 0;
+    color: #666;
+}
+
+.alertes-section {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.alertes-list {
+    margin-top: 1rem;
+}
+
+.alerte-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+}
+
+.alerte-date {
+    font-weight: bold;
+    color: #005a9c;
+    min-width: 150px;
+}
+
+.quick-links {
+    margin-top: 3rem;
+}
+
+.links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.quick-link-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-align: center;
+}
+
+.quick-link-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.link-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.quick-link-card h3 {
+    color: #005a9c;
+    margin: 0.5rem 0;
+}
+
+.quick-link-card p {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+}
+</style>
+{% endblock %}
+

@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Vérification 2FA Requise{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <div class="page-header">
+        <div class="header-top">
+            <div>
+                <h1>🔐 Vérification Requise</h1>
+                <p class="subtitle">Cette fonctionnalité nécessite une vérification de votre identité</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <div class="info-box">
+            <p>
+                Pour accéder à cette fonctionnalité sécurisée, vous devez vérifier votre identité 
+                en entrant le code de double authentification envoyé à votre adresse email.
+            </p>
+            <p>
+                <strong>📧 Code envoyé à :</strong> {{ user.email }}
+            </p>
+            <p>
+                Le code est valide pendant <strong>5 minutes</strong>. 
+                Vérifiez votre boîte de réception (et vos spams si nécessaire).
+            </p>
+            {% if request.user.is_superuser %}
+            <div class="debug-info">
+                <strong>Mode développement :</strong> Le code est également affiché dans la console du serveur Django.
+            </div>
+            {% endif %}
+        </div>
+
+        <form method="post" action="{% url 'verifier_2fa_session' %}" class="verification-form">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            
+            <div class="form-group">
+                <label for="code">Code de vérification (6 chiffres)</label>
+                <input 
+                    type="text" 
+                    id="code" 
+                    name="code" 
+                    class="form-control code-input" 
+                    maxlength="6" 
+                    pattern="[0-9]{6}" 
+                    placeholder="000000"
+                    required
+                    autocomplete="off"
+                    autofocus
+                >
+                <small class="help-text">Entrez le code à 6 chiffres reçu par email</small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">✅ Vérifier</button>
+                <a href="{% url 'verifier_2fa_session' %}?next={{ next }}" class="btn-secondary">Renvoyer le code</a>
+                <a href="{% url 'accueil' %}" class="btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+.info-box {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #005a9c;
+}
+
+.info-box p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+
+.debug-info {
+    background: #fff3cd;
+    padding: 0.75rem;
+    border-radius: 5px;
+    margin-top: 1rem;
+    color: #856404;
+    font-size: 0.9rem;
+}
+
+.verification-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.code-input {
+    width: 100%;
+    max-width: 200px;
+    padding: 1rem;
+    font-size: 1.5rem;
+    text-align: center;
+    letter-spacing: 0.5rem;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-family: 'Courier New', monospace;
+}
+
+.code-input:focus {
+    outline: none;
+    border-color: #005a9c;
+    box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.1);
+}
+
+.help-text {
+    display: block;
+    margin-top: 0.5rem;
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    padding: 0.75rem 1.5rem;
+    background: #005a9c;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background: #004070;
+}
+
+.btn-secondary {
+    padding: 0.75rem 1.5rem;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const codeInput = document.getElementById('code');
+    
+    // Ne permettre que les chiffres
+    codeInput.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}
+

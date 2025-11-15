@@ -1,0 +1,452 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cours Médecine 6 - Formations - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="formation-minimaliste">
+    <h2>Cours Médecine 6</h2>
+    
+    <div class="formation-content-minimal">
+        <div class="description-box">
+            <h3>📖 Description</h3>
+            <p><strong>⚠️ Accès réservé exclusivement aux étudiants en 6ème année de médecine.</strong></p>
+            <p>Cours de renforcement pour les étudiants en 6ème année de médecine, couvrant les aspects essentiels de la pratique clinique.</p>
+            <p>Pour accéder à ces cours, vous devez être inscrit dans la liste officielle des étudiants de 6ème année de médecine.</p>
+        </div>
+        
+        <div class="cours-box">
+            <h3>📚 Cours Proposés</h3>
+            <div class="cours-list">
+                <div class="cours-item">
+                    <h4>💬 Technique de Communication</h4>
+                    <p>Formation aux techniques de communication essentielles pour la pratique médicale et la relation avec les patients.</p>
+                </div>
+                <div class="cours-item">
+                    <h4>🏥 Santé Communautaire</h4>
+                    <p>Formation en santé communautaire pour comprendre les enjeux de santé publique et les approches communautaires.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="objectifs-box">
+            <h3>🎯 Objectifs Élémentaires</h3>
+            <ul>
+                <li>Renforcer les connaissances cliniques de base</li>
+                <li>Préparer aux examens de fin d'études</li>
+                <li>Développer les compétences pratiques essentielles</li>
+            </ul>
+        </div>
+        
+        <!-- Formulaire de connexion Med 6 -->
+        {% if not user.is_authenticated %}
+        <div class="login-med6-box">
+            <h3>🔐 Accéder aux cours</h3>
+            <p><strong>⚠️ Accès réservé UNIQUEMENT aux étudiants en 6ème année de médecine</strong></p>
+            <p>Pour accéder à ces cours, veuillez renseigner les informations suivantes :</p>
+            
+            <form method="POST" class="login-med6-form-inline">
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                <div class="alert alert-error">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <p>{{ error|linebreaks }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="form-instructions">
+                    <p><strong>📋 Informations requises :</strong></p>
+                    <ul>
+                        <li><strong>Matricule</strong> : Votre numéro de matricule tel qu'il apparaît dans la liste officielle</li>
+                        <li><strong>Nom</strong> : Votre nom de famille (exactement comme dans la liste)</li>
+                        <li><strong>Prénom</strong> : Votre prénom (exactement comme dans la liste)</li>
+                    </ul>
+                    <p class="note-important">⚠️ <strong>Important</strong> : Les informations doivent correspondre exactement à celles de la liste Excel officielle des étudiants de 6ème année de médecine.</p>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_matricule">
+                            <span class="label-text">Matricule</span>
+                            <span class="label-required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            name="matricule" 
+                            id="id_matricule" 
+                            class="form-control" 
+                            required 
+                            autofocus 
+                            placeholder="Ex: MED2024001"
+                            title="Entrez votre numéro de matricule"
+                        >
+                        <small class="form-help">Numéro de matricule de la liste officielle</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_nom">
+                            <span class="label-text">Nom</span>
+                            <span class="label-required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            name="nom" 
+                            id="id_nom" 
+                            class="form-control" 
+                            required 
+                            placeholder="Ex: TRAORE"
+                            title="Entrez votre nom de famille"
+                        >
+                        <small class="form-help">Nom de famille (exactement comme dans la liste)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_prenom">
+                            <span class="label-text">Prénom</span>
+                            <span class="label-required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            name="prenom" 
+                            id="id_prenom" 
+                            class="form-control" 
+                            required 
+                            placeholder="Ex: Fatoumata"
+                            title="Entrez votre prénom"
+                        >
+                        <small class="form-help">Prénom (exactement comme dans la liste)</small>
+                    </div>
+                </div>
+                
+                <div class="form-submit-section">
+                    <button type="submit" class="btn-submit-med6-inline">
+                        🔓 Accéder aux cours
+                    </button>
+                    <p class="submit-note">
+                        <strong>✅ Accès automatique</strong> - Si vous êtes dans la liste Excel officielle, vous serez automatiquement connecté et aurez accès à tous les cours.
+                    </p>
+                </div>
+            </form>
+        </div>
+        {% else %}
+        <div class="access-box">
+            <p><strong>✅ Vous êtes connecté</strong></p>
+            {% if a_acces_gratuit_med6 %}
+            <p>Vous avez accès aux cours de Médecine 6 (réservés aux étudiants de 6ème année).</p>
+            {% endif %}
+            <a href="{% url 'mes_cours' %}" class="btn-access-cours">Voir mes cours</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.formation-minimaliste {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.formation-minimaliste h2 {
+    color: #005a9c;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.formation-content-minimal {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.description-box,
+.objectifs-box,
+.cours-box {
+    background-color: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.cours-box h3 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.cours-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.cours-item {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cours-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 90, 156, 0.1);
+    border-color: #005a9c;
+}
+
+.cours-item h4 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.cours-item p {
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.description-box h3,
+.objectifs-box h3,
+.cours-box h3 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.description-box p {
+    color: #555;
+    line-height: 1.8;
+    margin: 0;
+}
+
+.objectifs-box ul {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.objectifs-box li {
+    color: #555;
+    line-height: 1.8;
+    margin-bottom: 0.5rem;
+}
+
+.login-med6-box {
+    background-color: #e3f2fd;
+    border: 2px solid #2196f3;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.login-med6-box h3 {
+    color: #1565c0;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.login-med6-box p {
+    color: #1565c0;
+    margin: 0.5rem 0;
+}
+
+.login-med6-form-inline {
+    margin-top: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.label-text {
+    flex: 1;
+}
+
+.label-required {
+    color: #f44336;
+    font-weight: bold;
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: #666;
+    font-style: italic;
+}
+
+.form-instructions {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-instructions p {
+    margin: 0.5rem 0;
+    color: #856404;
+}
+
+.form-instructions ul {
+    margin: 0.5rem 0 0.5rem 1.5rem;
+    padding: 0;
+    color: #856404;
+}
+
+.form-instructions li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.note-important {
+    background-color: #fff;
+    padding: 0.75rem;
+    border-radius: 4px;
+    border-left: 4px solid #f44336;
+    margin-top: 0.75rem !important;
+}
+
+.form-submit-section {
+    margin-top: 1.5rem;
+}
+
+.submit-note {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #e8f5e9;
+    border-radius: 4px;
+    color: #2e7d32;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #2196f3;
+}
+
+.btn-submit-med6-inline {
+    width: 100%;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #005a9c 0%, #003d6b 100%);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-submit-med6-inline:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 90, 156, 0.3);
+}
+
+.access-box {
+    background-color: #e8f5e9;
+    border: 2px solid #4caf50;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.access-box p {
+    color: #2e7d32;
+    margin-bottom: 1rem;
+}
+
+.btn-access-cours {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-access-cours:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.alert-error {
+    background-color: #ffebee;
+    border: 2px solid #f44336;
+    color: #c62828;
+}
+
+@media screen and (max-width: 768px) {
+    .formation-minimaliste {
+        padding: 1rem;
+    }
+    
+    .cours-list {
+        gap: 0.75rem;
+    }
+    
+    .cours-item {
+        padding: 0.75rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .login-med6-box {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}

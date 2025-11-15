@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Inscription - {{ formation_nom }} - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="inscription-container">
+    <div class="inscription-header">
+        <h1>Inscription à la formation</h1>
+        <h2>{{ formation_nom }}</h2>
+    </div>
+
+    <div class="formation-summary">
+        <div class="summary-card">
+            <h3>📋 Informations de la formation</h3>
+            <div class="summary-details">
+                <p><strong>Formation :</strong> {{ formation_nom }}</p>
+                <p><strong>Type :</strong> {{ formation.get_type_formation_display }}</p>
+                {% if formation.description %}
+                <p><strong>Description :</strong> {{ formation.description|truncatewords:30 }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="summary-card pricing-card">
+            <h3>💰 Coût de la formation</h3>
+            <div class="pricing-details">
+                {% if est_gratuite %}
+                <p class="price-free">Formation gratuite</p>
+                {% else %}
+                <p class="price-amount">{{ prix|floatformat:0 }} FCFA</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="inscription-form-container">
+        <form method="post" class="inscription-form">
+            {% csrf_token %}
+            
+            {% if not est_gratuite %}
+            <div class="form-section">
+                <h3>💳 Informations de paiement</h3>
+                
+                <div class="form-group">
+                    <label for="{{ form.mode_paiement.id_for_label }}">{{ form.mode_paiement.label }}</label>
+                    {{ form.mode_paiement }}
+                    {% if form.mode_paiement.errors %}
+                    <div class="error-message">{{ form.mode_paiement.errors }}</div>
+                    {% endif %}
+                    <small class="form-help">Sélectionnez votre mode de paiement préféré</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.reference_paiement.id_for_label }}">{{ form.reference_paiement.label }}</label>
+                    {{ form.reference_paiement }}
+                    {% if form.reference_paiement.errors %}
+                    <div class="error-message">{{ form.reference_paiement.errors }}</div>
+                    {% endif %}
+                    {% if form.reference_paiement.help_text %}
+                    <small class="form-help">{{ form.reference_paiement.help_text }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="payment-info-box">
+                    <h4>ℹ️ Instructions de paiement</h4>
+                    <ul>
+                        <li>Effectuez le paiement selon le mode choisi</li>
+                        <li>Indiquez la référence de votre transaction si disponible</li>
+                        <li>Votre inscription sera validée après vérification du paiement</li>
+                        <li>Vous recevrez une confirmation par email</li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="form-section">
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        {{ form.confirmation }}
+                        <span>{{ form.confirmation.label }}</span>
+                    </label>
+                    {% if form.confirmation.errors %}
+                    <div class="error-message">{{ form.confirmation.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    ✍️ Confirmer mon inscription
+                </button>
+                <a href="{% url 'formations' %}" class="btn-cancel">
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.inscription-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.inscription-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 3px solid #005a9c;
+}
+
+.inscription-header h1 {
+    color: #005a9c;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.inscription-header h2 {
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: normal;
+}
+
+.formation-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background-color: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.summary-card h3 {
+    color: #005a9c;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.summary-details p {
+    margin: 0.75rem 0;
+    color: #555;
+    line-height: 1.6;
+}
+
+.pricing-card {
+    background: linear-gradient(135deg, #005a9c 0%, #004070 100%);
+    color: white;
+    border: none;
+}
+
+.pricing-card h3 {
+    color: white;
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+.pricing-details {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.price-free {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #28a745;
+    background-color: white;
+    padding: 0.75rem;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.price-amount {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.inscription-form-container {
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section h3 {
+    color: #005a9c;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.form-group select,
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group select:focus,
+.form-group input[type="text"]:focus {
+    outline: none;
+    border-color: #005a9c;
+    box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.1);
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-top: 0.25rem;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.checkbox-label span {
+    flex: 1;
+    line-height: 1.5;
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.payment-info-box {
+    background-color: #e7f3ff;
+    border-left: 4px solid #005a9c;
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    margin-top: 1rem;
+}
+
+.payment-info-box h4 {
+    color: #005a9c;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.payment-info-box ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: #555;
+}
+
+.payment-info-box li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e0e0e0;
+}
+
+.btn-submit {
+    background-color: #005a9c;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+    background-color: #004070;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 90, 156, 0.3);
+}
+
+.btn-cancel {
+    background-color: #6c757d;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.btn-cancel:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+@media screen and (max-width: 768px) {
+    .inscription-container {
+        padding: 0 1rem;
+    }
+
+    .formation-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+

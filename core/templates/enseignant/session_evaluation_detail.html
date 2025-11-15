@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Session d'évaluation - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="session-container">
+    <div class="session-header">
+        <h1>{{ session.titre }}</h1>
+        <p class="session-meta">Évaluation : {{ session.evaluation.titre }} | Cours : {{ session.evaluation.cours.titre }}</p>
+        <div class="statut-info">
+            <span class="statut-badge statut-{{ session.statut }}">{{ session.get_statut_display }}</span>
+            {% if session.verrouillee %}
+            <span class="badge-verrouillee">🔒 Session verrouillée</span>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if user.est_enseignant and session.enseignant == user %}
+    <div class="session-actions">
+        {% if session.statut in 'planifiee,en_attente' %}
+        <a href="{% url 'demarrer_session_evaluation' session.id %}" class="btn-action btn-demarrer" onclick="return confirm('Êtes-vous sûr de vouloir démarrer cette session ? Les étudiants non connectés ne pourront plus y accéder.');">
+            ▶️ Démarrer l'évaluation (Verrouiller l'accès)
+        </a>
+        {% elif session.statut == 'en_cours' %}
+        <p class="message-info">✅ La session est en cours. Les étudiants non connectés ne peuvent plus y accéder.</p>
+        {% endif %}
+    </div>
+
+    {% if participations %}
+    <div class="participations-section">
+        <h2>👥 Participations</h2>
+        <div class="participations-list">
+            {% for participation in participations %}
+            <div class="participation-item">
+                <div class="participation-header">
+                    <strong>{{ participation.etudiant.get_full_name|default:participation.etudiant.username }}</strong>
+                    <span class="participation-statut {% if participation.soumise %}soumise{% else %}en-cours{% endif %}">
+                        {% if participation.soumise %}✅ Soumise{% else %}⏳ En cours{% endif %}
+                    </span>
+                </div>
+                <div class="participation-meta">
+                    <span>Connexion : {{ participation.date_connexion|date:"d/m/Y à H:i" }}</span>
+                    {% if participation.note_obtenue %}
+                    <span>Note : {{ participation.note_obtenue }}/{{ participation.note_sur }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {% if user.est_etudiant %}
+    <div class="session-info">
+        {% if session.verrouillee and not participation %}
+        <div class="alert-error">
+            <h3>🔒 Accès refusé</h3>
+            <p><strong>La session d'évaluation a commencé.</strong></p>
+            <p>Vous ne pouvez plus y accéder car vous n'étiez pas connecté au moment du démarrage du questionnaire interactif.</p>
+            <p>Veuillez contacter votre enseignant pour plus d'informations.</p>
+        </div>
+        {% elif session.statut == 'en_cours' %}
+        <div class="session-join">
+            <a href="{% url 'rejoindre_session_evaluation' session.id %}" class="btn-join">🚀 Commencer l'évaluation</a>
+        </div>
+        {% elif session.statut == 'planifiee' %}
+        <div class="alert-waiting">
+            <p>⏳ La session d'évaluation n'a pas encore démarré.</p>
+            <p><strong>Date prévue :</strong> {{ session.date_debut_prevue|date:"d/m/Y à H:i" }}</p>
+            <p class="warning-text">⚠️ <strong>Important :</strong> Assurez-vous d'être connecté avant le démarrage de l'évaluation pour pouvoir y participer.</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="session-details">
+        <div class="info-section">
+            <h3>📅 Planning</h3>
+            <div class="info-item">
+                <strong>Début prévu :</strong> {{ session.date_debut_prevue|date:"d/m/Y à H:i" }}
+            </div>
+            <div class="info-item">
+                <strong>Fin prévue :</strong> {{ session.date_fin_prevue|date:"d/m/Y à H:i" }}
+            </div>
+            {% if session.date_debut_reelle %}
+            <div class="info-item">
+                <strong>Début réel :</strong> {{ session.date_debut_reelle|date:"d/m/Y à H:i" }}
+            </div>
+            {% endif %}
+            {% if session.date_verrouillage %}
+            <div class="info-item">
+                <strong>Verrouillée le :</strong> {{ session.date_verrouillage|date:"d/m/Y à H:i" }}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if session.instructions %}
+        <div class="info-section">
+            <h3>📋 Instructions</h3>
+            <div class="instructions-content">
+                {{ session.instructions|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if session.description %}
+        <div class="info-section">
+            <h3>📝 Description</h3>
+            <p>{{ session.description }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.session-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.session-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.session-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.session-meta {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.statut-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.statut-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.statut-planifiee, .statut-en_attente {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.statut-en_cours {
+    background-color: #28a745;
+    color: white;
+}
+
+.statut-terminee {
+    background-color: #6c757d;
+    color: white;
+}
+
+.badge-verrouillee {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.session-actions {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.btn-action {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #005a9c;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-action:hover {
+    background-color: #004070;
+}
+
+.btn-demarrer {
+    background-color: #28a745;
+}
+
+.btn-demarrer:hover {
+    background-color: #218838;
+}
+
+.message-info {
+    background-color: #d4edda;
+    border: 2px solid #c3e6cb;
+    color: #155724;
+    padding: 1rem;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.participations-section {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.participations-section h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+}
+
+.participations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.participation-item {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    border-left: 4px solid #005a9c;
+}
+
+.participation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.participation-statut {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+.participation-statut.soumise {
+    background-color: #28a745;
+    color: white;
+}
+
+.participation-statut.en-cours {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.participation-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #721c24;
+}
+
+.alert-error h3 {
+    color: #dc3545;
+    margin-bottom: 1rem;
+}
+
+.alert-error p {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.alert-waiting {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #856404;
+}
+
+.alert-waiting p {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.warning-text {
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #856404;
+}
+
+.session-join {
+    text-align: center;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.btn-join {
+    display: inline-block;
+    padding: 1.5rem 3rem;
+    background-color: #28a745;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-join:hover {
+    background-color: #218838;
+}
+
+.session-details {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.info-section {
+    margin-bottom: 2rem;
+}
+
+.info-section:last-child {
+    margin-bottom: 0;
+}
+
+.info-section h3 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.info-item {
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.instructions-content {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 5px;
+    line-height: 1.8;
+    color: #333;
+}
+
+@media screen and (max-width: 768px) {
+    .session-container {
+        padding: 1rem;
+    }
+    
+    .participation-header {
+        flex-direction: column;
+        align-items: start;
+        gap: 0.5rem;
+    }
+    
+    .participation-meta {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+}
+</style>
+{% endblock %}
+

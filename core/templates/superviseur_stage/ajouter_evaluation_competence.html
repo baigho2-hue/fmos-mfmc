@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ajouter Évaluation de Compétence{% endblock %}
+
+{% block content %}
+{% if not user.is_authenticated %}
+<div class="alert alert-danger">
+    <strong>❌ Accès refusé :</strong> Vous devez être connecté pour accéder à cette page.
+    <a href="{% url 'login' %}?next={{ request.path }}">Se connecter</a>
+</div>
+{% elif not user.est_enseignant %}
+<div class="alert alert-danger">
+    <strong>❌ Accès refusé :</strong> Cette page est réservée aux enseignants.
+</div>
+{% elif not user.est_superviseur_cec %}
+<div class="alert alert-danger">
+    <strong>❌ Accès refusé :</strong> Cette page est réservée aux superviseurs cliniques et CEC. Veuillez contacter l'administration pour obtenir ce statut.
+</div>
+{% else %}
+<div class="administration-container">
+    <div class="page-header">
+        <div class="header-top">
+            <div>
+                <h1>➕ Ajouter une Évaluation de Compétence</h1>
+                <p class="subtitle">
+                    Stage : <strong>{{ evaluation.lieu_stage }}</strong> | 
+                    Étudiant : <strong>{{ evaluation.carnet.etudiant.get_full_name|default:evaluation.carnet.etudiant.username }}</strong>
+                </p>
+            </div>
+            <a href="{% url 'remplir_evaluation_stage' evaluation.id %}" class="btn-back">← Retour à l'évaluation</a>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <form method="post" class="evaluation-form">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="{{ form.competence.id_for_label }}">{{ form.competence.label }}</label>
+                        {{ form.competence }}
+                        {% if form.competence.errors %}
+                        <div class="error-message">{{ form.competence.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.jalon.id_for_label }}">{{ form.jalon.label }}</label>
+                        {{ form.jalon }}
+                        {% if form.jalon.errors %}
+                        <div class="error-message">{{ form.jalon.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.niveau_acquisition.id_for_label }}">{{ form.niveau_acquisition.label }}</label>
+                        {{ form.niveau_acquisition }}
+                        {% if form.niveau_acquisition.errors %}
+                        <div class="error-message">{{ form.niveau_acquisition.errors }}</div>
+                        {% endif %}
+                        <small class="help-text">
+                            1 = Non acquis | 2 = En cours d'acquisition | 3 = Acquis | 4 = Maîtrisé
+                        </small>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="{{ form.commentaire.id_for_label }}">{{ form.commentaire.label }}</label>
+                        {{ form.commentaire }}
+                        {% if form.commentaire.errors %}
+                        <div class="error-message">{{ form.commentaire.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="{{ form.observations.id_for_label }}">{{ form.observations.label }}</label>
+                        {{ form.observations }}
+                        {% if form.observations.errors %}
+                        <div class="error-message">{{ form.observations.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">💾 Enregistrer</button>
+                <a href="{% url 'remplir_evaluation_stage' evaluation.id %}" class="btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+.help-text {
+    display: block;
+    margin-top: 0.5rem;
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+    color: #721c24;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #dc3545;
+}
+</style>
+{% endblock %}
+{% endif %}
+{% endblock %}
+

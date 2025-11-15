@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Connexion Étudiant Médecine 6 - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="login-med6-container">
+    <h2>Connexion Étudiant Médecine 6</h2>
+    
+    <div class="med6-info-box">
+        <p><strong>📚 Connexion Étudiant Médecine 6</strong></p>
+        <p>Entrez votre <strong>matricule</strong>, votre <strong>nom</strong> et votre <strong>prénom</strong> pour accéder aux cours.</p>
+        <p><strong>✅ Accès automatique</strong> - Aucune inscription nécessaire !</p>
+    </div>
+    
+    <form method="POST" class="login-med6-form">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+        <div class="alert alert-error">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="form-group">
+            <label for="id_matricule">Matricule *</label>
+            <input type="text" name="matricule" id="id_matricule" class="form-control" required autofocus placeholder="Votre numéro de matricule">
+        </div>
+        
+        <div class="form-group">
+            <label for="id_nom">Nom *</label>
+            <input type="text" name="nom" id="id_nom" class="form-control" required placeholder="Votre nom">
+        </div>
+        
+        <div class="form-group">
+            <label for="id_prenom">Prénom *</label>
+            <input type="text" name="prenom" id="id_prenom" class="form-control" required placeholder="Votre prénom">
+        </div>
+        
+        <button type="submit" class="btn-submit-med6">Se connecter</button>
+    </form>
+    
+    <div class="login-links">
+        <p><a href="{% url 'login' %}">Connexion standard</a></p>
+        <p><a href="{% url 'inscription' %}">Créer un compte</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.login-med6-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.login-med6-container h2 {
+    color: #005a9c;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.med6-info-box {
+    background-color: #e3f2fd;
+    border: 2px solid #2196f3;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.med6-info-box p {
+    margin: 0.75rem 0;
+    color: #1565c0;
+}
+
+.med6-info-box ul {
+    margin: 1rem 0;
+    padding-left: 2rem;
+}
+
+.med6-info-box li {
+    margin: 0.5rem 0;
+    color: #1565c0;
+}
+
+.login-med6-form {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #005a9c;
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.25rem;
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.alert-error {
+    background-color: #ffebee;
+    border: 2px solid #f44336;
+    color: #c62828;
+}
+
+.btn-submit-med6 {
+    width: 100%;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #005a9c 0%, #003d6b 100%);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-submit-med6:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 90, 156, 0.3);
+}
+
+.login-links {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.login-links p {
+    margin: 0.5rem 0;
+}
+
+.login-links a {
+    color: #005a9c;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-links a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .login-med6-container {
+        padding: 1rem;
+    }
+    
+    .login-med6-form {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
+

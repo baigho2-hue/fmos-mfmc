@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Erreur serveur - FMOS MFMC{% endblock %}
+
+{% block content %}
+<h2>Erreur 500</h2>
+<p>Une erreur interne est survenue. Veuillez réessayer plus tard.</p>
+<p><a href="{% url 'accueil' %}">Retour à l'accueil</a></p>
+{% endblock %}

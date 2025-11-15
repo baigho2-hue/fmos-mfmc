@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Programmes - FMOS MFMC{% endblock %}
+
+{% block content %}
+<h2>Programmes de Formation</h2>
+{% if not user.is_authenticated %}
+<div class="alert-message">
+    <p>⚠️ <strong>Accès restreint :</strong> Vous devez être connecté pour accéder au contenu détaillé des programmes. <a href="{% url 'login' %}">Connectez-vous</a> ou <a href="{% url 'inscription' %}">créez un compte</a> pour continuer.</p>
+</div>
+{% endif %}
+<p class="intro-text">Découvrez nos programmes de formation en médecine de famille et médecine communautaire. Ces programmes sont conçus pour répondre aux besoins de formation continue et de spécialisation des professionnels de santé.</p>
+
+<!-- Section Programmes -->
+<section id="programmes" class="formations-section">
+    <h3 class="section-title">Nos Programmes</h3>
+    <p class="section-description">Explorez nos différents programmes de formation spécialisés.</p>
+    
+    <div class="formations-grid">
+        <!-- Programme DES -->
+        <div class="formation-card">
+            <div class="formation-icon">🎓</div>
+            <h4><a href="{% url 'programme_desmfmc' %}" class="formation-title-link">Programme DES</a></h4>
+            <p>Diplôme d'Études Spécialisées en Médecine de Famille et Médecine Communautaire. Programme de 4 ans pour devenir spécialiste en médecine de famille.</p>
+            <a href="{% url 'programme_desmfmc' %}" class="formation-link">En savoir plus →</a>
+        </div>
+
+        <!-- Programme Santé Communautaire -->
+        <div class="formation-card">
+            <div class="formation-icon">🏥</div>
+            <h4><a href="{% url 'programme_sante_communautaire' %}" class="formation-title-link">Programme Santé Communautaire</a></h4>
+            <p>Formation approfondie en santé communautaire pour améliorer la santé des populations à travers des approches préventives et communautaires.</p>
+            <a href="{% url 'programme_sante_communautaire' %}" class="formation-link">En savoir plus →</a>
+        </div>
+
+        <!-- Programme Recherche -->
+        <div class="formation-card">
+            <div class="formation-icon">🔬</div>
+            <h4><a href="{% url 'programme_recherche' %}" class="formation-title-link">Programme Recherche</a></h4>
+            <p>Formation en méthodologie de recherche et en conduite de projets de recherche en santé communautaire et médecine de famille.</p>
+            <a href="{% url 'programme_recherche' %}" class="formation-link">En savoir plus →</a>
+        </div>
+
+        <!-- Programme Logiciels d'Analyse -->
+        <div class="formation-card">
+            <div class="formation-icon">💻</div>
+            <h4><a href="{% url 'programme_logiciels_analyse' %}" class="formation-title-link">Programme Logiciels d'Analyse</a></h4>
+            <p>Formation certifiante sur les logiciels d'analyse statistique et de gestion de données pour la recherche médicale.</p>
+            <a href="{% url 'programme_logiciels_analyse' %}" class="formation-link">En savoir plus →</a>
+        </div>
+
+        <!-- Programme Pédagogie -->
+        <div class="formation-card">
+            <div class="formation-icon">📚</div>
+            <h4><a href="{% url 'programme_pedagogie_sante' %}" class="formation-title-link">Programme Pédagogie</a></h4>
+            <p>Formation certifiante en pédagogie médicale pour développer les compétences d'enseignement et de formation en santé.</p>
+            <a href="{% url 'programme_pedagogie_sante' %}" class="formation-link">En savoir plus →</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.alert-message {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    color: #856404;
+}
+
+.alert-message a {
+    color: #005a9c;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.alert-message a:hover {
+    color: #004070;
+}
+
+.intro-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    color: #555;
+    text-align: center;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.formations-section {
+    margin-bottom: 4rem;
+    scroll-margin-top: 100px; /* Compensation pour le header fixe lors du scroll */
+}
+
+.section-title {
+    color: #005a9c;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid #005a9c;
+}
+
+.section-description {
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.formations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.formation-card {
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.formation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px rgba(0, 90, 156, 0.2);
+    border-color: #005a9c;
+}
+
+.formation-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.formation-card h4 {
+    color: #005a9c;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    margin-top: 0;
+}
+
+.formation-title-link {
+    color: #005a9c;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.formation-title-link:hover {
+    color: #004070;
+    text-decoration: underline;
+}
+
+.formation-card p {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.formation-link {
+    color: #005a9c;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    transition: color 0.3s ease;
+    margin-top: auto;
+}
+
+.formation-link:hover {
+    color: #004070;
+    text-decoration: underline;
+}
+
+@media screen and (max-width: 768px) {
+    .formations-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .formation-card {
+        padding: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+}
+</style>
+{% endblock %}

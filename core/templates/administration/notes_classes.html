@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Administration - Notes des classes{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <h1>📝 Notes des classes</h1>
+
+    <div class="classes-grid">
+        {% for stat in stats_classes %}
+        <div class="classe-card">
+            <h3>{{ stat.classe.nom }}</h3>
+            <p class="formation-name">{{ stat.classe.formation.nom }}</p>
+            
+            <div class="classe-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Étudiants:</span>
+                    <span class="stat-value">{{ stat.nb_etudiants }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Cours:</span>
+                    <span class="stat-value">{{ stat.nb_cours }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Progression moyenne:</span>
+                    <span class="stat-value">{{ stat.moyenne_progression|floatformat:1 }}%</span>
+                </div>
+            </div>
+            
+            <div class="classe-actions">
+                <a href="{% url 'detail_notes_classe' stat.classe.id %}" class="btn-detail">Voir le détail →</a>
+                <a href="{% url 'bulletins_classe' stat.classe.id %}" class="btn-bulletin" target="_blank">📄 Bulletins A4</a>
+            </div>
+        </div>
+        {% empty %}
+        <p>Aucune classe active.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.classes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.classe-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.classe-card h3 {
+    color: #005a9c;
+    margin: 0 0 0.5rem 0;
+}
+
+.formation-name {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.classe-stats {
+    margin: 1rem 0;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.stat-label {
+    color: #666;
+}
+
+.stat-value {
+    font-weight: bold;
+    color: #005a9c;
+}
+
+.btn-detail {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.btn-detail:hover {
+    background: #004070;
+}
+
+.classe-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.btn-bulletin {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.btn-bulletin:hover {
+    background: #218838;
+}
+</style>
+{% endblock %}
+

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Stages</title>
+</head>
+<body>
+    <div class="header">
+        <h1>🏥 Liste des Stages</h1>
+        {% if annee %}
+        <p><strong>Année:</strong> {{ annee }}</p>
+        {% else %}
+        <p><strong>Toutes les années</strong></p>
+        {% endif %}
+        <p><strong>Date d'émission:</strong> {{ date_emission|date:"d/m/Y" }}</p>
+    </div>
+
+    {% for annee_key, periodes in stages_par_annee.items %}
+    <div class="annee-section" style="page-break-inside: avoid;">
+        <h2>Année {{ annee_key }}</h2>
+        
+        {% for periode_key, stages in periodes.items %}
+        <div class="periode-section">
+            <h3>Période {{ periode_key }} - {{ stages.0.get_periode_display }}</h3>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Étudiant</th>
+                        <th>CSCom-U</th>
+                        <th>Type</th>
+                        <th>Date début</th>
+                        <th>Date fin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stage in stages %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ stage.etudiant.get_full_name|default:stage.etudiant.username }}</td>
+                        <td>{{ stage.centre.nom }}</td>
+                        <td>{{ stage.get_type_centre_display }}</td>
+                        <td>{% if stage.date_debut %}{{ stage.date_debut|date:"d/m/Y" }}{% else %}-{% endif %}</td>
+                        <td>{% if stage.date_fin %}{{ stage.date_fin|date:"d/m/Y" }}{% else %}-{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+    {% empty %}
+    <p>Aucun stage trouvé.</p>
+    {% endfor %}
+
+    <div class="footer">
+        <p>Document généré le {{ date_emission|date:"d/m/Y à H:i" }} - FMOS MFMC</p>
+    </div>
+
+    {% if signature_coordination %}
+    <div class="signature-section">
+        <div class="signature-content">
+            {% if signature_coordination.cachet %}
+            <img src="{{ signature_coordination.cachet.url }}" alt="Cachet" class="cachet-image">
+            {% endif %}
+            <div class="signature-name">{{ signature_coordination.get_nom_complet }}</div>
+            <div class="signature-title">{{ signature_coordination.titre_signataire }}</div>
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>
+

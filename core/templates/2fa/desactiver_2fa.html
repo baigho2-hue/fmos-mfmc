@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Désactiver la Double Authentification{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <div class="page-header">
+        <div class="header-top">
+            <div>
+                <h1>🔓 Désactiver la Double Authentification</h1>
+                <p class="subtitle">Désactivez la double authentification pour votre compte</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <div class="alert alert-warning">
+            <strong>⚠️ Attention</strong>
+            <p>
+                La désactivation de la double authentification réduira la sécurité de votre compte. 
+                Vous devrez entrer un code de vérification pour confirmer cette action.
+            </p>
+        </div>
+
+        <form method="post" action="{% url 'desactiver_2fa' %}" class="verification-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="code">Code de vérification (6 chiffres)</label>
+                <input 
+                    type="text" 
+                    id="code" 
+                    name="code" 
+                    class="form-control code-input" 
+                    maxlength="6" 
+                    pattern="[0-9]{6}" 
+                    placeholder="000000"
+                    required
+                    autocomplete="off"
+                    autofocus
+                >
+                <small class="help-text">Un code a été envoyé à votre adresse email : <strong>{{ user.email }}</strong></small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-danger">🔓 Désactiver le 2FA</button>
+                <a href="{% url 'activer_2fa' %}" class="btn-secondary">Renvoyer le code</a>
+                {% if user.est_enseignant %}
+                <a href="{% url 'dashboard_enseignant' %}" class="btn-secondary">Annuler</a>
+                {% else %}
+                <a href="{% url 'accueil' %}" class="btn-secondary">Annuler</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffc107;
+    color: #856404;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #ffc107;
+}
+
+.alert-warning strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.verification-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.code-input {
+    width: 100%;
+    max-width: 200px;
+    padding: 1rem;
+    font-size: 1.5rem;
+    text-align: center;
+    letter-spacing: 0.5rem;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-family: 'Courier New', monospace;
+}
+
+.code-input:focus {
+    outline: none;
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.help-text {
+    display: block;
+    margin-top: 0.5rem;
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.btn-danger {
+    padding: 0.75rem 1.5rem;
+    background: #dc3545;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+.btn-secondary {
+    padding: 0.75rem 1.5rem;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const codeInput = document.getElementById('code');
+    
+    // Ne permettre que les chiffres
+    codeInput.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}
+

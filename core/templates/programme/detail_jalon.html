@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+{% load static %}
+{% load programme_tags %}
+
+{% block title %}Jalon {{ jalon.nom }} - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="jalon-detail-container">
+    <div class="jalon-header-detail">
+        <h1>{{ jalon.nom }}</h1>
+        <p class="jalon-info">
+            Année {{ jalon.annee }}{% if jalon.semestre %} - Semestre {{ jalon.semestre }}{% endif %}
+        </p>
+        <p class="jalon-dates">
+            📅 {{ jalon.date_debut|date:"d/m/Y" }} - {{ jalon.date_fin|date:"d/m/Y" }}
+            | ⏱️ {{ jalon.volume_horaire_total }} heures
+        </p>
+    </div>
+
+    {% if jalon.description %}
+    <div class="jalon-description-full">
+        <h3>Description</h3>
+        <p>{{ jalon.description|linebreaks }}</p>
+    </div>
+    {% endif %}
+
+    {% if user.est_etudiant and progression %}
+    <div class="progression-section">
+        <h3>Ma progression</h3>
+        <div class="progression-detail">
+            <div class="progression-bar-large">
+                <div class="progression-fill" style="width: {{ progression.pourcentage_completion }}%"></div>
+            </div>
+            <div class="progression-info">
+                <span class="progression-percent">{{ progression.pourcentage_completion }}% complété</span>
+                <span class="statut-badge statut-{{ progression.statut }}">{{ progression.get_statut_display }}</span>
+            </div>
+            {% if progression.note_finale %}
+            <div class="note-finale">
+                <strong>Note finale :</strong> {{ progression.note_finale }}/20
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="modules-section">
+        <h2>Modules du jalon</h2>
+        {% if modules %}
+        <div class="modules-list">
+            {% for module in modules %}
+            <div class="module-card">
+                <div class="module-header">
+                    <h3>{{ module.nom }}</h3>
+                    <span class="module-code">{{ module.code }}</span>
+                </div>
+                
+                <p class="module-description">{{ module.description|truncatewords:40 }}</p>
+                
+                <div class="module-meta">
+                    <div class="meta-item">
+                        <strong>⏱️ Volume horaire :</strong> {{ module.volume_horaire }}h
+                    </div>
+                    <div class="meta-item">
+                        <strong>📚 Cours :</strong> {{ module.cours_programme.count }}
+                    </div>
+                </div>
+
+                {% if module.objectifs_module.exists %}
+                <div class="objectifs-section">
+                    <h4>Objectifs d'apprentissage</h4>
+                    <ul class="objectifs-list">
+                        {% for objectif in module.objectifs_module.all|slice:":5" %}
+                        <li>{{ objectif.libelle|truncatewords:15 }}</li>
+                        {% endfor %}
+                        {% if module.objectifs_module.count > 5 %}
+                        <li><em>... et {{ module.objectifs_module.count|add:"-5" }} autres</em></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if module.competences_module.exists %}
+                <div class="competences-section">
+                    <h4>Compétences visées</h4>
+                    <div class="competences-tags">
+                        {% for competence in module.competences_module.all|slice:":5" %}
+                        <span class="competence-tag">{{ competence.get_domaine_display|slice:":1" }}: {{ competence.libelle|truncatewords:3 }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="cours-list">
+                    <h4>Cours du module</h4>
+                    <ul>
+                        {% for cours_prog in module.cours_programme.all %}
+                        <li>
+                            <a href="{% url 'detail_cours' cours_prog.cours.id %}">
+                                {{ cours_prog.cours.titre }}
+                            </a>
+                            {% if not cours_prog.obligatoire %}
+                            <span class="badge-optionnel">Optionnel</span>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="no-modules">Aucun module défini pour ce jalon.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.jalon-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.jalon-header-detail {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 3px solid #005a9c;
+}
+
+.jalon-header-detail h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.jalon-info {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.jalon-dates {
+    color: #888;
+    font-size: 0.95rem;
+}
+
+.jalon-description-full {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #005a9c;
+}
+
+.jalon-description-full h3 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.progression-section {
+    background-color: #e3f2fd;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border: 2px solid #005a9c;
+}
+
+.progression-section h3 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.progression-bar-large {
+    width: 100%;
+    height: 25px;
+    background-color: #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.progression-fill {
+    height: 100%;
+    background-color: #28a745;
+    transition: width 0.5s ease;
+}
+
+.progression-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.progression-percent {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #005a9c;
+}
+
+.note-finale {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: white;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.modules-section h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.modules-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.module-card {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 2px solid #e0e0e0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.module-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 90, 156, 0.15);
+    border-color: #005a9c;
+}
+
+.module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.module-header h3 {
+    color: #005a9c;
+    margin: 0;
+    flex: 1;
+}
+
+.module-code {
+    background-color: #f0f0f0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    color: #666;
+    font-weight: bold;
+}
+
+.module-description {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.module-meta {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.objectifs-section, .competences-section {
+    margin-bottom: 1rem;
+}
+
+.objectifs-section h4, .competences-section h4 {
+    color: #005a9c;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.objectifs-list {
+    margin-left: 1.5rem;
+    color: #666;
+}
+
+.competences-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.competence-tag {
+    background-color: #e3f2fd;
+    color: #005a9c;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+.cours-list {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.cours-list h4 {
+    color: #005a9c;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.cours-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cours-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.cours-list li:last-child {
+    border-bottom: none;
+}
+
+.cours-list a {
+    color: #005a9c;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.cours-list a:hover {
+    text-decoration: underline;
+}
+
+.badge-optionnel {
+    background-color: #ffc107;
+    color: #333;
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-left: 0.5rem;
+}
+
+.no-modules {
+    text-align: center;
+    padding: 3rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    color: #666;
+    font-style: italic;
+}
+
+.statut-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.statut-non_commence {
+    background-color: #6c757d;
+    color: white;
+}
+
+.statut-en_cours {
+    background-color: #007bff;
+    color: white;
+}
+
+.statut-termine {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.statut-valide {
+    background-color: #28a745;
+    color: white;
+}
+
+@media screen and (max-width: 768px) {
+    .jalon-detail-container {
+        padding: 1rem;
+    }
+    
+    .module-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
+

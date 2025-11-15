@@ -1,0 +1,1013 @@
+{
+  "annee_1": {
+    "annee": 1,
+    "cours": [
+      {
+        "titre": "Urgence médicale",
+        "titre_complet": "Urgence médicale (20 heures)",
+        "code": "DES1-UM",
+        "description": "",
+        "volume_horaire": 20,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 1,
+            "titre": "arrêt cardio-respiratoire"
+          },
+          {
+            "numero": 2,
+            "titre": "Traumatisme choc intoxications"
+          },
+          {
+            "numero": 3,
+            "titre": "Brulures et électrocution"
+          },
+          {
+            "numero": 4,
+            "titre": "..."
+          }
+        ]
+      },
+      {
+        "titre": "Médecine",
+        "titre_complet": "Médecine (44 heures)",
+        "code": "DES1-MÉDEC",
+        "description": "",
+        "volume_horaire": 44,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 5,
+            "titre": "HTA"
+          },
+          {
+            "numero": 6,
+            "titre": "Arythmies cardiaque"
+          },
+          {
+            "numero": 7,
+            "titre": "Insuffisance cardiaque"
+          },
+          {
+            "numero": 8,
+            "titre": "Douleur thoracique cardiaque"
+          },
+          {
+            "numero": 9,
+            "titre": "Dyspnée Cardiaque"
+          },
+          {
+            "numero": 10,
+            "titre": "La toux"
+          },
+          {
+            "numero": 11,
+            "titre": "L’épanchement pleural"
+          },
+          {
+            "numero": 12,
+            "titre": "Les BPCO"
+          },
+          {
+            "numero": 13,
+            "titre": "Le Diabète"
+          },
+          {
+            "numero": 14,
+            "titre": "Les désordres thyroïdiens"
+          },
+          {
+            "numero": 15,
+            "titre": "l’insuffisance rénale"
+          },
+          {
+            "numero": 16,
+            "titre": "Les désordres électrolytiques"
+          },
+          {
+            "numero": 17,
+            "titre": "l’obésité et dyslipidémies"
+          }
+        ]
+      },
+      {
+        "titre": "Anglais",
+        "titre_complet": "Anglais (20 heures)",
+        "code": "DES1-ANGLA",
+        "description": "",
+        "volume_horaire": 20,
+        "competence": "Communicateur",
+        "lecons": []
+      },
+      {
+        "titre": "Santé publique/Communautaire",
+        "titre_complet": "Santé publique/Communautaire (10 heures)",
+        "code": "DES1-SP",
+        "description": "",
+        "volume_horaire": 10,
+        "competence": "Promoteur de santé",
+        "lecons": [
+          {
+            "numero": 18,
+            "titre": "Les indicateurs de santé"
+          },
+          {
+            "numero": 19,
+            "titre": "Politique sectorielle de santé"
+          },
+          {
+            "numero": 20,
+            "titre": "Santé communautaire"
+          },
+          {
+            "numero": 21,
+            "titre": "Le paquet minimum d’activité"
+          },
+          {
+            "numero": 22,
+            "titre": "Système d’information sanitaire"
+          },
+          {
+            "numero": 23,
+            "titre": "Système de référence évacuation"
+          }
+        ]
+      },
+      {
+        "titre": "informatique médicale",
+        "titre_complet": "informatique médicale (10 heures)",
+        "code": "DES1-IM",
+        "description": "",
+        "volume_horaire": 10,
+        "competence": "Érudit",
+        "lecons": [
+          {
+            "numero": 24,
+            "titre": "Word"
+          },
+          {
+            "numero": 25,
+            "titre": "Excel"
+          },
+          {
+            "numero": 26,
+            "titre": "Powerpoint"
+          }
+        ]
+      },
+      {
+        "titre": "Méthodologie de la recherche",
+        "titre_complet": "Méthodologie de la recherche (10 heures)",
+        "code": "DES1-MDL",
+        "description": "",
+        "volume_horaire": 10,
+        "competence": "Érudit",
+        "lecons": [
+          {
+            "numero": 27,
+            "titre": "La statistique descriptive"
+          },
+          {
+            "numero": 28,
+            "titre": "Plan d’un protocole de recherche"
+          }
+        ]
+      },
+      {
+        "titre": "éthique et déontologie",
+        "titre_complet": "éthique et déontologie",
+        "code": "DES1-ÉED",
+        "description": "",
+        "volume_horaire": 0,
+        "competence": "Professionnel",
+        "lecons": [
+          {
+            "numero": 29,
+            "titre": "Droit éthique et santé"
+          },
+          {
+            "numero": 30,
+            "titre": "Médecine légale"
+          }
+        ]
+      }
+    ]
+  },
+  "annee_2": {
+    "annee": 2,
+    "cours": [
+      {
+        "titre": "Pédiatrie : Soins courants aux enfants",
+        "titre_complet": "Pédiatrie : Soins courants aux enfants (20 heures)",
+        "code": "DES2-PSC",
+        "description": "",
+        "volume_horaire": 20,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 1,
+            "titre": "Maladies fébrile"
+          },
+          {
+            "numero": 2,
+            "titre": "Infections fréquentes"
+          },
+          {
+            "numero": 3,
+            "titre": "Retard de développement staturo-pondéral et psychomoteur"
+          },
+          {
+            "numero": 4,
+            "titre": "Pleurs excessifs"
+          },
+          {
+            "numero": 5,
+            "titre": "Troubles digestifs et alimentaires fréquents"
+          },
+          {
+            "numero": 6,
+            "titre": "Problèmes locomoteurs"
+          },
+          {
+            "numero": 7,
+            "titre": "Troubles du sommeil"
+          },
+          {
+            "numero": 8,
+            "titre": "Troubles de l’ouïe et de la parole"
+          }
+        ]
+      },
+      {
+        "titre": "Obstétrique :",
+        "titre_complet": "Obstétrique :",
+        "code": "DES2-OBSTÉ",
+        "description": "Grossesse, accouchement et allaitement (15 heures)",
+        "volume_horaire": 0,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 9,
+            "titre": "la planification familiale (PF)"
+          },
+          {
+            "numero": 10,
+            "titre": "Suivi des grossesse (normales, à risques et pathologiques)"
+          },
+          {
+            "numero": 11,
+            "titre": "Techniques obstétricale"
+          },
+          {
+            "numero": 12,
+            "titre": "Dystocies"
+          },
+          {
+            "numero": 13,
+            "titre": "Infections et grossesse"
+          }
+        ]
+      },
+      {
+        "titre": "urgences obstétricales",
+        "titre_complet": "urgences obstétricales (27 heures)",
+        "code": "DES2-UO",
+        "description": "",
+        "volume_horaire": 27,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 1,
+            "titre": "Atelier 1: Gestion des Hémorragies du post partum",
+            "type": "atelier"
+          },
+          {
+            "numero": 2,
+            "titre": "Atelier 2: La réanimation du nouveau-né",
+            "type": "atelier"
+          }
+        ]
+      },
+      {
+        "titre": "Chirurgie générale",
+        "titre_complet": "Chirurgie générale",
+        "code": "DES2-CG",
+        "description": "",
+        "volume_horaire": 0,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 3,
+            "titre": "Atelier 3: Chirurgicaux (FISRT) (35 heures)",
+            "type": "atelier"
+          }
+        ]
+      },
+      {
+        "titre": "Gynécologie",
+        "titre_complet": "Gynécologie",
+        "code": "DES2-GYNÉC",
+        "description": "Soins aux femmes et aux adolescentes (20 heures)",
+        "volume_horaire": 0,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 14,
+            "titre": "L’infertilité"
+          },
+          {
+            "numero": 15,
+            "titre": "Les infections sexuellement transmissibles"
+          },
+          {
+            "numero": 16,
+            "titre": "Les dysménorrhées"
+          },
+          {
+            "numero": 17,
+            "titre": "Les métrorragies"
+          },
+          {
+            "numero": 18,
+            "titre": "Les tumeurs pelviennes"
+          },
+          {
+            "numero": 19,
+            "titre": "les Maladies du sein"
+          },
+          {
+            "numero": 20,
+            "titre": "Violences et abus sexuels"
+          },
+          {
+            "numero": 21,
+            "titre": "La ménopause"
+          },
+          {
+            "numero": 22,
+            "titre": "L’ostéoporose"
+          },
+          {
+            "numero": 23,
+            "titre": "Gestion des MGF/E"
+          },
+          {
+            "numero": 4,
+            "titre": "Atelier 4: technique de dépistage du cancer du col de l’utérus",
+            "type": "atelier"
+          }
+        ]
+      },
+      {
+        "titre": "Technique de communication",
+        "titre_complet": "Technique de communication (18 heures)",
+        "code": "DES2-TDC",
+        "description": "",
+        "volume_horaire": 18,
+        "competence": "Communicateur",
+        "lecons": [
+          {
+            "numero": 24,
+            "titre": "L’entrevue du malade"
+          },
+          {
+            "numero": 25,
+            "titre": "Particularité de l’approche des adolescents (es)"
+          },
+          {
+            "numero": 4,
+            "titre": "Atelier 4: Début d’entrevu",
+            "type": "atelier"
+          },
+          {
+            "numero": 5,
+            "titre": "Atelier 5: Fin d’entrevu",
+            "type": "atelier"
+          }
+        ]
+      },
+      {
+        "titre": "Pédiatrie",
+        "titre_complet": "Pédiatrie",
+        "code": "DES2-PÉDIA",
+        "description": "Suivi de l’enfant (15 heures)",
+        "volume_horaire": 0,
+        "competence": "Promoteur de la Santé",
+        "lecons": [
+          {
+            "numero": 26,
+            "titre": "Examen périodique et vaccination"
+          },
+          {
+            "numero": 27,
+            "titre": "Conseils Nutrition"
+          },
+          {
+            "numero": 28,
+            "titre": "Consultation Post natale"
+          },
+          {
+            "numero": 29,
+            "titre": "Examen périodique"
+          },
+          {
+            "numero": 30,
+            "titre": "Méthodes de changment et modification des habitudes de vie"
+          }
+        ]
+      },
+      {
+        "titre": "Gestion",
+        "titre_complet": "Gestion",
+        "code": "DES2-GESTI",
+        "description": "Gestion des données (10 heures)",
+        "volume_horaire": 0,
+        "competence": "Gestionnaire",
+        "lecons": [
+          {
+            "numero": 31,
+            "titre": "La micro-planification"
+          },
+          {
+            "numero": 32,
+            "titre": "Comptes d’exploitation"
+          },
+          {
+            "numero": 33,
+            "titre": "remplissage des supports"
+          }
+        ]
+      },
+      {
+        "titre": "Méthodologie de la recherche",
+        "titre_complet": "Méthodologie de la recherche",
+        "code": "DES2-MDL",
+        "description": "Clubs de lecture (10 heures)",
+        "volume_horaire": 0,
+        "competence": "Érudit",
+        "lecons": [
+          {
+            "numero": 34,
+            "titre": "Analyse critique de la littérature"
+          },
+          {
+            "numero": 35,
+            "titre": "Niveaux de preuve"
+          }
+        ]
+      },
+      {
+        "titre": "Éthique et déontologie",
+        "titre_complet": "Éthique et déontologie (3 heures)",
+        "code": "DES2-ÉED",
+        "description": "",
+        "volume_horaire": 3,
+        "competence": "Professionnelle",
+        "lecons": [
+          {
+            "numero": 36,
+            "titre": "Discussion éthique"
+          }
+        ]
+      },
+      {
+        "titre": "informatique médicale",
+        "titre_complet": "informatique médicale (10 heures)",
+        "code": "DES2-IM",
+        "description": "",
+        "volume_horaire": 10,
+        "competence": "Professionnelle",
+        "lecons": [
+          {
+            "numero": 37,
+            "titre": "critères d’une bonne présentation"
+          },
+          {
+            "numero": 21,
+            "titre": "Word"
+          },
+          {
+            "numero": 22,
+            "titre": "Excel"
+          },
+          {
+            "numero": 23,
+            "titre": "Powerpoint"
+          }
+        ]
+      }
+    ]
+  },
+  "annee_3": {
+    "annee": 3,
+    "cours": [
+      {
+        "titre": "Santé mentale",
+        "titre_complet": "Santé mentale (26 heures)",
+        "code": "DES3-SM",
+        "description": "",
+        "volume_horaire": 26,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 1,
+            "titre": "Troubles anxieux"
+          },
+          {
+            "numero": 2,
+            "titre": "Troubles dépressifs"
+          },
+          {
+            "numero": 3,
+            "titre": "Troubles de la personnalité"
+          },
+          {
+            "numero": 4,
+            "titre": "Troubles psychotiques et délirants"
+          },
+          {
+            "numero": 5,
+            "titre": "Troubles du sommeil"
+          },
+          {
+            "numero": 6,
+            "titre": "Patient suicidaire"
+          },
+          {
+            "numero": 7,
+            "titre": "Psychose aigue"
+          }
+        ]
+      },
+      {
+        "titre": "Urgences obstétricales",
+        "titre_complet": "Urgences obstétricales (21 heures)",
+        "code": "DES3-UO",
+        "description": "",
+        "volume_horaire": 21,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 8,
+            "titre": "Gesta niveau II"
+          }
+        ]
+      },
+      {
+        "titre": "Urgences Médicales",
+        "titre_complet": "Urgences Médicales (30 heures)",
+        "code": "DES3-UM",
+        "description": "",
+        "volume_horaire": 30,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 9,
+            "titre": "Infections aigues"
+          },
+          {
+            "numero": 10,
+            "titre": "Traumatismes mineurs"
+          },
+          {
+            "numero": 11,
+            "titre": "Gestion de la douleur aigue"
+          },
+          {
+            "numero": 12,
+            "titre": "Syndrome Coronarien aigue"
+          },
+          {
+            "numero": 13,
+            "titre": "Dyspnée aigue"
+          },
+          {
+            "numero": 14,
+            "titre": "Convulsions"
+          },
+          {
+            "numero": 15,
+            "titre": "Urgences ophtalmiques et ORL"
+          },
+          {
+            "numero": 16,
+            "titre": "Urgences pédiatriques"
+          },
+          {
+            "numero": 17,
+            "titre": "Problèmes locomoteurs aigus"
+          },
+          {
+            "numero": 18,
+            "titre": "Problèmes bucco-dentaires"
+          },
+          {
+            "numero": 19,
+            "titre": "État de mal épileptique"
+          }
+        ]
+      },
+      {
+        "titre": "Médecine",
+        "titre_complet": "Médecine",
+        "code": "DES3-MÉDEC",
+        "description": "Problèmes fréquents chez l’adulte et l’adolescent (20 heures)",
+        "volume_horaire": 0,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 20,
+            "titre": "Asthme"
+          },
+          {
+            "numero": 21,
+            "titre": "Problèmes cutanés (acné, eczéma, psoriasis, gale, teigne, )"
+          },
+          {
+            "numero": 22,
+            "titre": "céphalées"
+          },
+          {
+            "numero": 23,
+            "titre": "Vertiges et étourdissements"
+          },
+          {
+            "numero": 24,
+            "titre": "Problèmes digestifs hauts et bas"
+          },
+          {
+            "numero": 25,
+            "titre": "Problèmes locomoteurs"
+          },
+          {
+            "numero": 26,
+            "titre": "Infections Sexuellement transmissibles"
+          },
+          {
+            "numero": 27,
+            "titre": "Arthrose/Arthrite"
+          },
+          {
+            "numero": 28,
+            "titre": "Maladies infectieuses"
+          }
+        ]
+      },
+      {
+        "titre": "Médecine",
+        "titre_complet": "Médecine",
+        "code": "DES3-MÉDEC",
+        "description": "Suivi des maladies chroniques (20 heures)",
+        "volume_horaire": 0,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 29,
+            "titre": "HTA"
+          },
+          {
+            "numero": 30,
+            "titre": "Maladie vasculaire athérosclérotique"
+          },
+          {
+            "numero": 31,
+            "titre": "Insuffisance cardiaque"
+          },
+          {
+            "numero": 32,
+            "titre": "BPCO"
+          },
+          {
+            "numero": 33,
+            "titre": "Diabète"
+          },
+          {
+            "numero": 34,
+            "titre": "SIDA"
+          },
+          {
+            "numero": 35,
+            "titre": "Cancer"
+          },
+          {
+            "numero": 36,
+            "titre": "Tuberculose"
+          },
+          {
+            "numero": 37,
+            "titre": "Épilepsie"
+          }
+        ]
+      },
+      {
+        "titre": "Gériatrie",
+        "titre_complet": "Gériatrie (24 heures)",
+        "code": "DES3-GÉRIA",
+        "description": "",
+        "volume_horaire": 24,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 38,
+            "titre": "Vieillissement normale"
+          },
+          {
+            "numero": 39,
+            "titre": "Vieillissement pathologique"
+          },
+          {
+            "numero": 40,
+            "titre": "Les démences, délirium et trouble du comportement"
+          },
+          {
+            "numero": 41,
+            "titre": "Troubles de la marche et chutes"
+          },
+          {
+            "numero": 42,
+            "titre": "Incontinences et rétention"
+          },
+          {
+            "numero": 43,
+            "titre": "Problèmes cutanés courants"
+          },
+          {
+            "numero": 44,
+            "titre": "Pharmacothérapie chez la personne âgée"
+          }
+        ]
+      },
+      {
+        "titre": "Communication et sciences comportementales",
+        "titre_complet": "Communication et sciences comportementales (21 heures)",
+        "code": "DES3-CES",
+        "description": "",
+        "volume_horaire": 21,
+        "competence": "Communicateur",
+        "lecons": [
+          {
+            "numero": 45,
+            "titre": "Approche des troubles psychiques ou psycho-comportementales (anxiété, dépression, trouble de la personnalité)"
+          },
+          {
+            "numero": 46,
+            "titre": "Annonce d’une mauvaise nouvelle"
+          },
+          {
+            "numero": 47,
+            "titre": "Niveaux de Soins"
+          },
+          {
+            "numero": 48,
+            "titre": "Approches des victimes de violences (femmes, enfants, personnes âgées)"
+          }
+        ]
+      },
+      {
+        "titre": "érudition",
+        "titre_complet": "érudition",
+        "code": "DES3-ÉRUDI",
+        "description": "",
+        "volume_horaire": 0,
+        "competence": "Érudit",
+        "lecons": [
+          {
+            "numero": 49,
+            "titre": "Clubs de lecture (10 heures)"
+          }
+        ]
+      },
+      {
+        "titre": "Méthodologie de la recherche",
+        "titre_complet": "Méthodologie de la recherche (10 heures)",
+        "code": "DES3-MDL",
+        "description": "",
+        "volume_horaire": 10,
+        "competence": "Érudit",
+        "lecons": [
+          {
+            "numero": 50,
+            "titre": "Plan d’un protocole de recherche"
+          }
+        ]
+      },
+      {
+        "titre": "éthique et déontologie",
+        "titre_complet": "éthique et déontologie (6 heures)",
+        "code": "DES3-ÉED",
+        "description": "",
+        "volume_horaire": 6,
+        "competence": "Professionnel",
+        "lecons": [
+          {
+            "numero": 51,
+            "titre": "discussion éthique"
+          }
+        ]
+      }
+    ]
+  },
+  "annee_4": {
+    "annee": 4,
+    "cours": [
+      {
+        "titre": "Soins de fin de vie",
+        "titre_complet": "Soins de fin de vie (15 heures)",
+        "code": "DES4-SDF",
+        "description": "",
+        "volume_horaire": 15,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 1,
+            "titre": "Douleur totale (nociceptive, neuropathique, morale)"
+          },
+          {
+            "numero": 2,
+            "titre": "Détresse respiratoire et douleur aigue"
+          },
+          {
+            "numero": 3,
+            "titre": "Soins de confort (problèmes buccaux, cutanés, ...)"
+          }
+        ]
+      },
+      {
+        "titre": "Gestion des problèmes de fin de vie",
+        "titre_complet": "Gestion des problèmes de fin de vie (15 heures)",
+        "code": "DES4-GDP",
+        "description": "",
+        "volume_horaire": 15,
+        "competence": "Expert médical",
+        "lecons": [
+          {
+            "numero": 4,
+            "titre": "Nausées, Constipation et diarrhée"
+          },
+          {
+            "numero": 5,
+            "titre": "Anorexie"
+          },
+          {
+            "numero": 6,
+            "titre": "Confusion agitation"
+          },
+          {
+            "numero": 7,
+            "titre": "Soins des plaies"
+          },
+          {
+            "numero": 8,
+            "titre": "Asthénie"
+          }
+        ]
+      },
+      {
+        "titre": "Communication et science comportementale",
+        "titre_complet": "Communication et science comportementale (09 heures)",
+        "code": "DES4-CES",
+        "description": "",
+        "volume_horaire": 9,
+        "competence": "Communicateur",
+        "lecons": [
+          {
+            "numero": 9,
+            "titre": "Deuil, mort et souffrance"
+          },
+          {
+            "numero": 10,
+            "titre": "Approche familiale"
+          },
+          {
+            "numero": 11,
+            "titre": "Gestion des comportements agressifs"
+          },
+          {
+            "numero": 12,
+            "titre": "Approche socio-culturelle"
+          },
+          {
+            "numero": 13,
+            "titre": "Plan d’action de la politique nationale genre (PNG)"
+          }
+        ]
+      },
+      {
+        "titre": "Responsabilité et tâches administratives et techniques",
+        "titre_complet": "Responsabilité et tâches administratives et techniques (3 heures)",
+        "code": "DES4-RET",
+        "description": "",
+        "volume_horaire": 3,
+        "competence": "Collaborateur",
+        "lecons": [
+          {
+            "numero": 14,
+            "titre": "Relations avec le personnel, l’ASACO"
+          },
+          {
+            "numero": 15,
+            "titre": "Relations ASACO, Marie, CSCom, HD"
+          }
+        ]
+      },
+      {
+        "titre": "Gestion",
+        "titre_complet": "Gestion (09 heures)",
+        "code": "DES4-GESTI",
+        "description": "",
+        "volume_horaire": 9,
+        "competence": "Collaborateur",
+        "lecons": [
+          {
+            "numero": 16,
+            "titre": "Planification, animation de réunion et tenue des rapports"
+          }
+        ]
+      },
+      {
+        "titre": "Gestions pratique",
+        "titre_complet": "Gestions pratique (30 heures)",
+        "code": "DES4-GP",
+        "description": "",
+        "volume_horaire": 30,
+        "competence": "Gestionnaire",
+        "lecons": [
+          {
+            "numero": 17,
+            "titre": "Planification budgétaire et gestion administrative"
+          },
+          {
+            "numero": 18,
+            "titre": "Planification et développement des services et de stratégies avancées"
+          },
+          {
+            "numero": 19,
+            "titre": "Gestion et formation du personnel"
+          },
+          {
+            "numero": 20,
+            "titre": "Gestion d’un environnement de pratique sécuritaire incluant les déchets biomédicaux."
+          },
+          {
+            "numero": 21,
+            "titre": "Organisation des services"
+          }
+        ]
+      },
+      {
+        "titre": "érudition",
+        "titre_complet": "érudition (40 heures)",
+        "code": "DES4-ÉRUDI",
+        "description": "",
+        "volume_horaire": 40,
+        "competence": "Érudit",
+        "lecons": [
+          {
+            "numero": 22,
+            "titre": "Clubs de lecture"
+          },
+          {
+            "numero": 23,
+            "titre": "Rédaction scientifique"
+          }
+        ]
+      },
+      {
+        "titre": "Éthique",
+        "titre_complet": "Éthique (6 heures)",
+        "code": "DES4-ÉTHIQ",
+        "description": "",
+        "volume_horaire": 6,
+        "competence": "Professionnelle",
+        "lecons": [
+          {
+            "numero": 24,
+            "titre": "Discussions éthique"
+          }
+        ]
+      },
+      {
+        "titre": "Déontologie",
+        "titre_complet": "Déontologie (6 heures)",
+        "code": "DES4-DÉONT",
+        "description": "",
+        "volume_horaire": 6,
+        "competence": "Professionnelle",
+        "lecons": [
+          {
+            "numero": 25,
+            "titre": "Code de bonne conduite professionnelle"
+          },
+          {
+            "numero": 26,
+            "titre": "Cadre réglementaire de la prescription"
+          },
+          {
+            "numero": 27,
+            "titre": "Responsabilité médicale"
+          }
+        ]
+      }
+    ]
+  }
+}

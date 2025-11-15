@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Administration - Résultats des évaluations{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <h1>📊 Résultats des évaluations</h1>
+
+    <div class="evaluations-section">
+        <h2>Évaluations des cours</h2>
+        {% if stats_evaluations %}
+        <div class="evaluations-grid">
+            {% for stat in stats_evaluations %}
+            <div class="evaluation-card">
+                <h3>{{ stat.evaluation.titre }}</h3>
+                <p><strong>Cours:</strong> {{ stat.evaluation.cours.titre }}</p>
+                <div class="evaluation-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Participants:</span>
+                        <span class="stat-value">{{ stat.nb_participants }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Moyenne:</span>
+                        <span class="stat-value">{{ stat.moyenne|floatformat:2 }}/20</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Note max:</span>
+                        <span class="stat-value">{{ stat.note_max|default:"-" }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Note min:</span>
+                        <span class="stat-value">{{ stat.note_min|default:"-" }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>Aucune évaluation avec résultats.</p>
+        {% endif %}
+    </div>
+
+    <div class="evaluations-section">
+        <h2>Évaluations des enseignants</h2>
+        {% if evaluations_enseignants %}
+        <div class="evaluations-list">
+            {% for eval_ens in evaluations_enseignants %}
+            <div class="evaluation-item">
+                <div class="eval-header">
+                    <h4>{{ eval_ens.enseignant.get_full_name|default:eval_ens.enseignant.username }}</h4>
+                    <span class="eval-date">{{ eval_ens.date_evaluation|date:"d/m/Y" }}</span>
+                </div>
+                <p><strong>Évalué par:</strong> {{ eval_ens.etudiant.get_full_name|default:eval_ens.etudiant.username }}</p>
+                <div class="eval-scores">
+                    <span>Qualité: {{ eval_ens.qualite_pedagogique }}/5</span>
+                    <span>Disponibilité: {{ eval_ens.disponibilite }}/5</span>
+                    <span>Clarté: {{ eval_ens.clarte_explications }}/5</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>Aucune évaluation d'enseignant.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.evaluations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.evaluation-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.evaluation-item {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.eval-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.eval-scores {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    color: #666;
+}
+</style>
+{% endblock %}
+

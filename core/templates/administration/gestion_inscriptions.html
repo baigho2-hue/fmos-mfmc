@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Administration - Gestion des inscriptions{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <h1>✏️ Gestion des inscriptions</h1>
+
+    <div class="formations-grid">
+        {% for stat in stats_formations %}
+        <div class="formation-card">
+            <h3>{{ stat.formation.nom }}</h3>
+            <p class="formation-type">{{ stat.formation.get_type_formation_display }}</p>
+            
+            <div class="formation-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Classes:</span>
+                    <span class="stat-value">{{ stat.nb_classes }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Étudiants inscrits:</span>
+                    <span class="stat-value">{{ stat.nb_etudiants }}</span>
+                </div>
+            </div>
+            
+            <a href="{% url 'detail_inscriptions_formation' stat.formation.id %}" class="btn-detail">Voir les inscriptions →</a>
+        </div>
+        {% empty %}
+        <p>Aucune formation active.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.formations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.formation-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.formation-type {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}
+

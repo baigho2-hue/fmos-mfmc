@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+{% load programme_tags %}
+
+{% block title %}Administration - Notes - {{ classe.nom }}{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <h1>📝 Notes - {{ classe.nom }}</h1>
+    <p class="subtitle">{{ classe.formation.nom }}</p>
+
+    <div class="notes-table-container">
+        <table class="notes-table">
+            <thead>
+                <tr>
+                    <th>Étudiant</th>
+                    {% for cours in cours_list %}
+                    <th>{{ cours.titre }}</th>
+                    {% endfor %}
+                    <th>Moyenne</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for etudiant_id, data in progressions_par_etudiant.items %}
+                <tr>
+                    <td><strong>{{ data.etudiant.get_full_name|default:data.etudiant.username }}</strong></td>
+                    {% for cours in cours_list %}
+                    <td>
+                        {% if cours.id in data.progressions %}
+                            {% with progression=data.progressions|get_item:cours.id %}
+                                {% if progression %}
+                                    {{ progression.pourcentage_completion|floatformat:1 }}%
+                                    <br><small class="statut-{{ progression.statut }}">{{ progression.get_statut_display }}</small>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            {% endwith %}
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                    <td><strong>{{ data.moyenne|floatformat:1 }}%</strong></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="{{ cours_list|length|add:2 }}">Aucun étudiant dans cette classe.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include 'includes/boutons_pdf.html' with doc_type='bulletins' classe_id=classe.id %}
+    
+    <div class="actions">
+        <a href="{% url 'notes_classes' %}" class="btn-back">← Retour à la liste</a>
+        <a href="{% url 'bulletins_classe' classe.id %}" class="btn-bulletin" target="_blank">📄 Générer les bulletins A4</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.notes-table-container {
+    overflow-x: auto;
+    margin: 2rem 0;
+}
+
+.notes-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.notes-table th {
+    background: #005a9c;
+    color: white;
+    padding: 1rem;
+    text-align: left;
+    position: sticky;
+    left: 0;
+    z-index: 10;
+}
+
+.notes-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.notes-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.statut-termine { color: #28a745; }
+.statut-en_cours { color: #ffc107; }
+.statut-non_commence { color: #6c757d; }
+.text-muted { color: #999; }
+
+.btn-back {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 2rem;
+}
+
+.btn-bulletin {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+    font-weight: bold;
+}
+
+.btn-bulletin:hover {
+    background: #218838;
+}
+</style>
+{% endblock %}
+

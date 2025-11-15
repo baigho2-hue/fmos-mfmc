@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Logiciels d'analyse (Non certifiant) - Formations - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="formation-minimaliste">
+    <h2>Logiciels d'analyse - Formation Non Certifiante</h2>
+    
+    <div class="formation-content-minimal">
+        <div class="description-box">
+            <h3>📖 Description</h3>
+            <p>Formation non certifiante sur les outils et logiciels d'analyse de données pour la pratique médicale quotidienne.</p>
+        </div>
+        
+        <div class="objectifs-box">
+            <h3>🎯 Objectifs Élémentaires</h3>
+            <ul>
+                <li>Découvrir les outils d'analyse de données de base</li>
+                <li>Apprendre à utiliser les logiciels essentiels</li>
+                <li>Améliorer la gestion des données médicales</li>
+            </ul>
+        </div>
+        
+        <!-- Bouton d'inscription -->
+        {% include 'formations/_bouton_inscription.html' %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.formation-minimaliste {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.formation-minimaliste h2 {
+    color: #005a9c;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.formation-content-minimal {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.description-box,
+.objectifs-box {
+    background-color: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.description-box h3,
+.objectifs-box h3 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.description-box p {
+    color: #555;
+    line-height: 1.8;
+    margin: 0;
+}
+
+.objectifs-box ul {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.objectifs-box li {
+    color: #555;
+    line-height: 1.8;
+    margin-bottom: 0.5rem;
+}
+
+@media screen and (max-width: 768px) {
+    .formation-minimaliste {
+        padding: 1rem;
+    }
+}
+</style>
+{% endblock %}

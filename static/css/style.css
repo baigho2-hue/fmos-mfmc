@@ -1,0 +1,1228 @@
+/* --- Réinitialisation et styles de base --- */
+html {
+scroll-behavior: smooth;
+}
+
+body {
+font-family: Arial, sans-serif;
+margin: 0;
+padding: 0;
+background-color: #f1eff5; /* Couleur de fond légère */
+color : hsl(240, 2%, 11%);
+}
+a {
+text-decoration: none;
+color: inherit; /* Hérite de la couleur du parent */
+}
+ul {
+list-style: none;
+padding: 0;
+margin: 0;
+}
+/* --- En-tête --- */
+
+header {
+background-color: #005a9c; /* Bleu principal */
+color: #ffffff; /* Texte blanc */
+padding : 1rem 2rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Ombre légère */
+position: relative;
+}
+
+.header-left {
+flex: 0 0 auto;
+}
+
+.header-center {
+flex: 1 1 auto;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.header-right {
+flex: 0 0 auto;
+display: flex;
+align-items: center;
+justify-content: flex-end;
+height: 100%;
+gap: 1.5rem;
+}
+
+.header-buttons {
+display: flex;
+align-items: center;
+gap: 0.75rem;
+margin-right: 0.5rem;
+}
+
+.btn-inscription,
+.btn-connexion {
+padding: 0.75rem 1.25rem;
+border-radius: 4px;
+font-weight: 700;
+text-decoration: none;
+transition: all 0.2s ease;
+font-size: 0.95rem;
+white-space: nowrap;
+cursor: pointer;
+border: 3px solid #495057;
+display: inline-block;
+text-align: center;
+width: auto;
+background-color: #6c757d;
+color: #ffffff;
+text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.btn-inscription {
+background-color: #6c757d;
+background-image: linear-gradient(to bottom, #7d8489 0%, #6c757d 50%, #5a6268 100%);
+border-color: #495057;
+}
+
+.btn-inscription:hover {
+background-image: linear-gradient(to bottom, #6c757d 0%, #5a6268 50%, #495057 100%);
+border-color: #343a40;
+transform: translateY(-1px);
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-inscription:active {
+transform: translateY(0);
+background-image: linear-gradient(to bottom, #5a6268 0%, #495057 100%);
+box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4);
+border-color: #343a40;
+}
+
+.btn-connexion {
+background-color: #6c757d;
+background-image: linear-gradient(to bottom, #7d8489 0%, #6c757d 50%, #5a6268 100%);
+border-color: #495057;
+}
+
+.btn-connexion:hover {
+background-image: linear-gradient(to bottom, #6c757d 0%, #5a6268 50%, #495057 100%);
+border-color: #343a40;
+transform: translateY(-1px);
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-connexion:active {
+transform: translateY(0);
+background-image: linear-gradient(to bottom, #5a6268 0%, #495057 100%);
+box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4);
+border-color: #343a40;
+}
+
+header h1 {
+margin: 0;
+font-size: 1.8rem;
+}
+
+/* Exclusion du header USTTB pour les styles header h1 */
+.usttb-header h1,
+.usttb-header .usttb-title {
+    margin: 0 auto 0.5rem auto !important;
+    font-size: 1.5rem !important;
+}
+
+.header-logo {
+height: 100%;
+max-height: 50px;
+width: 50px;
+object-fit: cover;
+background-color: rgba(255, 255, 255, 0.95);
+padding: 4px;
+border-radius: 50%;
+transition: all 0.3s ease;
+display: block;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.header-logo:hover {
+opacity: 0.95;
+transform: scale(1.05);
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Bouton hamburger pour mobile --- */
+.menu-toggle {
+display: none;
+background: none;
+border: none;
+cursor: pointer;
+padding: 0.5rem;
+flex-direction: column;
+justify-content: space-around;
+width: 2rem;
+height: 2rem;
+z-index: 1001;
+}
+
+.menu-toggle:focus {
+outline: 2px solid #ffffff;
+outline-offset: 2px;
+}
+
+.hamburger-line {
+width: 2rem;
+height: 3px;
+background-color: #ffffff;
+border-radius: 3px;
+transition: all 0.3s ease;
+}
+
+.menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(1) {
+transform: rotate(45deg) translate(8px, 8px);
+}
+
+.menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(2) {
+opacity: 0;
+}
+
+.menu-toggle[aria-expanded="true"] .hamburger-line:nth-child(3) {
+transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* --- Menu de navigation principal --- */
+nav.main-menu {
+display: flex;
+justify-content: center;
+align-items: center;
+}
+ul.menu > li {
+position: relative; /* Essentiel pour le positionnement des sous-menus */
+display: inline-block;
+}
+ul.menu > li > a {
+display: block;
+padding: 15px 20px;
+color: #ffffff;
+font-weight: bold;
+transition: background-color 0.3s ease;
+}
+
+/* Indicateur de sous-menu (flèche) */
+ul.menu > li.has-submenu > a::after,
+ul.menu > li:has(.submenu) > a::after {
+content: " ▼";
+font-size: 0.7em;
+margin-left: 5px;
+opacity: 0.8;
+}
+ul.menu > li:hover > a, 
+ul.menu > li.active > a { /* Style pour l'élément actif */
+background-color: #004070; /* Bleu plus foncé au survol/actif */
+
+}
+/* --- Sous-menus (premier niveau) --- */
+.submenu {
+display: none; /* Caché par défaut */
+position: absolute;
+top: 100%;
+left: 0;
+background-color: #ffffff; /* Fond blanc */
+border-radius: 0 0 5px 5px; /* Coins arrondis en bas */
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+min-width: 220px; /* Largeur minimale */
+z-index: 1000;
+}
+/* Affichage du sous-menu au survol du parent */
+ul.menu > li:hover > .submenu {
+display: block;
+}
+.submenu li {
+position: relative; /* Pour le sous-sous-menu */
+}
+
+.submenu li a {
+display: block;
+padding: 12px 20px;
+color: #005a9c; /* Texte en bleu */
+transition: background-color 0.3s ease, color 0.3s ease;
+color: #005a9c; /* Rendu visible sur fond blanc */
+}
+
+/* Styles pour les catégories et séparateurs du menu Administration */
+.submenu .menu-header {
+background-color: #005a9c;
+border-radius: 5px 5px 0 0;
+}
+
+.submenu .menu-header a {
+color: #ffffff !important;
+font-weight: bold;
+padding: 14px 20px;
+}
+
+.submenu .menu-header:hover {
+background-color: #004070;
+}
+
+.submenu .menu-header:hover a {
+background-color: transparent;
+color: #ffffff !important;
+}
+
+.submenu .menu-category {
+padding: 8px 20px 4px 20px;
+font-size: 0.75rem;
+font-weight: bold;
+color: #6c757d;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+margin-top: 4px;
+cursor: default;
+pointer-events: none;
+}
+
+.submenu .menu-category:hover {
+background-color: transparent;
+}
+
+.submenu .menu-separator {
+height: 1px;
+background-color: #e0e0e0;
+margin: 4px 10px;
+padding: 0;
+list-style: none;
+pointer-events: none;
+}
+
+.submenu .menu-separator:hover {
+background-color: #e0e0e0;
+}
+
+submenu a, .subsubmenu a { 
+    color: #005a9c; /* Rendu visible sur fond blanc */
+}
+
+/* Amélioration de l'interaction (facultatif mais recommandé) */
+ul.menu > li:hover > .submenu {
+    display: block;
+    transition-delay: 0.2s; /* Ajoute un léger délai */
+}
+.submenu li:hover > a {
+background-color: #005a9c; /* Fond bleu au survol */
+color: #ffffff; /* Texte blanc au survol */
+}/* --- Sous-sous-menus (deuxième niveau) --- */
+.subsubmenu {
+display: none; /* Caché par défaut */
+position: absolute;
+top: 0;
+left: 100%; /* Se positionne à droite du parent */
+background-color: #ffffff;
+border-radius: 5px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+min-width: 220px;
+}/* Affichage du sous-sous-menu au survol du parent */
+
+
+.submenu li:hover > .subsubmenu {
+display: block;
+}/* --- Contenu principal et pied de page --- */
+.main {
+padding: 2rem;
+min-height: 60vh; /* Pour s'assurer que le pied de page ne remonte pas trop */
+}
+.main h2 {
+color: #005a9c;
+}
+
+/* --- Messages Django --- */
+.messages {
+margin-bottom: 1.5rem;
+}
+
+.alert {
+padding: 1rem 1.5rem;
+border-radius: 5px;
+margin-bottom: 1rem;
+font-weight: 500;
+}
+
+.alert-success {
+background-color: #d4edda;
+border: 1px solid #c3e6cb;
+color: #155724;
+}
+
+.alert-error {
+background-color: #f8d7da;
+border: 1px solid #f5c6cb;
+color: #721c24;
+}
+
+.alert-info {
+background-color: #d1ecf1;
+border: 1px solid #bee5eb;
+color: #0c5460;
+}
+
+.alert-warning {
+background-color: #fff3cd;
+border: 1px solid #ffeaa7;
+color: #856404;
+}
+footer {
+background-color: #333;
+color: #ffffff;
+text-align: center;
+padding: 1.5rem;
+margin-top: 2rem;
+}
+
+/* --- Sections de contenu --- */
+.section-hero {
+padding: 2.25rem 1.5rem;
+background-color: #ffffff;
+margin-bottom: 2rem;
+border: 2px solid #005a9c;
+border-radius: 8px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sections-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: stretch;
+}
+
+.section-small {
+padding: 0.5rem;
+background-color: #ffffff;
+margin-bottom: 0;
+border: 2px solid #005a9c;
+border-radius: 8px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+flex: 1 1 calc(33.333% - 2rem);
+min-width: 75px;
+display: flex;
+flex-direction: column;
+}
+
+.section-content {
+display: flex;
+align-items: center;
+gap: 2rem;
+max-width: 1200px;
+margin: 0 auto;
+}
+
+.section-hero .section-content {
+flex-direction: row;
+}
+
+.section-small .section-content {
+flex-direction: column;
+align-items: stretch;
+flex: 1;
+display: flex;
+gap: 0.5rem;
+}
+
+.section-hero .section-image {
+flex: 0 0 40%;
+}
+
+.section-small .section-image {
+flex: 1 1 100%;
+width: 100%;
+}
+
+.section-image img {
+width: 100%;
+height: auto;
+border-radius: 8px;
+object-fit: cover;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+display: block;
+}
+
+.section-image {
+position: relative;
+}
+
+.section-image img[src=""],
+.section-image img:not([src]),
+.section-image img[src*="placeholder"] {
+background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+}
+
+.section-hero .section-image img {
+min-height: 320px;
+max-height: 420px;
+}
+
+.section-small .section-image img {
+min-height: 50px;
+max-height: 62.5px;
+width: 100%;
+}
+
+.section-hero .section-text {
+flex: 1;
+}
+
+.section-small .section-text {
+flex: 1 1 100%;
+width: 100%;
+}
+
+.section-text h2 {
+color: #005a9c;
+margin-top: 0;
+margin-bottom: 1rem;
+font-size: 2rem;
+}
+
+.section-small .section-text h2 {
+font-size: 0.5rem;
+margin-bottom: 0.25rem;
+}
+
+.section-hero .section-text h2 {
+font-size: 2.5rem;
+}
+
+.section-text p {
+line-height: 1.8;
+margin-bottom: 1rem;
+color: #333;
+text-align: justify;
+}
+
+.section-small .section-text p {
+font-size: 0.35rem;
+line-height: 1.3;
+margin-bottom: 0.25rem;
+}
+
+/* --- Bande news roulante --- */
+.news-ticker {
+background-color: #005a9c;
+color: #ffffff;
+padding: 1rem 0;
+overflow: hidden;
+position: relative;
+margin-top: 2rem;
+}
+
+.news-ticker-label {
+position: absolute;
+left: 0;
+top: 0;
+background-color: #004070;
+padding: 1rem 1.5rem;
+font-weight: bold;
+z-index: 10;
+height: 100%;
+display: flex;
+align-items: center;
+}
+
+.news-ticker-content {
+display: flex;
+animation: scroll-news 60s linear infinite;
+white-space: nowrap;
+padding-left: 200px;
+will-change: transform;
+}
+
+.news-item {
+padding: 0 2rem;
+display: inline-flex;
+align-items: center;
+font-size: 1rem;
+flex-shrink: 0;
+}
+
+@keyframes scroll-news {
+0% {
+transform: translateX(0);
+}
+100% {
+transform: translateX(-50%);
+}
+}
+
+.news-ticker:hover .news-ticker-content {
+animation-play-state: paused;
+}
+
+/* --- Media Queries pour le responsive --- */
+
+/* Tablettes (max-width: 768px) */
+@media screen and (max-width: 768px) {
+    header {
+        padding: 1rem;
+        flex-wrap: wrap;
+        position: relative;
+    }
+    
+    .header-left,
+    .header-center,
+    .header-right {
+        flex: 1 1 100%;
+    }
+    
+    .header-right {
+        order: -1;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .header-center {
+        order: 2;
+        width: 100%;
+    }
+    
+    .header-left {
+        order: 1;
+        text-align: center;
+    }
+    
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .header-logo {
+        height: 35px;
+        width: 35px;
+    }
+    
+    .header-buttons {
+        gap: 0.5rem;
+        margin-right: 0.3rem;
+    }
+    
+    .btn-inscription,
+    .btn-connexion {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .menu-toggle {
+        display: flex;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        order: 0;
+        z-index: 1002;
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+    }
+    
+    .menu-toggle:hover {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+    
+    nav.main-menu {
+        width: 100%;
+        margin-top: 1rem;
+        display: none;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, opacity 0.3s ease;
+        opacity: 0;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #005a9c;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+    }
+    
+    nav.main-menu.active {
+        display: block;
+        max-height: 2000px;
+        opacity: 1;
+    }
+    
+    ul.menu {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 0.5rem 0;
+    }
+    
+    ul.menu > li {
+        display: block;
+        width: 100%;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    ul.menu > li:last-child {
+        border-bottom: none;
+    }
+    
+    ul.menu > li > a {
+        padding: 14px 20px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    /* Indicateur pour les sous-menus sur mobile */
+    ul.menu > li.has-submenu > a::after {
+        content: " ▶";
+        font-size: 0.8em;
+        transition: transform 0.3s ease;
+    }
+    
+    ul.menu > li.has-submenu.active > a::after {
+        transform: rotate(90deg);
+    }
+    
+    /* Sous-menus en mode vertical sur tablette */
+    .submenu {
+        position: static;
+        display: none;
+        width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+        margin-left: 0;
+        background-color: rgba(0, 0, 0, 0.1);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+    
+    ul.menu > li.active > .submenu {
+        display: block;
+        max-height: 2000px;
+    }
+    
+    .submenu li {
+        border-left: 3px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .submenu li a {
+        padding: 12px 20px 12px 35px;
+        color: #ffffff;
+        font-size: 0.95em;
+    }
+    
+    .submenu li:hover > a,
+    .submenu li:active > a {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+    }
+    
+    /* Styles pour les catégories et séparateurs sur mobile */
+    .submenu .menu-header {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 0;
+    }
+    
+    .submenu .menu-header a {
+        color: #ffffff !important;
+        padding: 14px 20px 14px 35px;
+    }
+    
+    .submenu .menu-category {
+        padding: 8px 20px 4px 35px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.7rem;
+    }
+    
+    .submenu .menu-separator {
+        background-color: rgba(255, 255, 255, 0.2);
+        margin: 4px 20px;
+    }
+    
+    /* Sous-sous-menus en mode vertical */
+    .subsubmenu {
+        position: static;
+        display: none;
+        width: 100%;
+        left: 0;
+        box-shadow: none;
+        border-radius: 0;
+        margin-left: 0;
+        background-color: rgba(0, 0, 0, 0.15);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+    
+    .submenu li.active > .subsubmenu {
+        display: block;
+        max-height: 2000px;
+    }
+    
+    .subsubmenu li a {
+        padding: 10px 20px 10px 50px;
+        font-size: 0.9em;
+    }
+    
+    .main {
+        padding: 1.5rem;
+    }
+    
+    .section-hero {
+        padding: 1.75rem 0.875rem;
+    }
+    
+    .sections-container {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .section-small {
+        padding: 0.375rem;
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+    
+    .section-hero .section-content {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .section-hero .section-image {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+    
+    .section-hero .section-image img {
+        min-height: 240px;
+        max-height: 300px;
+    }
+    
+    .section-small .section-image img {
+        min-height: 50px;
+        max-height: 62.5px;
+    }
+    
+    .section-text h2 {
+        font-size: 1.75rem;
+    }
+    
+    .section-small .section-text h2 {
+        font-size: 0.5rem;
+    }
+    
+    .section-small .section-text p {
+        font-size: 0.35rem;
+    }
+    
+    .section-hero .section-text h2 {
+        font-size: 2rem;
+    }
+    
+    .news-ticker-label {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .news-ticker-content {
+        padding-left: 120px;
+    }
+    
+    .news-item {
+        padding: 0 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    footer {
+        padding: 1rem;
+    }
+}
+
+/* Mobiles (max-width: 480px) */
+@media screen and (max-width: 480px) {
+    header {
+        padding: 0.75rem 1rem;
+        position: relative;
+    }
+    
+    .header-logo {
+        height: 30px;
+        width: 30px;
+    }
+    
+    .header-buttons {
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-right: 0.2rem;
+    }
+    
+    .btn-inscription,
+    .btn-connexion {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    header h1 {
+        font-size: 1.2rem;
+    }
+    
+    .menu-toggle {
+        display: flex;
+        width: 1.75rem;
+        height: 1.75rem;
+        top: 0.75rem;
+        right: 0.75rem;
+    }
+    
+    .hamburger-line {
+        width: 1.75rem;
+        height: 2.5px;
+    }
+    
+    nav.main-menu {
+        margin-top: 0.5rem;
+        top: 100%;
+    }
+    
+    ul.menu > li > a {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .submenu li a {
+        padding: 10px 15px 10px 30px;
+        font-size: 0.85em;
+    }
+    
+    .subsubmenu li a {
+        padding: 8px 15px 8px 45px;
+        font-size: 0.8em;
+    }
+    
+    .submenu {
+        margin-left: 0.5rem;
+    }
+    
+    .submenu li a {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .subsubmenu {
+        margin-left: 0.5rem;
+        width: calc(100% - 1rem);
+    }
+    
+    .main {
+        padding: 1rem;
+        min-height: 50vh;
+    }
+    
+    .main h2 {
+        font-size: 1.3rem;
+    }
+    
+    .section-hero {
+        padding: 1.25rem 0.75rem;
+    }
+    
+    .sections-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .section-small {
+        padding: 0.25rem;
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+    
+    .section-hero .section-content {
+        gap: 1rem;
+    }
+    
+    .section-hero .section-image img {
+        min-height: 200px;
+        max-height: 260px;
+    }
+    
+    .section-small .section-image img {
+        min-height: 45px;
+        max-height: 55px;
+    }
+    
+    .section-text h2 {
+        font-size: 1.5rem;
+    }
+    
+    .section-small .section-text h2 {
+        font-size: 0.5rem;
+    }
+    
+    .section-small .section-text p {
+        font-size: 0.35rem;
+    }
+    
+    .section-hero .section-text h2 {
+        font-size: 1.75rem;
+    }
+    
+    .section-text p {
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    
+    .news-ticker {
+        padding: 0.75rem 0;
+    }
+    
+    .news-ticker-label {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .news-ticker-content {
+        padding-left: 100px;
+    }
+    
+    .news-item {
+        padding: 0 1rem;
+        font-size: 0.85rem;
+    }
+    
+    footer {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Très petits écrans (max-width: 320px) */
+@media screen and (max-width: 320px) {
+    header h1 {
+        font-size: 1rem;
+    }
+    
+    ul.menu > li > a {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+    }
+    
+    .submenu li a {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .main {
+        padding: 0.75rem;
+    }
+    
+    .section-hero {
+        padding: 1rem 0.5rem;
+    }
+    
+    .section-small {
+        padding: 0.1875rem;
+    }
+    
+    .section-text h2 {
+        font-size: 1.3rem;
+    }
+    
+    .section-small .section-text h2 {
+        font-size: 0.5rem;
+    }
+    
+    .section-small .section-text p {
+        font-size: 0.35rem;
+    }
+    
+    .section-hero .section-text h2 {
+        font-size: 1.5rem;
+    }
+    
+    .section-text p {
+        font-size: 0.85rem;
+    }
+    
+    .news-ticker-label {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+    
+    .news-ticker-content {
+        padding-left: 80px;
+    }
+    
+    .news-item {
+        padding: 0 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* --- Header USTTB --- */
+.usttb-header {
+    background: linear-gradient(135deg, #87ceeb 0%, #6bb6ff 100%);
+    color: #333333;
+    padding: 1.5rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    border-bottom: 4px solid #4a9eff;
+    position: relative;
+}
+
+.usttb-header-content {
+    max-width: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0;
+}
+
+.usttb-logo-left {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-left: 0;
+    padding-left: 0;
+    position: absolute;
+    left: 0;
+}
+
+.usttb-logo-right {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-right: 0;
+    padding-right: 0;
+    position: absolute;
+    right: 0;
+}
+
+.usttb-logo-circle {
+    height: 100px;
+    width: 100px;
+    object-fit: cover;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: block;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.usttb-logo-circle:hover {
+    opacity: 0.95;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.usttb-logo-container {
+    flex-shrink: 0;
+}
+
+.usttb-logo {
+    height: 40px;
+    width: 40px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.usttb-text-container {
+    text-align: center !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto;
+}
+
+.usttb-header .usttb-title,
+.usttb-title {
+    color: #1e3a8a !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    margin: 0 auto 0.5rem auto !important;
+    padding: 0.75rem 1.5rem !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+    line-height: 1.3 !important;
+    text-align: center !important;
+    display: block !important;
+    border: 4px solid #4a9eff !important;
+    border-radius: 8px !important;
+    max-width: fit-content !important;
+    width: auto !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    text-transform: uppercase !important;
+}
+
+.usttb-header .usttb-subtitle,
+.usttb-subtitle {
+    color: #1e3a8a !important;
+    font-size: 1rem !important;
+    margin: 0.5rem auto 0 auto !important;
+    padding: 0.5rem 1rem !important;
+    line-height: 1.5 !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    display: block !important;
+    border: 4px solid #4a9eff !important;
+    border-radius: 8px !important;
+    max-width: fit-content !important;
+    width: auto !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    text-transform: uppercase !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Responsive pour le header USTTB */
+@media screen and (max-width: 768px) {
+    .usttb-header {
+        padding: 1rem;
+    }
+    
+    .usttb-header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+        justify-content: center;
+    }
+    
+    .usttb-logo-left,
+    .usttb-logo-right {
+        order: -1;
+    }
+    
+    .usttb-logo-right {
+        order: 1;
+    }
+    
+    .usttb-text-container {
+        order: 0;
+        width: 100%;
+    }
+    
+    .usttb-logo-circle {
+        height: 70px;
+        width: 70px;
+    }
+    
+    .usttb-title {
+        font-size: 1.2rem;
+    }
+    
+    .usttb-subtitle {
+        font-size: 0.9rem;
+    }
+}

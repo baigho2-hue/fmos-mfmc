@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Administration - Signature Coordination{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <h1>✍️ Signature de la Coordination</h1>
+    <p class="subtitle">Configurez la signature et le cachet pour les documents administratifs PDF</p>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="card-section">
+        <form method="post" enctype="multipart/form-data" class="signature-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="nom_signataire">Nom du signataire *</label>
+                <input 
+                    type="text" 
+                    id="nom_signataire" 
+                    name="nom_signataire" 
+                    class="form-control"
+                    value="{{ signature.nom_signataire|default:'' }}"
+                    required
+                    placeholder="Ex: TRAORE"
+                >
+                <small class="form-text">Nom de famille du signataire</small>
+            </div>
+
+            <div class="form-group">
+                <label for="prenom_signataire">Prénom du signataire</label>
+                <input 
+                    type="text" 
+                    id="prenom_signataire" 
+                    name="prenom_signataire" 
+                    class="form-control"
+                    value="{{ signature.prenom_signataire|default:'' }}"
+                    placeholder="Ex: Fatoumata"
+                >
+                <small class="form-text">Prénom du signataire (optionnel)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="titre_signataire">Titre/Fonction *</label>
+                <select 
+                    id="titre_signataire" 
+                    name="titre_signataire" 
+                    class="form-control"
+                    required
+                >
+                    <option value="Directeur du Programme DESMFMC" {% if signature.titre_signataire == 'Directeur du Programme DESMFMC' %}selected{% endif %}>Directeur du Programme DESMFMC</option>
+                    <option value="Adjoint au Directeur du Programme DESMFMC" {% if signature.titre_signataire == 'Adjoint au Directeur du Programme DESMFMC' %}selected{% endif %}>Adjoint au Directeur du Programme DESMFMC</option>
+                    <option value="Coordonnateur DESMFMC" {% if signature.titre_signataire == 'Coordonnateur DESMFMC' %}selected{% endif %}>Coordonnateur DESMFMC</option>
+                </select>
+                <small class="form-text">Titre ou fonction du signataire</small>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input 
+                        type="checkbox" 
+                        name="est_directeur" 
+                        {% if signature and signature.est_directeur %}checked{% endif %}
+                    >
+                    <span>Directeur du Programme (priorité pour la signature par défaut)</span>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label for="cachet">Cachet de la coordination</label>
+                {% if signature and signature.cachet %}
+                <div class="current-cachet">
+                    <p><strong>Cachet actuel:</strong></p>
+                    <img src="{{ signature.cachet.url }}" alt="Cachet" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; padding: 10px;">
+                </div>
+                {% endif %}
+                <input 
+                    type="file" 
+                    id="cachet" 
+                    name="cachet" 
+                    class="form-control"
+                    accept="image/*"
+                >
+                <small class="form-text">Image du cachet officiel (PNG, JPG, etc.)</small>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input 
+                        type="checkbox" 
+                        name="actif" 
+                        {% if signature and signature.actif %}checked{% endif %}
+                    >
+                    <span>Utiliser cette signature pour les nouveaux documents</span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">💾 Enregistrer</button>
+                <a href="{% url 'dashboard_administration' %}" class="btn-secondary">← Retour</a>
+            </div>
+        </form>
+    </div>
+
+    {% if signature %}
+    <div class="info-section">
+        <h3>📋 Informations</h3>
+        <p><strong>Signataire:</strong> {{ signature.get_nom_complet }}</p>
+        <p><strong>Titre:</strong> {{ signature.titre_signataire }}</p>
+        {% if signature.est_directeur %}
+        <p><strong>Statut:</strong> <span style="color: #005a9c; font-weight: bold;">Directeur du Programme</span></p>
+        {% endif %}
+        <p><strong>Date de création:</strong> {{ signature.date_creation|date:"d/m/Y à H:i" }}</p>
+        <p><strong>Dernière modification:</strong> {{ signature.date_modification|date:"d/m/Y à H:i" }}</p>
+    </div>
+    {% endif %}
+
+    <div class="info-section">
+        <h3>👥 Membres de la Coordination DESMFMC</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li style="padding: 5px 0;"><strong>TRAORE, Fatoumata</strong> - Directeur du Programme</li>
+            <li style="padding: 5px 0;"><strong>GOÏTA, Issa Souleymane</strong> - Adjoint</li>
+            <li style="padding: 5px 0;"><strong>SIDIBE, Drissa Mansa</strong> - Adjoint</li>
+            <li style="padding: 5px 0;"><strong>SIDIBE, Souleymane</strong> - Adjoint</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+.signature-form {
+    max-width: 600px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #005a9c;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.form-text {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #666;
+}
+
+.current-cachet {
+    margin-bottom: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 10px;
+    width: auto;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.btn-primary {
+    padding: 10px 20px;
+    background: #005a9c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary:hover {
+    background: #004080;
+}
+
+.btn-secondary {
+    padding: 10px 20px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.info-section {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+</style>
+{% endblock %}
+

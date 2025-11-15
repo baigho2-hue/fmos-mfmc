@@ -1,0 +1,141 @@
+{% comment %}
+Composant réutilisable pour les boutons d'impression, téléchargement et envoi PDF
+Usage: {% include 'includes/boutons_pdf.html' with doc_type='liste_etudiants' classe_id=classe.id %}
+{% endcomment %}
+
+<div class="boutons-pdf">
+    <button onclick="window.print()" class="btn-pdf btn-print">
+        🖨️ Imprimer
+    </button>
+    
+    {% if doc_type == 'liste_etudiants' %}
+        {% if classe_id %}
+            <a href="{% url 'pdf_liste_etudiants_classe' classe_id %}" class="btn-pdf btn-download">
+                📥 Télécharger PDF
+            </a>
+            <button onclick="envoyerPDF('liste_etudiants', {{ classe_id }})" class="btn-pdf btn-send">
+                📧 Envoyer par email
+            </button>
+        {% else %}
+            <a href="{% url 'pdf_liste_etudiants' %}" class="btn-pdf btn-download">
+                📥 Télécharger PDF
+            </a>
+        {% endif %}
+    
+    {% elif doc_type == 'stages' %}
+        {% if annee %}
+            <a href="{% url 'pdf_stages_annee' annee %}" class="btn-pdf btn-download">
+                📥 Télécharger PDF
+            </a>
+            <button onclick="envoyerPDF('stages', null, {{ annee }})" class="btn-pdf btn-send">
+                📧 Envoyer par email
+            </button>
+        {% else %}
+            <a href="{% url 'pdf_stages' %}" class="btn-pdf btn-download">
+                📥 Télécharger PDF
+            </a>
+        {% endif %}
+    
+    {% elif doc_type == 'bulletins' %}
+        {% if classe_id %}
+            <a href="{% url 'pdf_bulletins' classe_id %}" class="btn-pdf btn-download">
+                📥 Télécharger PDF
+            </a>
+            <button onclick="envoyerPDF('bulletins', {{ classe_id }})" class="btn-pdf btn-send">
+                📧 Envoyer par email
+            </button>
+        {% endif %}
+    
+    {% elif doc_type == 'lettre_information' %}
+        {% if lettre_id %}
+            <a href="{% url 'pdf_lettre_information' lettre_id %}" class="btn-pdf btn-download">
+                📥 Télécharger PDF
+            </a>
+        {% endif %}
+    
+    {% elif doc_type == 'lettres_informations' %}
+        <a href="{% url 'pdf_lettres_informations' %}" class="btn-pdf btn-download">
+            📥 Télécharger PDF
+        </a>
+    {% endif %}
+</div>
+
+<style>
+.boutons-pdf {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.btn-pdf {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.btn-print {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-print:hover {
+    background: #5a6268;
+}
+
+.btn-download {
+    background: #005a9c;
+    color: white;
+}
+
+.btn-download:hover {
+    background: #004080;
+}
+
+.btn-send {
+    background: #28a745;
+    color: white;
+}
+
+.btn-send:hover {
+    background: #218838;
+}
+</style>
+
+<script>
+function envoyerPDF(docType, classeId = null, annee = null) {
+    const email = prompt('Entrez l\'adresse email du destinataire:');
+    if (!email) return;
+    
+    const formData = new FormData();
+    formData.append('doc_type', docType);
+    formData.append('email', email);
+    if (classeId) formData.append('classe_id', classeId);
+    if (annee) formData.append('annee', annee);
+    
+    fetch('{% url "envoyer_pdf_par_email" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('PDF envoyé avec succès à ' + email);
+        } else {
+            alert('Erreur: ' + (data.error || 'Impossible d\'envoyer le PDF'));
+        }
+    })
+    .catch(error => {
+        alert('Erreur: ' + error.message);
+    });
+}
+</script>
+

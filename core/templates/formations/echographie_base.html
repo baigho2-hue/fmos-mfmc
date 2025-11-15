@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Échographie de base - Formations - FMOS MFMC{% endblock %}
+
+{% block content %}
+<h2>Échographie de base</h2>
+
+{% if user.is_authenticated %}
+<div class="formation-content">
+    <h3>Description du programme</h3>
+    <p>Formation certifiante en échographie de base pour la pratique médicale en soins primaires et en médecine de famille.</p>
+    
+    <h3>Objectifs de la formation</h3>
+    <ul>
+        <li>Maîtriser les bases de l'échographie médicale</li>
+        <li>Apprendre à utiliser les équipements d'échographie</li>
+        <li>Interpréter les images échographiques de base</li>
+        <li>Intégrer l'échographie dans la pratique clinique</li>
+    </ul>
+    
+    <!-- Bouton d'inscription -->
+    {% include 'formations/_bouton_inscription.html' %}
+</div>
+{% else %}
+<div class="access-restricted">
+    <p>🔒 <strong>Contenu réservé aux utilisateurs inscrits</strong></p>
+    <p>Pour accéder au contenu complet de cette formation, veuillez <a href="{% url 'login' %}">vous connecter</a> ou <a href="{% url 'inscription' %}">créer un compte</a>.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.access-restricted {
+    background-color: #f8d7da;
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.access-restricted p {
+    margin: 0.5rem 0;
+    color: #721c24;
+}
+
+.access-restricted a {
+    color: #005a9c;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.formation-content {
+    line-height: 1.8;
+}
+
+.formation-content h3 {
+    color: #005a9c;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.formation-content ul {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.formation-content li {
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %}

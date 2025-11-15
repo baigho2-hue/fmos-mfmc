@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tableau d'Évaluation - DESMFMC{% endblock %}
+
+{% block content %}
+<div class="tableau-container">
+    <div class="tableau-header">
+        <h1>📊 Tableau d'Évaluation</h1>
+        <div class="header-actions">
+            <a href="{% url 'imprimer_tableau_evaluation' tableau.id %}" class="btn-print" target="_blank">🖨️ Imprimer en PDF</a>
+            <a href="{% url 'mon_carnet_stage' %}" class="btn-back">← Retour au carnet</a>
+        </div>
+    </div>
+
+    <div class="tableau-info">
+        <h2>{{ tableau.classe.nom }}</h2>
+        <p><strong>Année :</strong> {{ tableau.annee }}ème année</p>
+        {% if tableau.jalon %}
+            <p><strong>Jalon associé :</strong> {{ tableau.jalon.nom }}</p>
+        {% endif %}
+    </div>
+
+    {% if evaluations %}
+    <div class="evaluations-table-wrapper">
+        <table class="evaluations-table">
+            <thead>
+                <tr>
+                    <th>Compétence</th>
+                    <th>Domaine</th>
+                    <th>Niveau d'acquisition</th>
+                    <th>Commentaire</th>
+                    <th>Date d'évaluation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for eval in evaluations %}
+                <tr>
+                    <td><strong>{{ eval.competence.libelle }}</strong></td>
+                    <td>{{ eval.competence.get_domaine_display }}</td>
+                    <td>
+                        {% if eval.niveau_acquisition %}
+                            <span class="niveau-badge niveau-{{ eval.niveau_acquisition }}">
+                                {{ eval.get_niveau_acquisition_display }}
+                            </span>
+                        {% else %}
+                            <span class="niveau-badge">Non évalué</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ eval.commentaire|default:"-" }}</td>
+                    <td>{{ eval.date_evaluation|date:"d/m/Y"|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="no-data">Aucune compétence évaluée dans ce tableau.</p>
+    {% endif %}
+
+    <div class="actions-section">
+        <a href="{% url 'mon_carnet_stage' %}" class="btn-primary">Retour au carnet</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.tableau-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.tableau-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.tableau-header h1 {
+    color: #005a9c;
+    margin: 0;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.btn-print {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-print:hover {
+    background-color: #218838;
+}
+
+.btn-back {
+    padding: 0.75rem 1.5rem;
+    background-color: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.btn-back:hover {
+    background-color: #5a6268;
+}
+
+.tableau-info {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.tableau-info h2 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.evaluations-table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+}
+
+.evaluations-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.evaluations-table thead {
+    background: #005a9c;
+    color: white;
+}
+
+.evaluations-table th,
+.evaluations-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.evaluations-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.niveau-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+.niveau-1 {
+    background-color: #dc3545;
+    color: white;
+}
+
+.niveau-2 {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.niveau-3 {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.niveau-4 {
+    background-color: #28a745;
+    color: white;
+}
+
+.actions-section {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #004070;
+}
+</style>
+{% endblock %}
+

@@ -1,0 +1,664 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}DESMFMC - Formations - FMOS MFMC{% endblock %}
+
+{% block content %}
+<h2>DESMFMC - Diplôme d'Études Spécialisées en Médecine de Famille et Médecine Communautaire</h2>
+
+{% if user.is_authenticated %}
+    {% if user.est_etudiant or user.est_enseignant %}
+    <div class="formation-content">
+        {% if user.est_etudiant %}
+        <div class="user-info-badge">
+            <p>👤 <strong>Étudiant</strong> - Classe : {{ user.classe|default:"Non renseignée" }}</p>
+        </div>
+        {% elif user.est_enseignant %}
+        <div class="user-info-badge">
+            <p>👨‍🏫 <strong>Enseignant</strong> - Matières : {{ user.matieres|default:"Non renseignées" }}</p>
+            {% if user.a_acces_complet %}
+            <p class="acces-complet-badge">🔓 Accès complet au contenu</p>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <h3>Description du programme</h3>
+        <p>Le DESMFMC est un programme de formation post-universitaire de 4 ans qui prépare les médecins à devenir des spécialistes en médecine de famille. Ce programme combine formation théorique rigoureuse et expérience clinique pratique dans divers contextes de soins.</p>
+        
+        <h3>Objectifs de la formation</h3>
+        <ul>
+            <li>Développer des compétences approfondies en médecine générale</li>
+            <li>Acquérir des connaissances en pédiatrie, gynécologie, psychiatrie</li>
+            <li>Maîtriser la médecine d'urgence et la santé publique</li>
+            <li>Effectuer des stages dans des centres de santé communautaires</li>
+        </ul>
+        
+        <h3>Durée et structure</h3>
+        <p>Le programme s'étend sur 4 ans et comprend des stages pratiques dans des structures de soins primaires, des hôpitaux de district, ainsi que dans les Centres Hospitaliers Universitaires (CHU) qui constituent le sommet de la pyramide de prise en charge.</p>
+        
+        <h3>Conditions d'admission</h3>
+        <p>Les candidats doivent être titulaires d'un diplôme de médecine et réussir le concours d'entrée.</p>
+        
+        <!-- Bouton d'inscription -->
+        {% include 'formations/_bouton_inscription.html' %}
+        
+        <!-- Compétences finales après 4 ans de spécialisation -->
+        <div class="competences-finales-section">
+            <h3>🎓 Compétences Finales du Médecin de Famille/Médecin Communautaire</h3>
+            <p class="competences-intro">Après quatre années de spécialisation dans le programme DESMFMC, le médecin de famille/médecin communautaire acquiert un ensemble complet de compétences lui permettant d'exercer efficacement dans divers contextes de soins de santé primaires et communautaires.</p>
+            
+            <div class="competences-grid">
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">🏥</div>
+                        <h4>Compétences Cliniques</h4>
+                    </div>
+                    <ul>
+                        <li>Diagnostic et prise en charge globale des pathologies courantes en médecine générale</li>
+                        <li>Gestion des urgences médicales en contexte de soins primaires</li>
+                        <li>Soins préventifs, curatifs et palliatifs pour tous les âges</li>
+                        <li>Suivi longitudinal des patients et de leurs familles</li>
+                        <li>Coordination des soins avec les spécialistes et les structures de référence</li>
+                    </ul>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">👨‍👩‍👧‍👦</div>
+                        <h4>Compétences en Médecine Familiale</h4>
+                    </div>
+                    <ul>
+                        <li>Approche centrée sur la famille et le contexte communautaire</li>
+                        <li>Compréhension des déterminants sociaux de la santé</li>
+                        <li>Communication efficace avec les patients et leurs proches</li>
+                        <li>Éducation thérapeutique et promotion de la santé</li>
+                        <li>Gestion des situations complexes impliquant plusieurs membres d'une famille</li>
+                    </ul>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">🏛️</div>
+                        <h4>Compétences en Santé Publique et Communautaire</h4>
+                    </div>
+                    <ul>
+                        <li>Planification et mise en œuvre de programmes de santé communautaire</li>
+                        <li>Surveillance épidémiologique et gestion des épidémies</li>
+                        <li>Organisation et gestion des structures de soins primaires</li>
+                        <li>Formation et supervision des équipes de santé</li>
+                        <li>Recherche en santé communautaire et médecine de famille</li>
+                    </ul>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">🔧</div>
+                        <h4>Compétences en Gestion et Leadership</h4>
+                    </div>
+                    <ul>
+                        <li>Gestion administrative et financière des structures de santé</li>
+                        <li>Leadership d'équipe et coordination interdisciplinaire</li>
+                        <li>Élaboration et suivi de politiques sanitaires</li>
+                        <li>Gestion de la qualité et amélioration continue des soins</li>
+                        <li>Utilisation efficace des systèmes d'information sanitaire</li>
+                    </ul>
+                </div>
+                
+                <div class="competence-card">
+                    <div class="competence-header-with-image">
+                        <div class="competence-icon-container">📚</div>
+                        <h4>Compétences en Pédagogie de Base</h4>
+                    </div>
+                    <ul>
+                        <li>Pédagogie de base pour la formation des étudiants et des équipes de santé</li>
+                        <li>Conception et animation de sessions de formation médicale</li>
+                        <li>Évaluation des apprentissages et suivi pédagogique</li>
+                        <li>Méthodes d'enseignement adaptées au contexte médical</li>
+                        <li>Transmission des connaissances et compétences cliniques</li>
+                    </ul>
+                </div>
+                
+                <div class="competence-card competence-card-echographie">
+                    <div class="competence-header-with-image">
+                        <img src="https://www.frafito.net/919-thickbox_default/echographe-portable-dus60.jpg" alt="Appareil d'échographie" class="echographie-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="echographie-icon-fallback" style="display:none;">📡</span>
+                        <h4>Compétences en Échographie de Première Ligne</h4>
+                    </div>
+                    <ul>
+                        <li>Échographie de première ligne pour le diagnostic en soins primaires</li>
+                        <li>Utilisation de l'échographie pour les urgences médicales courantes</li>
+                        <li>Interprétation des images échographiques de base</li>
+                        <li>Techniques d'échographie abdominale, pelvienne et cardiaque de base</li>
+                        <li>Intégration de l'échographie dans la pratique clinique quotidienne</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sections pour images des médecins de famille -->
+        <div class="images-medecins-section">
+            <h3>📸 Médecins de Famille en Action</h3>
+            <p class="images-intro">Découvrez les différents contextes d'exercice des médecins de famille formés dans le programme DESMFMC.</p>
+            
+            <!-- Fonction Publique -->
+            <div class="contexte-section fonction-publique">
+                <h4>🏛️ Fonction Publique</h4>
+                
+                <div class="sous-section-images">
+                    <div class="image-subsection">
+                        <h5>🏥 Hôpital du District (HD)</h5>
+                        <p class="subsection-description">Anciennement appelés Centre de Santé de Référence (CSRéf), les Hôpitaux du District accueillent les médecins de famille pour la prise en charge des patients nécessitant des soins de niveau secondaire.</p>
+                        <div class="images-container">
+                            <!-- Les images seront ajoutées ici ultérieurement -->
+                            <div class="image-placeholder">
+                                <p>📷 Images à ajouter</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="image-subsection">
+                        <h5>📋 Services Centraux</h5>
+                        <p class="subsection-description">Les médecins de famille peuvent exercer dans les services centraux des différentes structures administratives du système de santé.</p>
+                        
+                        <div class="services-list">
+                            <div class="service-item">
+                                <h6>Direction Régionale de la Santé (DRS)</h6>
+                                <div class="images-container">
+                                    <div class="image-placeholder">
+                                        <p>📷 Images à ajouter</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="service-item">
+                                <h6>Direction Nationale de la Santé (DNS)</h6>
+                                <div class="images-container">
+                                    <div class="image-placeholder">
+                                        <p>📷 Images à ajouter</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="service-item">
+                                <h6>Ministère de la Santé</h6>
+                                <div class="images-container">
+                                    <div class="image-placeholder">
+                                        <p>📷 Images à ajouter</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="service-item">
+                                <h6>Ministère de l'Enseignement Supérieur</h6>
+                                <div class="images-container">
+                                    <div class="image-placeholder">
+                                        <p>📷 Images à ajouter</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="service-item">
+                                <h6>ONASR (Office National d'Appui à la Sécurité Routière)</h6>
+                                <div class="images-container">
+                                    <div class="image-placeholder">
+                                        <p>📷 Images à ajouter</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Secteur Privé -->
+            <div class="contexte-section secteur-prive">
+                <h4>💼 Secteur Privé</h4>
+                
+                <div class="sous-section-images">
+                    <div class="image-subsection">
+                        <h5>🏥 Cabinet Privé</h5>
+                        <p class="subsection-description">Exercice libéral en cabinet privé, offrant des soins de médecine générale et de médecine de famille aux patients.</p>
+                        <div class="images-container">
+                            <div class="image-placeholder">
+                                <p>📷 Images à ajouter</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="image-subsection">
+                        <h5>🏥 Clinique Privée</h5>
+                        <p class="subsection-description">Exercice dans des cliniques privées, participant à la prise en charge des patients dans un contexte de soins organisés.</p>
+                        <div class="images-container">
+                            <div class="image-placeholder">
+                                <p>📷 Images à ajouter</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="image-subsection">
+                        <h5>🤝 ONG (Organisations Non Gouvernementales)</h5>
+                        <p class="subsection-description">Participation aux programmes de santé communautaire et de développement sanitaire menés par les ONG.</p>
+                        <div class="images-container">
+                            <div class="image-placeholder">
+                                <p>📷 Images à ajouter</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="formation-actions">
+            <h3>📚 Programme détaillé</h3>
+            <p>Consultez le programme complet structuré sur 4 ans avec tous les jalons, modules et cours.</p>
+            <a href="{% url 'programme_desmfmc_complet' %}" class="btn-programme">Voir le programme complet →</a>
+        </div>
+        
+        {% if user.est_etudiant %}
+        <div class="formation-agenda">
+            <h3>📅 Agenda de formation</h3>
+            <p>Consultez votre emploi du temps et les événements liés à cette formation dans votre <a href="{% url 'dashboard_etudiant' %}">tableau de bord étudiant</a>.</p>
+            <p>Suivez votre progression dans le programme : <a href="{% url 'ma_progression_programme' %}">Ma progression dans le programme →</a></p>
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="access-restricted">
+        <p>🔒 <strong>Accès restreint</strong></p>
+        <p>Vous n'avez pas les permissions nécessaires pour accéder à ce contenu.</p>
+    </div>
+    {% endif %}
+{% else %}
+<div class="access-restricted">
+    <p>🔒 <strong>Contenu réservé aux utilisateurs inscrits</strong></p>
+    <p>Pour accéder au contenu complet de cette formation, veuillez <a href="{% url 'login' %}">vous connecter</a> ou <a href="{% url 'inscription' %}">créer un compte</a>.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.access-restricted {
+    background-color: #f8d7da;
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.access-restricted p {
+    margin: 0.5rem 0;
+    color: #721c24;
+}
+
+.access-restricted a {
+    color: #005a9c;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.formation-content {
+    line-height: 1.8;
+}
+
+.formation-content h3 {
+    color: #005a9c;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.formation-content ul {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.formation-content li {
+    margin-bottom: 0.5rem;
+}
+
+.user-info-badge {
+    background-color: #e3f2fd;
+    border: 2px solid #005a9c;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+.user-info-badge p {
+    margin: 0.5rem 0;
+    color: #005a9c;
+}
+
+.acces-complet-badge {
+    background-color: #28a745;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-weight: bold;
+}
+
+.formation-agenda {
+    background-color: #f0f8ff;
+    border-left: 4px solid #005a9c;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    border-radius: 5px;
+}
+
+.formation-agenda h3 {
+    margin-top: 0;
+}
+
+.formation-agenda a {
+    color: #005a9c;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.formation-actions {
+    background-color: #e3f2fd;
+    border: 2px solid #005a9c;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.formation-actions h3 {
+    margin-top: 0;
+    color: #005a9c;
+}
+
+.btn-programme {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 1rem 2rem;
+    background-color: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-programme:hover {
+    background-color: #004070;
+}
+
+/* Styles pour la section des compétences finales */
+.competences-finales-section {
+    background-color: #f8f9fa;
+    border: 2px solid #005a9c;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.competences-finales-section h3 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.competences-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.competences-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.competence-card {
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.competence-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 90, 156, 0.15);
+    border-color: #005a9c;
+}
+
+/* Styles uniformes pour toutes les cartes de compétences */
+.competence-header-with-image {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.competence-icon-container {
+    width: 80px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    background-color: #f0f8ff;
+    border: 2px solid #005a9c;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 90, 156, 0.2);
+    flex-shrink: 0;
+}
+
+.competence-card h4 {
+    color: #005a9c;
+    margin: 0;
+    font-size: 1.2rem;
+    border-bottom: none;
+    padding-bottom: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.competence-header-with-image h4 {
+    color: #005a9c;
+    font-size: 1.2rem;
+}
+
+/* Styles spécifiques pour la carte échographie avec image */
+.competence-card-echographie {
+    position: relative;
+    overflow: hidden;
+}
+
+.echographie-image {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid #005a9c;
+    box-shadow: 0 2px 4px rgba(0, 90, 156, 0.2);
+    flex-shrink: 0;
+}
+
+.competence-card ul {
+    margin-left: 1.5rem;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.competence-card li {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+    color: #555;
+}
+
+/* Styles pour la section des images */
+.images-medecins-section {
+    background-color: #ffffff;
+    border: 2px solid #28a745;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.images-medecins-section h3 {
+    color: #28a745;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.images-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 2rem;
+    text-align: justify;
+}
+
+.contexte-section {
+    margin-bottom: 3rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 5px solid;
+}
+
+.contexte-section.fonction-publique {
+    border-left-color: #005a9c;
+}
+
+.contexte-section.secteur-prive {
+    border-left-color: #ffc107;
+}
+
+.contexte-section h4 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.sous-section-images {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.image-subsection {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.image-subsection h5 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.3rem;
+}
+
+.image-subsection h6 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.subsection-description {
+    color: #666;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.service-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem;
+}
+
+.images-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.image-placeholder {
+    background-color: #e9ecef;
+    border: 2px dashed #adb5bd;
+    border-radius: 6px;
+    padding: 2rem;
+    text-align: center;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-placeholder p {
+    color: #6c757d;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .competences-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .images-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .competences-finales-section,
+    .images-medecins-section {
+        padding: 1rem;
+    }
+    
+    .echographie-image,
+    .competence-icon-container {
+        width: 60px;
+        height: 45px;
+    }
+    
+    .competence-icon-container {
+        font-size: 2rem;
+    }
+    
+    .competence-header-with-image {
+        gap: 0.75rem;
+    }
+    
+    .competence-card-echographie .competence-header-with-image h4,
+    .competence-header-with-image h4 {
+        font-size: 1.1rem;
+    }
+}
+</style>
+{% endblock %}
+

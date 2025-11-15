@@ -1,0 +1,89 @@
+/* admin/css/classe_cours_filter.css */
+/* Styles pour l'affichage des cours d'une classe dans l'admin */
+
+.classe-select-wrapper {
+    margin-bottom: 1rem;
+}
+
+.cours-list-display {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    border-left: 4px solid #005a9c;
+    clear: both;
+}
+
+.cours-list-display h4 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    color: #005a9c;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.cours-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cours-items li {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background-color: white;
+    border-left: 3px solid #005a9c;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.cours-items li:hover {
+    background-color: #e9ecef;
+    transform: translateX(3px);
+}
+
+.cours-classe-list {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #e3f2fd;
+    border: 1px solid #90caf9;
+    border-radius: 4px;
+}
+
+.cours-classe-list h4 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    color: #1565c0;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.cours-classe-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cours-classe-list li {
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+    background-color: white;
+    border-left: 3px solid #2196f3;
+    border-radius: 3px;
+}
+
+.classe-select-field {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Style pour le message "Aucun cours" */
+.cours-items li:empty::before {
+    content: "Aucun cours dans cette classe";
+    color: #6c757d;
+    font-style: italic;
+}
+

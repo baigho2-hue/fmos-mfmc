@@ -1,0 +1,458 @@
+{% extends "base.html" %}
+{% load static %}
+{% load programme_tags %}
+
+{% block title %}Ma progression dans le programme - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="progression-container">
+    <div class="progression-header">
+        <h1>Ma progression dans le programme DESMFMC</h1>
+        <p class="formation-name">{{ formation.nom }}</p>
+    </div>
+
+    <!-- Progression globale -->
+    <div class="progression-globale-card">
+        <h2>Progression globale</h2>
+        <div class="progression-globale-content">
+            <div class="progression-circle">
+                <div class="circle-progress" style="--progress: {{ progression_globale }}%">
+                    <span class="progress-value">{{ progression_globale }}%</span>
+                </div>
+            </div>
+            <div class="progression-stats">
+                <div class="stat-item">
+                    <strong>{{ jalons_termines }}</strong> / <strong>{{ total_jalons }}</strong> jalons terminés
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progression par année -->
+    {% for annee, items in progression_par_annee.items %}
+    <div class="annee-progression-section">
+        <div class="annee-progression-header">
+            <h2>Année {{ annee }}</h2>
+            {% with stats=stats_par_annee|get_item:annee %}
+            <div class="stats-annee">
+                <span class="stat-badge">{{ stats.termines }}/{{ stats.total }} jalons terminés</span>
+                <span class="progression-badge">{{ stats.progression }}% complété</span>
+            </div>
+            {% endwith %}
+        </div>
+
+        <div class="jalons-progression-list">
+            {% for item in items %}
+            {% with jalon=item.jalon progression=item.progression %}
+            <div class="jalon-progression-card">
+                <div class="jalon-progression-header">
+                    <h3>{{ jalon.nom }}</h3>
+                    {% if jalon.semestre %}
+                    <span class="badge-semestre">S{{ jalon.semestre }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="jalon-progression-meta">
+                    <div class="meta-item">
+                        📅 {{ jalon.date_debut|date:"d/m/Y" }} - {{ jalon.date_fin|date:"d/m/Y" }}
+                    </div>
+                    <div class="meta-item">
+                        ⏱️ {{ jalon.volume_horaire_total }}h | 📚 {{ jalon.modules.count }} modules
+                    </div>
+                </div>
+
+                {% if progression %}
+                <div class="progression-detail-card">
+                    <div class="progression-bar-large">
+                        <div class="progression-fill" style="width: {{ progression.pourcentage_completion }}%"></div>
+                    </div>
+                    <div class="progression-info-detail">
+                        <div class="progression-left">
+                            <span class="progression-percent">{{ progression.pourcentage_completion }}% complété</span>
+                            <span class="statut-badge statut-{{ progression.statut }}">
+                                {{ progression.get_statut_display }}
+                            </span>
+                        </div>
+                        <div class="progression-right">
+                            {% if progression.note_finale %}
+                            <span class="note-badge">Note : {{ progression.note_finale }}/20</span>
+                            {% endif %}
+                            {% if progression.derniere_activite %}
+                            <span class="date-activite">Dernière activité : {{ progression.derniere_activite|date:"d/m/Y" }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if progression.commentaires %}
+                    <div class="commentaires-section">
+                        <strong>Commentaires :</strong>
+                        <p>{{ progression.commentaires }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="progression-non-commencee">
+                    <p>⏳ Ce jalon n'a pas encore été commencé.</p>
+                </div>
+                {% endif %}
+
+                <div class="jalon-actions">
+                    <a href="{% url 'detail_jalon' jalon.id %}" class="btn-detail">Voir le détail →</a>
+                </div>
+            </div>
+            {% endwith %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.progression-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.progression-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 3px solid #005a9c;
+}
+
+.progression-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.formation-name {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.progression-globale-card {
+    background: linear-gradient(135deg, #005a9c 0%, #004070 100%);
+    color: white;
+    padding: 3rem;
+    border-radius: 15px;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.progression-globale-card h2 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.progression-globale-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+}
+
+.circle-progress {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(#28a745 0% var(--progress), rgba(255,255,255,0.3) var(--progress) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.circle-progress::before {
+    content: '';
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: #005a9c;
+}
+
+.progress-value {
+    position: relative;
+    z-index: 1;
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.progression-stats {
+    text-align: left;
+}
+
+.stat-item {
+    font-size: 1.5rem;
+}
+
+.annee-progression-section {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    border: 2px solid #005a9c;
+}
+
+.annee-progression-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.annee-progression-header h2 {
+    color: #005a9c;
+    margin: 0;
+    font-size: 2rem;
+}
+
+.stats-annee {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.stat-badge, .progression-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.stat-badge {
+    background-color: #e3f2fd;
+    color: #005a9c;
+}
+
+.progression-badge {
+    background-color: #28a745;
+    color: white;
+}
+
+.jalons-progression-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.jalon-progression-card {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 2px solid #e0e0e0;
+}
+
+.jalon-progression-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.jalon-progression-header h3 {
+    color: #005a9c;
+    margin: 0;
+    flex: 1;
+}
+
+.jalon-progression-meta {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.progression-detail-card {
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background-color: #e3f2fd;
+    border-radius: 8px;
+    border: 2px solid #005a9c;
+}
+
+.progression-bar-large {
+    width: 100%;
+    height: 30px;
+    background-color: #e9ecef;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.progression-fill {
+    height: 100%;
+    background-color: #28a745;
+    transition: width 0.5s ease;
+}
+
+.progression-info-detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.progression-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.progression-percent {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #005a9c;
+}
+
+.progression-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.note-badge {
+    background-color: #ffc107;
+    color: #333;
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    font-weight: bold;
+}
+
+.date-activite {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.commentaires-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #005a9c;
+}
+
+.commentaires-section p {
+    margin: 0.5rem 0 0 0;
+    color: #333;
+    font-style: italic;
+}
+
+.progression-non-commencee {
+    text-align: center;
+    padding: 2rem;
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+}
+
+.progression-non-commencee p {
+    margin: 0;
+    color: #856404;
+    font-size: 1.1rem;
+}
+
+.jalon-actions {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.btn-detail {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-detail:hover {
+    background-color: #004070;
+}
+
+.statut-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+.statut-non_commence {
+    background-color: #6c757d;
+    color: white;
+}
+
+.statut-en_cours {
+    background-color: #007bff;
+    color: white;
+}
+
+.statut-termine {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.statut-valide {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-semestre {
+    background-color: #ffc107;
+    color: #333;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+@media screen and (max-width: 768px) {
+    .progression-container {
+        padding: 1rem;
+    }
+    
+    .progression-globale-content {
+        flex-direction: column;
+    }
+    
+    .annee-progression-header {
+        flex-direction: column;
+        align-items: start;
+    }
+    
+    .progression-info-detail {
+        flex-direction: column;
+        align-items: start;
+    }
+    
+    .progression-right {
+        align-items: flex-start;
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+

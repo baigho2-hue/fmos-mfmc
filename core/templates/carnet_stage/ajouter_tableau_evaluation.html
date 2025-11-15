@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ajouter Tableau d'Évaluation - DESMFMC{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h1>➕ Ajouter un tableau d'évaluation</h1>
+        <a href="{% url 'mon_carnet_stage' %}" class="btn-back">← Retour au carnet</a>
+    </div>
+
+    <form method="post" class="evaluation-form">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <h2>Informations du tableau</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>{{ form.classe.label }}</label>
+                    {{ form.classe }}
+                    {% if form.classe.errors %}
+                        <div class="error">{{ form.classe.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label>{{ form.jalon.label }}</label>
+                    {{ form.jalon }}
+                    {% if form.jalon.errors %}
+                        <div class="error">{{ form.jalon.errors }}</div>
+                    {% endif %}
+                    <small>Optionnel : associer ce tableau à un jalon</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>{{ form.annee.label }}</label>
+                    {{ form.annee }}
+                    {% if form.annee.errors %}
+                        <div class="error">{{ form.annee.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>{{ form.competences.label }}</label>
+                    {{ form.competences }}
+                    {% if form.competences.errors %}
+                        <div class="error">{{ form.competences.errors }}</div>
+                    {% endif %}
+                    <small>Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs compétences</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Créer le tableau</button>
+            <a href="{% url 'mon_carnet_stage' %}" class="btn-cancel">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.form-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.form-header h1 {
+    color: #005a9c;
+    margin: 0;
+}
+
+.evaluation-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section h2 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.form-group select[multiple] {
+    min-height: 200px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #005a9c;
+    box-shadow: 0 0 0 2px rgba(0, 90, 156, 0.2);
+}
+
+.form-group small {
+    color: #666;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #eee;
+}
+
+.btn-submit {
+    padding: 0.75rem 2rem;
+    background-color: #005a9c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-submit:hover {
+    background-color: #004070;
+}
+
+.btn-cancel {
+    padding: 0.75rem 2rem;
+    background-color: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-cancel:hover {
+    background-color: #5a6268;
+}
+</style>
+{% endblock %}
+
