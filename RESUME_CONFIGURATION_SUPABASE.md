@@ -34,7 +34,7 @@ Votre application Django est maintenant connectée à Supabase PostgreSQL.
 - **Host** : `aws-1-eu-north-1.pooler.supabase.com`
 - **Port** : `5432`
 - **Database** : `postgres`
-- **User** : `postgres.bmfkvwpfeuyserrfrqjb`
+- **User** : `postgres.VOTRE_PROJECT_ID`
 - **URL complète** : Configurée dans `.env` (fichier sécurisé, non versionné)
 
 ### Superutilisateur Django

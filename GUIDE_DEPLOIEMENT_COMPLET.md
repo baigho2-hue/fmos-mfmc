@@ -40,7 +40,7 @@ Dans Railway, allez dans **Variables** et ajoutez :
 SECRET_KEY=votre-cle-secrete-tres-longue-et-aleatoire-generee
 DEBUG=False
 ALLOWED_HOSTS=votre-app.railway.app,*.railway.app
-DATABASE_URL=postgresql://postgres.bmfkvwpfeuyserrfrqjb:Yiriba_19Soul@aws-1-eu-north-1.pooler.supabase.com:5432/postgres
+DATABASE_URL=postgresql://postgres.VOTRE_PROJECT_ID:VOTRE_MOT_DE_PASSE@aws-1-eu-north-1.pooler.supabase.com:5432/postgres
 ```
 
 **Important** :
@@ -117,7 +117,7 @@ Dans **Environment Variables**, ajoutez :
 SECRET_KEY=votre-cle-secrete-tres-longue-et-aleatoire
 DEBUG=False
 ALLOWED_HOSTS=votre-app.onrender.com
-DATABASE_URL=postgresql://postgres.bmfkvwpfeuyserrfrqjb:Yiriba_19Soul@aws-1-eu-north-1.pooler.supabase.com:5432/postgres
+DATABASE_URL=postgresql://postgres.VOTRE_PROJECT_ID:VOTRE_MOT_DE_PASSE@aws-1-eu-north-1.pooler.supabase.com:5432/postgres
 ```
 
 ### Étape 4 : Configurer les migrations

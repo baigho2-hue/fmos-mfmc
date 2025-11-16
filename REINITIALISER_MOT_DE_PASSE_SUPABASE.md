@@ -44,7 +44,7 @@ Si votre nouveau mot de passe contient des caractères spéciaux, ils doivent ê
 **Exemple** :
 - Mot de passe : `MonNouveauMot@123`
 - Encodé : `MonNouveauMot%40123`
-- URL : `postgresql://postgres.bmfkvwpfeuyserrfrqjb:MonNouveauMot%40123@aws-1-eu-north-1.pooler.supabase.com:5432/postgres`
+- URL : `postgresql://postgres.VOTRE_PROJECT_ID:MonNouveauMot%40123@aws-1-eu-north-1.pooler.supabase.com:5432/postgres`
 
 ---
 
@@ -53,7 +53,7 @@ Si votre nouveau mot de passe contient des caractères spéciaux, ils doivent ê
 Votre URL devrait ressembler à :
 
 ```
-postgresql://postgres.bmfkvwpfeuyserrfrqjb:VOTRE_NOUVEAU_MOT_DE_PASSE_ENCODE@aws-1-eu-north-1.pooler.supabase.com:5432/postgres
+postgresql://postgres.VOTRE_PROJECT_ID:VOTRE_NOUVEAU_MOT_DE_PASSE_ENCODE@aws-1-eu-north-1.pooler.supabase.com:5432/postgres
 ```
 
 ---

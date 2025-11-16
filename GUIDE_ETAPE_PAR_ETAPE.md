@@ -115,7 +115,7 @@ Cliquez sur **"New Variable"** et ajoutez une par une :
 
 #### Variable 4 : DATABASE_URL
 - **Name** : `DATABASE_URL`
-- **Value** : `postgresql://postgres.bmfkvwpfeuyserrfrqjb:Yiriba_19Soul@aws-1-eu-north-1.pooler.supabase.com:5432/postgres`
+- **Value** : `postgresql://postgres.VOTRE_PROJECT_ID:VOTRE_MOT_DE_PASSE@aws-1-eu-north-1.pooler.supabase.com:5432/postgres`
 
 ### 4.3. Générer une SECRET_KEY
 

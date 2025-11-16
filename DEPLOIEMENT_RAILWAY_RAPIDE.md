@@ -37,7 +37,7 @@ Dans Railway, allez dans votre projet > **Variables** et ajoutez :
 SECRET_KEY=_^#er8(9esr5je=%uv=$30_8g!$oishls%8a^8mlzn^5k+6)tw
 DEBUG=False
 ALLOWED_HOSTS=*.railway.app
-DATABASE_URL=postgresql://postgres.bmfkvwpfeuyserrfrqjb:Yiriba_19Soul@aws-1-eu-north-1.pooler.supabase.com:5432/postgres
+DATABASE_URL=postgresql://postgres.VOTRE_PROJECT_ID:VOTRE_MOT_DE_PASSE@aws-1-eu-north-1.pooler.supabase.com:5432/postgres
 ```
 
 **⚠️ Important** :
