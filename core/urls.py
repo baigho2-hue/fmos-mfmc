@@ -10,6 +10,7 @@ from core import views_med6
 from core import views_carnet_stage
 from core import views_superviseur_stage
 from core import views_2fa
+from core import views_setup  # noqa: F401 - Vues temporaires pour la configuration Render
 
 urlpatterns = [
     # Admin
@@ -154,6 +155,14 @@ urlpatterns = [
     path('formations/inscrire/', views.inscription_formations, name='inscription_formations'),
     path('formations/inscrire/<str:formation_slug>/', views.inscription_formations, name='inscrire_formation'),
     path('formations/mes-formations/', views.mes_formations, name='mes_formations'),
+    
+    # ⚠️ VUES TEMPORAIRES POUR CONFIGURATION RENDER - À SUPPRIMER APRÈS CONFIGURATION
+    # noqa: F401 - Code temporaire pour configuration initiale Render
+    path('setup/', views_setup.setup_dashboard, name='setup_dashboard'),
+    path('setup/migrate/', views_setup.setup_migrate, name='setup_migrate'),
+    path('setup/create-superuser/', views_setup.setup_create_superuser, name='setup_create_superuser'),
+    path('setup/init-programme/', views_setup.setup_init_programme, name='setup_init_programme'),
+    path('setup/status/', views_setup.setup_status, name='setup_status'),
 ]
 
 # Ajouter les vues de formation pour éviter les erreurs Reverse
@@ -164,20 +173,8 @@ formation_vues = [
     'base_pedagogie', 'cours_med6', 'habilites_cliniques'
 ]
 
-# Les vues desmfmc, sante_communautaire, etc. sont déjà disponibles via formations/
-# Pas besoin de routes programme/ séparées pour éviter les conflits
-# programme_vues = [
-#     'desmfmc', 'sante_communautaire', 'recherche', 
-#     'echographie_base', 'pedagogie_sante', 'autres_programmes'
-# ]
-
 for vue in formation_vues:
     urlpatterns.append(path(f'formations/{vue}/', getattr(views, vue), name=vue))
-
-# Les routes programme/ pour ces vues sont supprimées car elles créent des conflits
-# Utilisez les routes formations/ à la place
-# for vue in programme_vues:
-#     urlpatterns.append(path(f'programme/{vue}/', getattr(views, vue), name=vue))
 
 # Servir les fichiers statiques et media en debug
 if settings.DEBUG:

@@ -1,0 +1,32 @@
+services:
+  # Service Web Django
+  - type: web
+    name: fmos-mfmc
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput
+    startCommand: gunicorn core.wsgi:application --bind 0.0.0.0:$PORT --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DJANGO_SETTINGS_MODULE
+        value: core.settings
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        value: fmos-mfmc.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fmos-mfmc-db
+          property: connectionString
+    healthCheckPath: /
+
+databases:
+  # Base de données PostgreSQL
+  - name: fmos-mfmc-db
+    plan: free
+    databaseName: fmos_mfmc
+    user: fmos_mfmc_user
+
