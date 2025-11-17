@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Messagerie{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>📧 Messagerie</h1>
+                <a href="{% url 'messagerie_envoyer' %}" class="btn btn-primary">
+                    <i class="fas fa-envelope"></i> Nouveau message
+                </a>
+            </div>
+            
+            {% if nb_messages_non_lus > 0 %}
+            <div class="alert alert-info">
+                Vous avez <strong>{{ nb_messages_non_lus }}</strong> message(s) non lu(s).
+            </div>
+            {% endif %}
+            
+            {% if page_obj %}
+            <div class="list-group">
+                {% for conversation in page_obj %}
+                <a href="{% url 'messagerie_conversation' conversation.utilisateur_id %}" 
+                   class="list-group-item list-group-item-action {% if conversation.nb_non_lus > 0 %}list-group-item-warning{% endif %}">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">
+                            {{ conversation.username }}
+                            {% if conversation.nb_non_lus > 0 %}
+                            <span class="badge bg-danger">{{ conversation.nb_non_lus }}</span>
+                            {% endif %}
+                        </h5>
+                        <small>{{ conversation.dernier_message|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    <p class="mb-1 text-muted">{{ conversation.email }}</p>
+                </a>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Précédent</a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Suivant</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+            
+            {% else %}
+            <div class="alert alert-info">
+                <p>Aucune conversation pour le moment.</p>
+                <a href="{% url 'messagerie_envoyer' %}" class="btn btn-primary">Envoyer votre premier message</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

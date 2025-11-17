@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Conversation avec {{ autre_utilisateur.username }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>💬 Conversation avec {{ autre_utilisateur.username }}</h1>
+                <a href="{% url 'messagerie_liste' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+            
+            <!-- Zone de messages -->
+            <div class="card mb-4" style="max-height: 600px; overflow-y: auto;">
+                <div class="card-body">
+                    {% for message in messages %}
+                    <div class="mb-4 {% if message.expediteur == request.user %}text-end{% endif %}">
+                        <div class="d-inline-block p-3 rounded {% if message.expediteur == request.user %}bg-primary text-white{% else %}bg-light{% endif %}" 
+                             style="max-width: 70%;">
+                            <div class="d-flex justify-content-between mb-2">
+                                <strong>{{ message.expediteur.username }}</strong>
+                                <small class="ms-3">{{ message.date_envoi|date:"d/m/Y H:i" }}</small>
+                            </div>
+                            {% if message.sujet %}
+                            <h6 class="mb-2">{{ message.sujet }}</h6>
+                            {% endif %}
+                            <p class="mb-0">{{ message.contenu|linebreaks }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center">Aucun message dans cette conversation.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Formulaire de réponse -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Répondre</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'messagerie_envoyer' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="destinataire_id" value="{{ autre_utilisateur.id }}">
+                        <div class="mb-3">
+                            <label for="sujet" class="form-label">Sujet (optionnel)</label>
+                            <input type="text" class="form-control" id="sujet" name="sujet" 
+                                   placeholder="Réponse à votre message...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="contenu" class="form-label">Message</label>
+                            <textarea class="form-control" id="contenu" name="contenu" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Envoyer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-scroll vers le bas au chargement
+window.addEventListener('load', function() {
+    const cardBody = document.querySelector('.card-body');
+    if (cardBody) {
+        cardBody.scrollTop = cardBody.scrollHeight;
+    }
+});
+</script>
+{% endblock %}
+

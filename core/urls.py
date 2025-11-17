@@ -11,6 +11,7 @@ from core import views_carnet_stage
 from core import views_superviseur_stage
 from core import views_2fa
 from core import views_setup  # noqa: F401 - Vues temporaires pour la configuration Render
+from django.urls import include
 
 urlpatterns = [
     # Admin
@@ -41,6 +42,9 @@ urlpatterns = [
     path('etudiants/', views.etudiants, name='etudiants'),
     path('contact/', views.contact, name='contact'),
     path('inscription/', views.inscription, name='inscription'),
+    
+    # Messagerie interne
+    path('messagerie/', include('apps.communications.urls')),
     path('login/', views.login_view, name='login'),
     path('login/med6/', views_med6.login_med6, name='login_med6'),
     path('logout/', views.logout_view, name='logout'),
