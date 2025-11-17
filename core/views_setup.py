@@ -73,9 +73,21 @@ def setup_create_superuser(request):
             stdout=output
         )
         result = output.getvalue()
+        
+        # Corriger le type_utilisateur et niveau_acces du superutilisateur créé
+        try:
+            from apps.utilisateurs.models import Utilisateur
+            user = Utilisateur.objects.get(username=username)
+            user.type_utilisateur = 'enseignant'
+            user.niveau_acces = 'complet'
+            user.save()
+        except Exception as e:
+            # Ne pas bloquer si la correction échoue
+            print(f"⚠️  Impossible de corriger le type utilisateur : {e}")
+        
         return JsonResponse({
             'success': True,
-            'message': f'Superutilisateur "{username}" créé avec succès',
+            'message': f'Superutilisateur "{username}" créé avec succès (enseignant avec accès complet)',
             'output': result
         })
     except Exception as e:

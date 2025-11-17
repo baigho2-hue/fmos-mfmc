@@ -70,7 +70,9 @@ class Command(BaseCommand):
                 is_staff=True,
                 is_superuser=True,
                 is_active=True,
-                email_verifie=True  # Superutilisateur = email vérifié
+                email_verifie=True,  # Superutilisateur = email vérifié
+                type_utilisateur='enseignant',  # Superutilisateur = enseignant
+                niveau_acces='complet'  # Accès complet pour superutilisateur
             )
             
             self.stdout.write(self.style.SUCCESS(
