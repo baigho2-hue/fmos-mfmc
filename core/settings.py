@@ -17,6 +17,11 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 # Auth user personnalisé
 AUTH_USER_MODEL = 'utilisateurs.Utilisateur'
 
+# Configuration de l'authentification
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
 # Applications installées
 INSTALLED_APPS = [
     'django.contrib.admin',

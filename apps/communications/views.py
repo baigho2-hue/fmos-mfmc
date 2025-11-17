@@ -10,7 +10,7 @@ from .models import Message
 from apps.utilisateurs.models import Utilisateur
 
 
-@login_required
+@login_required(login_url='/login/')
 def messagerie_liste(request):
     """Liste des conversations (boîte de réception)"""
     utilisateur = request.user
@@ -76,7 +76,7 @@ def messagerie_liste(request):
     return render(request, 'communications/messagerie_liste.html', context)
 
 
-@login_required
+@login_required(login_url='/login/')
 def messagerie_conversation(request, utilisateur_id):
     """Affiche la conversation avec un utilisateur spécifique"""
     utilisateur = request.user
@@ -109,7 +109,7 @@ def messagerie_conversation(request, utilisateur_id):
     return render(request, 'communications/messagerie_conversation.html', context)
 
 
-@login_required
+@login_required(login_url='/login/')
 def messagerie_envoyer(request):
     """Envoyer un nouveau message"""
     if request.method == 'POST':
@@ -160,7 +160,7 @@ def messagerie_envoyer(request):
     return render(request, 'communications/messagerie_envoyer.html', context)
 
 
-@login_required
+@login_required(login_url='/login/')
 def messagerie_detail(request, message_id):
     """Affiche un message spécifique"""
     message = get_object_or_404(Message, id=message_id)
@@ -181,7 +181,7 @@ def messagerie_detail(request, message_id):
     return render(request, 'communications/messagerie_detail.html', context)
 
 
-@login_required
+@login_required(login_url='/login/')
 def messagerie_supprimer(request, message_id):
     """Supprime un message (soft delete)"""
     message = get_object_or_404(Message, id=message_id)
@@ -202,7 +202,7 @@ def messagerie_supprimer(request, message_id):
     return redirect('messagerie_liste')
 
 
-@login_required
+@login_required(login_url='/login/')
 def messagerie_marquer_lu(request, message_id):
     """Marque un message comme lu (AJAX)"""
     message = get_object_or_404(Message, id=message_id)
@@ -214,7 +214,7 @@ def messagerie_marquer_lu(request, message_id):
     return JsonResponse({'success': False, 'error': 'Accès refusé'})
 
 
-@login_required
+@login_required(login_url='/login/')
 def messagerie_nb_non_lus(request):
     """Retourne le nombre de messages non lus (AJAX)"""
     nb_non_lus = Message.objects.filter(
