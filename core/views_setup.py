@@ -162,62 +162,91 @@ def setup_dashboard(request):
     Page de dashboard pour la configuration
     URL: /setup/?token=VOTRE_TOKEN
     """
-    if not _check_secret_token(request):
-        return HttpResponse('''
+    try:
+        if not _check_secret_token(request):
+            return HttpResponse('''
+            <html>
+            <head><title>Accès refusé</title></head>
+            <body>
+                <h1>❌ Accès refusé</h1>
+                <p>Token invalide ou manquant.</p>
+                <p>Utilisez: /setup/?token=VOTRE_TOKEN</p>
+            </body>
+            </html>
+            ''', status=403)
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        return HttpResponse(f'''
         <html>
-        <head><title>Accès refusé</title></head>
+        <head><title>Erreur</title></head>
         <body>
-            <h1>❌ Accès refusé</h1>
-            <p>Token invalide ou manquant.</p>
-            <p>Utilisez: /setup/?token=VOTRE_TOKEN</p>
+            <h1>❌ Erreur lors de la vérification du token</h1>
+            <p>Erreur : {str(e)}</p>
+            <pre>{error_details}</pre>
         </body>
         </html>
-        ''', status=403)
+        ''', status=500)
     
-    return HttpResponse('''
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Configuration Render - FMOS MFMC</title>
-        <meta charset="utf-8">
-        <style>
-            body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
-            .button { display: inline-block; padding: 10px 20px; margin: 5px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
-            .button:hover { background: #0056b3; }
-            .success { color: green; }
-            .error { color: red; }
-            .output { background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 10px 0; white-space: pre-wrap; }
-        </style>
-    </head>
-    <body>
-        <h1>⚙️ Configuration Render - FMOS MFMC</h1>
-        
-        <h2>Étapes de configuration</h2>
-        
-        <h3>1. Appliquer les migrations</h3>
-        <a href="/setup/migrate/?token=''' + request.GET.get('token', '') + '''" class="button">Appliquer les migrations</a>
-        
-        <h3>2. Créer un superutilisateur</h3>
-        <form method="GET" action="/setup/create-superuser/" style="margin: 10px 0;">
-            <input type="hidden" name="token" value="''' + request.GET.get('token', '') + '''">
-            <p>
-                <label>Username: <input type="text" name="username" value="admin" required></label><br>
-                <label>Email: <input type="email" name="email" value="admin@example.com" required></label><br>
-                <label>Password: <input type="password" name="password" required></label><br>
-                <button type="submit" class="button">Créer le superutilisateur</button>
-            </p>
-        </form>
-        
-        <h3>3. Initialiser le programme DESMFMC</h3>
-        <a href="/setup/init-programme/?token=''' + request.GET.get('token', '') + '''&type=detaille" class="button">Initialiser (détaillé)</a>
-        <a href="/setup/init-programme/?token=''' + request.GET.get('token', '') + '''&type=base" class="button">Initialiser (base)</a>
-        
-        <h3>4. Vérifier le statut</h3>
-        <a href="/setup/status/?token=''' + request.GET.get('token', '') + '''" class="button">Vérifier le statut</a>
-        
-        <hr>
-        <p><small>⚠️ Supprimez ces vues après la configuration pour des raisons de sécurité.</small></p>
-    </body>
-    </html>
-    ''')
+    try:
+        token = request.GET.get('token', '')
+        return HttpResponse(f'''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Configuration Render - FMOS MFMC</title>
+            <meta charset="utf-8">
+            <style>
+                body {{ font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }}
+                .button {{ display: inline-block; padding: 10px 20px; margin: 5px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }}
+                .button:hover {{ background: #0056b3; }}
+                .success {{ color: green; }}
+                .error {{ color: red; }}
+                .output {{ background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 10px 0; white-space: pre-wrap; }}
+            </style>
+        </head>
+        <body>
+            <h1>⚙️ Configuration Render - FMOS MFMC</h1>
+            
+            <h2>Étapes de configuration</h2>
+            
+            <h3>1. Appliquer les migrations</h3>
+            <a href="/setup/migrate/?token={token}" class="button">Appliquer les migrations</a>
+            
+            <h3>2. Créer un superutilisateur</h3>
+            <form method="GET" action="/setup/create-superuser/" style="margin: 10px 0;">
+                <input type="hidden" name="token" value="{token}">
+                <p>
+                    <label>Username: <input type="text" name="username" value="admin" required></label><br>
+                    <label>Email: <input type="email" name="email" value="admin@example.com" required></label><br>
+                    <label>Password: <input type="password" name="password" required></label><br>
+                    <button type="submit" class="button">Créer le superutilisateur</button>
+                </p>
+            </form>
+            
+            <h3>3. Initialiser le programme DESMFMC</h3>
+            <a href="/setup/init-programme/?token={token}&type=detaille" class="button">Initialiser (détaillé)</a>
+            <a href="/setup/init-programme/?token={token}&type=base" class="button">Initialiser (base)</a>
+            
+            <h3>4. Vérifier le statut</h3>
+            <a href="/setup/status/?token={token}" class="button">Vérifier le statut</a>
+            
+            <hr>
+            <p><small>⚠️ Supprimez ces vues après la configuration pour des raisons de sécurité.</small></p>
+        </body>
+        </html>
+        ''')
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        return HttpResponse(f'''
+        <html>
+        <head><title>Erreur</title></head>
+        <body>
+            <h1>❌ Erreur lors du chargement de la page</h1>
+            <p>Erreur : {str(e)}</p>
+            <pre>{error_details}</pre>
+        </body>
+        </html>
+        ''', status=500)
 
