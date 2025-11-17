@@ -76,30 +76,52 @@ if 'DATABASE_URL' in os.environ:
     import dj_database_url
     
     # Récupérer l'URL de la base de données
-    database_url = os.environ.get('DATABASE_URL')
+    database_url = os.environ.get('DATABASE_URL', '')
     
-    # Pour Render PostgreSQL, s'assurer que SSL est activé dans l'URL
-    # Si l'URL ne contient pas déjà sslmode, l'ajouter
-    if 'render.com' in database_url and 'sslmode' not in database_url:
-        # Ajouter sslmode=require à l'URL si elle se termine par le nom de la base
-        if '?' not in database_url:
-            database_url += '?sslmode=require'
+    # Pour Render PostgreSQL, configuration SSL robuste
+    if 'render.com' in database_url:
+        # Les URLs internes Render (commencent par dpg-) n'ont PAS besoin de SSL
+        # Les URLs externes nécessitent SSL
+        
+        # Détecter si c'est une URL interne (contient dpg-)
+        is_internal = 'dpg-' in database_url
+        
+        if is_internal:
+            # URL interne : Retirer sslmode de l'URL si présent (pas besoin de SSL)
+            if 'sslmode' in database_url:
+                import re
+                database_url = re.sub(r'[?&]sslmode=[^&]*', '', database_url)
+                # Nettoyer les ? ou & en double
+                database_url = database_url.replace('??', '?').replace('&&', '&')
+                if database_url.endswith('?') or database_url.endswith('&'):
+                    database_url = database_url[:-1]
+            
+            # Parser l'URL
+            db_config = dj_database_url.parse(database_url)
+            
+            # Pas d'options SSL pour les URLs internes
+            db_config['OPTIONS'] = {
+                'connect_timeout': 10,
+            }
         else:
-            database_url += '&sslmode=require'
-    
-    # Parser l'URL avec dj-database-url
-    db_config = dj_database_url.parse(database_url)
-    
-    # Configuration SSL supplémentaire pour Render PostgreSQL
-    # Render nécessite SSL pour les connexions
-    if 'render.com' in db_config.get('HOST', ''):
-        # Options SSL pour psycopg2
-        db_config['OPTIONS'] = {
-            'sslmode': 'require',
-            'connect_timeout': 10,
-        }
+            # URL externe : Utiliser SSL avec mode prefer (plus flexible)
+            if 'sslmode' not in database_url:
+                if '?' not in database_url:
+                    database_url += '?sslmode=prefer'
+                else:
+                    database_url += '&sslmode=prefer'
+            
+            db_config = dj_database_url.parse(database_url)
+            db_config['OPTIONS'] = {
+                'sslmode': 'prefer',  # Plus flexible que 'require'
+                'connect_timeout': 10,
+            }
+        
         # Réutiliser les connexions pour éviter les fermetures inattendues
         db_config['CONN_MAX_AGE'] = 600
+    else:
+        # Pour les autres providers (Railway, etc.)
+        db_config = dj_database_url.parse(database_url)
     
     DATABASES = {
         'default': db_config
