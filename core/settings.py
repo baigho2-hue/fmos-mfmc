@@ -74,8 +74,35 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Si DATABASE_URL existe (Railway, Render, etc.), l'utiliser
 if 'DATABASE_URL' in os.environ:
     import dj_database_url
+    
+    # Récupérer l'URL de la base de données
+    database_url = os.environ.get('DATABASE_URL')
+    
+    # Pour Render PostgreSQL, s'assurer que SSL est activé dans l'URL
+    # Si l'URL ne contient pas déjà sslmode, l'ajouter
+    if 'render.com' in database_url and 'sslmode' not in database_url:
+        # Ajouter sslmode=require à l'URL si elle se termine par le nom de la base
+        if '?' not in database_url:
+            database_url += '?sslmode=require'
+        else:
+            database_url += '&sslmode=require'
+    
+    # Parser l'URL avec dj-database-url
+    db_config = dj_database_url.parse(database_url)
+    
+    # Configuration SSL supplémentaire pour Render PostgreSQL
+    # Render nécessite SSL pour les connexions
+    if 'render.com' in db_config.get('HOST', ''):
+        # Options SSL pour psycopg2
+        db_config['OPTIONS'] = {
+            'sslmode': 'require',
+            'connect_timeout': 10,
+        }
+        # Réutiliser les connexions pour éviter les fermetures inattendues
+        db_config['CONN_MAX_AGE'] = 600
+    
     DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+        'default': db_config
     }
 else:
     # Sinon, utiliser la configuration normale avec variables d'environnement
