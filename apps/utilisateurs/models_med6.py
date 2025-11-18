@@ -149,16 +149,25 @@ class EtudiantMed6(models.Model):
     def verifier_identite(self, matricule, prenom, nom):
         """
         Vérifie si les informations fournies correspondent à cet étudiant
-        Comparaison insensible à la casse et aux accents
+        Comparaison insensible à la casse, aux accents et aux espaces multiples
         """
         import unicodedata
+        import re
         
         def normalize_text(text):
             """Normalise le texte pour la comparaison"""
             if not text:
                 return ""
-            # Convertir en minuscules et supprimer les accents
-            text = unicodedata.normalize('NFD', str(text).lower().strip())
+            # Convertir en chaîne et nettoyer
+            text = str(text)
+            # Supprimer les espaces en début et fin
+            text = text.strip()
+            # Remplacer les espaces multiples par un seul espace
+            text = re.sub(r'\s+', ' ', text)
+            # Convertir en minuscules
+            text = text.lower()
+            # Supprimer les accents
+            text = unicodedata.normalize('NFD', text)
             text = ''.join(c for c in text if unicodedata.category(c) != 'Mn')
             return text
         
@@ -173,6 +182,7 @@ class EtudiantMed6(models.Model):
         """
         Récupère un étudiant actif avec une liste non expirée
         VALIDATION STRICTE: Le matricule, le nom ET le prénom doivent tous correspondre
+        La comparaison est insensible à la casse, aux accents et aux espaces multiples
         
         Args:
             matricule: Numéro de matricule de l'étudiant
@@ -182,10 +192,17 @@ class EtudiantMed6(models.Model):
         Returns:
             EtudiantMed6 si trouvé et validé, None sinon
         """
-        # Normaliser les entrées
+        import re
+        
+        # Normaliser les entrées (nettoyer les espaces)
         matricule = str(matricule).strip() if matricule else ""
         prenom = str(prenom).strip() if prenom else ""
         nom = str(nom).strip() if nom else ""
+        
+        # Remplacer les espaces multiples par un seul espace
+        matricule = re.sub(r'\s+', ' ', matricule)
+        prenom = re.sub(r'\s+', ' ', prenom)
+        nom = re.sub(r'\s+', ' ', nom)
         
         # Vérifier que tous les champs sont remplis
         if not matricule or not prenom or not nom:
@@ -202,9 +219,10 @@ class EtudiantMed6(models.Model):
         # IMPORTANT: On cherche d'abord par matricule, puis on valide nom ET prénom
         for liste in listes_valides:
             try:
+                # Recherche insensible à la casse pour le matricule
                 etudiant = cls.objects.get(
                     liste=liste,
-                    matricule__iexact=matricule,  # Recherche insensible à la casse
+                    matricule__iexact=matricule,
                     actif=True
                 )
                 # VALIDATION STRICTE: Vérifier que le matricule, nom ET prénom correspondent
@@ -222,6 +240,17 @@ class EtudiantMed6(models.Model):
                 for etudiant in etudiants:
                     if etudiant.verifier_identite(matricule, prenom, nom):
                         return etudiant
+        
+        # Si pas trouvé par matricule exact, essayer une recherche plus flexible
+        # en cherchant tous les étudiants actifs et en comparant les noms normalisés
+        for liste in listes_valides:
+            etudiants = cls.objects.filter(
+                liste=liste,
+                actif=True
+            )
+            for etudiant in etudiants:
+                if etudiant.verifier_identite(matricule, prenom, nom):
+                    return etudiant
         
         return None
 

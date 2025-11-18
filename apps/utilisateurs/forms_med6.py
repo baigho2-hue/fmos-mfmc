@@ -40,13 +40,25 @@ class LoginMed6Form(forms.Form):
     )
     
     def clean(self):
+        import re
+        
         cleaned_data = super().clean()
         matricule = cleaned_data.get('matricule', '').strip()
         prenom = cleaned_data.get('prenom', '').strip()
         nom = cleaned_data.get('nom', '').strip()
         
+        # Nettoyer les espaces multiples
+        matricule = re.sub(r'\s+', ' ', matricule) if matricule else ""
+        prenom = re.sub(r'\s+', ' ', prenom) if prenom else ""
+        nom = re.sub(r'\s+', ' ', nom) if nom else ""
+        
         if not matricule or not prenom or not nom:
             raise ValidationError("Veuillez remplir tous les champs (matricule, nom et prénom).")
+        
+        # Mettre à jour les données nettoyées
+        cleaned_data['matricule'] = matricule
+        cleaned_data['prenom'] = prenom
+        cleaned_data['nom'] = nom
         
         # VALIDATION STRICTE: Chercher l'étudiant actif avec une liste valide
         # La méthode get_etudiant_actif vérifie déjà que le matricule, nom ET prénom correspondent
