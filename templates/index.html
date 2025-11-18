@@ -6,7 +6,38 @@
     <section class="section-hero">
       <div class="section-content">
         <div class="section-image">
-          <img src="{% static 'images/medecine-famille.jpg' %}" alt="Médecine de famille et médecine communautaire" />
+          <!-- Carousel d'images du CSCom de Kayes N'di -->
+          <div class="image-carousel">
+            <div class="carousel-container">
+              <div class="carousel-slides">
+                <!-- Image 1 -->
+                <div class="carousel-slide active">
+                  <img src="{% static 'images/cscom-kayes-ndi/WhatsApp Image 2025-11-17 at 12.06.33.jpeg' %}" alt="CSCom de Kayes N'di - Photo 1" onerror="this.src='{% static 'images/medecine-famille.jpg' %}'" />
+                </div>
+                <!-- Image 2 -->
+                <div class="carousel-slide">
+                  <img src="{% static 'images/cscom-kayes-ndi/WhatsApp Image 2025-11-17 at 12.06.34 (1).jpeg' %}" alt="CSCom de Kayes N'di - Photo 2" onerror="this.src='{% static 'images/medecine-famille.jpg' %}'" />
+                </div>
+                <!-- Image 3 -->
+                <div class="carousel-slide">
+                  <img src="{% static 'images/cscom-kayes-ndi/WhatsApp Image 2025-11-17 at 12.06.34.jpeg' %}" alt="CSCom de Kayes N'di - Photo 3" onerror="this.src='{% static 'images/medecine-famille.jpg' %}'" />
+                </div>
+                <!-- Image 4 -->
+                <div class="carousel-slide">
+                  <img src="{% static 'images/cscom-kayes-ndi/WhatsApp Image 2025-11-17 at 12.07.31 (1).jpeg' %}" alt="CSCom de Kayes N'di - Photo 4" onerror="this.src='{% static 'images/medecine-famille.jpg' %}'" />
+                </div>
+                <!-- Image par défaut si aucune image n'est disponible -->
+                <div class="carousel-slide fallback">
+                  <img src="{% static 'images/medecine-famille.jpg' %}" alt="Médecine de famille et médecine communautaire" />
+                </div>
+              </div>
+              <!-- Boutons de navigation -->
+              <button class="carousel-btn carousel-prev" aria-label="Image précédente">&#8249;</button>
+              <button class="carousel-btn carousel-next" aria-label="Image suivante">&#8250;</button>
+              <!-- Indicateurs de position -->
+              <div class="carousel-indicators"></div>
+            </div>
+          </div>
         </div>
         <div class="section-text">
           <h2>Médecine de Famille et Médecine Communautaire</h2>
@@ -112,4 +143,5 @@
 
 {% block extra_js %}
   <script src="{% static 'js/news-ticker.js' %}"></script>
+  <script src="{% static 'js/carousel.js' %}"></script>
 {% endblock %}
