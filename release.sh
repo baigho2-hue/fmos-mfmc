@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script exécuté par Railway avant le démarrage de l'application
+# Script exécuté par Render avant le démarrage de l'application
 # Applique les migrations et collecte les fichiers statiques
 
 echo "🚀 Démarrage du script de release..."

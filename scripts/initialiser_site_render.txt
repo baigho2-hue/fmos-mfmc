@@ -1,0 +1,43 @@
+# Script d'initialisation du site sur Render
+# Copiez-collez ces commandes dans le Shell Render une par une
+
+# ==========================================
+# ÉTAPE 1 : Appliquer les migrations
+# ==========================================
+python manage.py migrate
+
+# Vérifier l'état des migrations
+python manage.py showmigrations
+
+# ==========================================
+# ÉTAPE 2 : Créer un superutilisateur
+# ==========================================
+python manage.py createsuperuser
+# Entrez : username, email, password
+
+# ==========================================
+# ÉTAPE 3 : Initialiser le programme DESMFMC
+# ==========================================
+python manage.py init_programme_desmfmc_detaille
+
+# ==========================================
+# ÉTAPE 4 (Optionnelle) : Initialiser les coûts
+# ==========================================
+python manage.py init_couts_formations
+
+# ==========================================
+# VÉRIFICATION
+# ==========================================
+# Vérifier les utilisateurs
+python manage.py shell
+# Puis dans le shell Python :
+# from apps.utilisateurs.models import Utilisateur
+# print(f"Utilisateurs : {Utilisateur.objects.count()}")
+# exit()
+
+# ==========================================
+# ACCÈS AU SITE
+# ==========================================
+# Admin : https://fmos-mfmc.onrender.com/admin/
+# Site : https://fmos-mfmc.onrender.com/
+
