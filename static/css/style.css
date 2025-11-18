@@ -463,6 +463,22 @@ background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
 }
 
 /* --- Styles pour le carousel d'images --- */
+.carousel-title {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.carousel-title h3 {
+    color: #005a9c;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+    padding: 0.5rem 1rem;
+    background-color: rgba(0, 90, 156, 0.1);
+    border-radius: 8px;
+    display: inline-block;
+}
+
 .image-carousel {
     width: 100%;
     position: relative;
@@ -579,6 +595,11 @@ background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
 
 /* Responsive pour le carousel */
 @media screen and (max-width: 768px) {
+    .carousel-title h3 {
+        font-size: 1.25rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
     .carousel-btn {
         width: 35px;
         height: 35px;
@@ -605,6 +626,11 @@ background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
 }
 
 @media screen and (max-width: 480px) {
+    .carousel-title h3 {
+        font-size: 1.1rem;
+        padding: 0.35rem 0.7rem;
+    }
+    
     .carousel-btn {
         width: 30px;
         height: 30px;
