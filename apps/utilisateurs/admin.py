@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
 from django import forms
 from django.utils.safestring import mark_safe
@@ -18,6 +18,7 @@ from .models_programme_desmfmc import (
 )
 from .models_cout import CoutFormation
 from .models_med6 import EtudiantMed6, ListeMed6
+from .services.med6_import import sync_etudiants_from_excel
 from .models_documents import LettreInformation, ModelePedagogique, SignatureCoordination
 from .models_carnet_stage import (
     CarnetStage, EvaluationStage, EvaluationCompetence,
@@ -35,6 +36,7 @@ class ListeMed6Admin(admin.ModelAdmin):
     list_filter = ('active', 'date_import', 'annee_universitaire')
     search_fields = ('annee_universitaire', 'fichier_source')
     readonly_fields = ('date_import', 'nombre_etudiants')
+    actions = ['generer_etudiants_depuis_fichier']
     
     fieldsets = (
         ('Informations générales', {
@@ -52,6 +54,44 @@ class ListeMed6Admin(admin.ModelAdmin):
         return "Oui" if obj.est_expiree() else "Non"
     est_expiree_display.boolean = True
     est_expiree_display.short_description = 'Expirée'
+
+    @admin.action(description="Générer les étudiants à partir du fichier associé")
+    def generer_etudiants_depuis_fichier(self, request, queryset):
+        """Action d'admin pour créer/mettre à jour les EtudiantMed6 depuis le fichier Excel."""
+        for liste in queryset:
+            if not liste.fichier_source:
+                messages.error(
+                    request,
+                    f"La liste {liste.annee_universitaire} n'a pas de fichier source défini."
+                )
+                continue
+
+            try:
+                result = sync_etudiants_from_excel(liste, liste.fichier_source)
+            except FileNotFoundError:
+                messages.error(
+                    request,
+                    f"Fichier introuvable pour la liste {liste.annee_universitaire}: {liste.fichier_source}"
+                )
+                continue
+            except ImportError as exc:
+                messages.error(request, str(exc))
+                return
+            except Exception as exc:  # pylint: disable=broad-except
+                messages.error(
+                    request,
+                    f"Erreur lors de la génération pour {liste.annee_universitaire}: {exc}"
+                )
+                continue
+
+            messages.success(
+                request,
+                (
+                    f"Liste {liste.annee_universitaire}: "
+                    f"{result['imported']} importés, {result['updated']} mis à jour, "
+                    f"{result['errors']} erreurs. Total: {result['total']}."
+                )
+            )
 
 
 @admin.register(EtudiantMed6)
