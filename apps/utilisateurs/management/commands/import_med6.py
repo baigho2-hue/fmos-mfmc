@@ -135,12 +135,45 @@ class Command(BaseCommand):
             # Lire les en-têtes (première ligne)
             headers = [cell.value for cell in ws[1]]
             self.stdout.write(f'Colonnes trouvées: {headers}')
-            
-            # Déterminer les indices des colonnes (matricule=col2, prenom=col3, nom=col4)
-            # Les indices commencent à 1 dans openpyxl
-            matricule_col = 2  # 2ème colonne (index 2)
-            prenom_col = 3     # 3ème colonne (index 3)
-            nom_col = 4        # 4ème colonne (index 4)
+
+            def normalize_header(value):
+                import unicodedata
+                import re
+                if value is None:
+                    return ""
+                value = str(value).strip().lower()
+                value = unicodedata.normalize('NFD', value)
+                value = ''.join(c for c in value if unicodedata.category(c) != 'Mn')
+                value = re.sub(r'\s+', ' ', value)
+                return value
+
+            normalized_headers = {normalize_header(header): idx + 1 for idx, header in enumerate(headers)}
+
+            def find_col(candidates, default=None):
+                for candidate in candidates:
+                    if candidate in normalized_headers:
+                        return normalized_headers[candidate]
+                return default
+
+            # Essayer de déterminer dynamiquement les colonnes à partir des en-têtes
+            matricule_col = find_col(
+                ['matricule', 'numero matricule', 'numero'],
+                default=1  # Par défaut, première colonne
+            )
+            prenom_col = find_col(
+                ['prenom', 'prénom', 'prenoms', 'prénoms'],
+                default=2  # Par défaut, deuxième colonne
+            )
+            nom_col = find_col(
+                ['nom', 'noms'],
+                default=3  # Par défaut, troisième colonne
+            )
+
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Colonnes utilisées -> Matricule: {matricule_col}, Prénom: {prenom_col}, Nom: {nom_col}'
+                )
+            )
             
             # Parcourir les lignes (en commençant à la ligne 2 pour ignorer l'en-tête)
             imported = 0
@@ -204,37 +237,37 @@ class Command(BaseCommand):
                         )
                         continue
             
-        # Mettre à jour le nombre d'étudiants dans la liste
-        liste.nombre_etudiants = EtudiantMed6.objects.filter(liste=liste).count()
-        liste.save()
-        
-        # Afficher les informations sur l'expiration
-        jours_avant_expiration = liste.jours_avant_expiration()
-        if jours_avant_expiration is not None:
-            if jours_avant_expiration < 0:
-                self.stdout.write(
-                    self.style.WARNING(
-                        f'\n⚠️ ATTENTION: Cette liste est expirée depuis {abs(jours_avant_expiration)} jours!'
+            # Mettre à jour le nombre d'étudiants dans la liste
+            liste.nombre_etudiants = EtudiantMed6.objects.filter(liste=liste).count()
+            liste.save()
+
+            # Afficher les informations sur l'expiration
+            jours_avant_expiration = liste.jours_avant_expiration()
+            if jours_avant_expiration is not None:
+                if jours_avant_expiration < 0:
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f'\nATTENTION: Cette liste est expirée depuis {abs(jours_avant_expiration)} jours!'
+                        )
                     )
-                )
-            else:
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f'\n✓ Cette liste sera valide pendant encore {jours_avant_expiration} jours'
+                else:
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f'\nCette liste sera valide pendant encore {jours_avant_expiration} jours'
+                        )
                     )
+
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'\nImport terminé: {imported} importés, {updated} mis à jour, {errors} erreurs'
                 )
-        
-        self.stdout.write(
-            self.style.SUCCESS(
-                f'\nImport terminé: {imported} importés, {updated} mis à jour, {errors} erreurs'
             )
-        )
-        self.stdout.write(
-            self.style.SUCCESS(
-                f'Total étudiants dans la liste: {liste.nombre_etudiants}'
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Total étudiants dans la liste: {liste.nombre_etudiants}'
+                )
             )
-        )
-        
+
         except Exception as e:
             self.stdout.write(
                 self.style.ERROR(f'Erreur lors de l\'import: {str(e)}')
