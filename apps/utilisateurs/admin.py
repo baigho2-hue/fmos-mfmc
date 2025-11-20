@@ -55,6 +55,45 @@ class ListeMed6Admin(admin.ModelAdmin):
     est_expiree_display.boolean = True
     est_expiree_display.short_description = 'Expirée'
 
+    def save_model(self, request, obj, form, change):
+        """Enregistre la liste et synchronise automatiquement les étudiants si nécessaire."""
+        super().save_model(request, obj, form, change)
+
+        if not obj.fichier_source:
+            return
+
+        should_sync = not change
+
+        if form is not None and 'fichier_source' in getattr(form, 'changed_data', []):
+            should_sync = True
+
+        if not should_sync:
+            return
+
+        try:
+            result = sync_etudiants_from_excel(obj, obj.fichier_source)
+        except FileNotFoundError:
+            messages.error(
+                request,
+                f"Fichier introuvable pour la liste {obj.annee_universitaire}: {obj.fichier_source}"
+            )
+        except ImportError as exc:
+            messages.error(request, str(exc))
+        except Exception as exc:  # pylint: disable=broad-except
+            messages.error(
+                request,
+                f"Erreur lors de la synchronisation automatique pour {obj.annee_universitaire}: {exc}"
+            )
+        else:
+            messages.success(
+                request,
+                (
+                    f"Synchronisation automatique terminée pour {obj.annee_universitaire}: "
+                    f"{result['imported']} importés, {result['updated']} mis à jour, "
+                    f"{result['errors']} erreurs. Total: {result['total']}."
+                )
+            )
+
     @admin.action(description="Générer les étudiants à partir du fichier associé")
     def generer_etudiants_depuis_fichier(self, request, queryset):
         """Action d'admin pour créer/mettre à jour les EtudiantMed6 depuis le fichier Excel."""
