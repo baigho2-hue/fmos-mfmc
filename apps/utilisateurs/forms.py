@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
 from .models import Utilisateur
+from .models_formation import PaiementCours
 
 class InscriptionEtudiantForm(UserCreationForm):
     email = forms.EmailField(
@@ -195,3 +196,76 @@ class CodeVerificationForm(forms.Form):
         }),
         help_text="Entrez le code à 6 chiffres envoyé à votre adresse email"
     )
+
+
+class PaiementCoursForm(forms.ModelForm):
+    """Formulaire pour créer un paiement de cours"""
+    
+    class Meta:
+        model = PaiementCours
+        fields = ['cours', 'montant', 'mode_paiement', 'reference_paiement', 'preuve_paiement', 'commentaires']
+        widgets = {
+            'cours': forms.Select(attrs={'class': 'form-control'}),
+            'montant': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01',
+                'min': '0',
+                'placeholder': '0.00'
+            }),
+            'mode_paiement': forms.Select(attrs={'class': 'form-control'}),
+            'reference_paiement': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Numéro de transaction, référence, etc.'
+            }),
+            'preuve_paiement': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*,.pdf'
+            }),
+            'commentaires': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Informations complémentaires (optionnel)'
+            }),
+        }
+        labels = {
+            'cours': 'Cours',
+            'montant': 'Montant (FCFA)',
+            'mode_paiement': 'Mode de paiement',
+            'reference_paiement': 'Référence de paiement',
+            'preuve_paiement': 'Preuve de paiement',
+            'commentaires': 'Commentaires',
+        }
+        help_texts = {
+            'reference_paiement': 'Numéro de transaction, référence Orange Money, numéro de virement, etc.',
+            'preuve_paiement': 'Capture d\'écran, reçu de paiement, etc. (formats acceptés: images, PDF)',
+        }
+    
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        
+        # Limiter les cours aux cours accessibles par l'étudiant
+        if user and user.type_utilisateur == 'etudiant':
+            from .models_formation import Cours
+            from core.views_med6 import a_acces_gratuit_med6
+            
+            # Récupérer les cours de la classe de l'étudiant
+            classe_obj = user.get_classe_obj()
+            if classe_obj:
+                queryset = Cours.objects.filter(
+                    classe=classe_obj,
+                    actif=True
+                )
+                
+                # Si l'étudiant a accès gratuit Med6, exclure les cours Med6 (gratuits)
+                if a_acces_gratuit_med6(user):
+                    # Exclure les cours de la classe Med6 (gratuits pour cet étudiant)
+                    queryset = queryset.exclude(classe__nom__icontains='Médecine 6')
+                
+                self.fields['cours'].queryset = queryset.order_by('titre')
+            else:
+                self.fields['cours'].queryset = Cours.objects.none()
+        elif user and user.type_utilisateur != 'etudiant':
+            # Pour les admins/enseignants, afficher tous les cours
+            from .models_formation import Cours
+            self.fields['cours'].queryset = Cours.objects.filter(actif=True).order_by('titre')

@@ -10,7 +10,8 @@ from .models_formation import (
     ObjectifApprentissage, MethodePedagogique, Competence,
     SessionCoursEnLigne, SessionEvaluationEnLigne,
     ProgressionLecon, CommentaireLecon, QuizLecon, QuestionQuiz,
-    ReponseQuestion, ReponseEtudiantQuiz, ResultatQuiz, AlerteLecon
+    ReponseQuestion, ReponseEtudiantQuiz, ResultatQuiz, AlerteLecon,
+    PaiementCours
 )
 from .models_programme_desmfmc import (
     JalonProgramme, ModuleProgramme, CoursProgramme, SuiviProgressionProgramme,
@@ -366,6 +367,89 @@ class LeconAdmin(admin.ModelAdmin):
         """Optimise les requêtes en préchargeant les relations"""
         qs = super().get_queryset(request)
         return qs.select_related('cours', 'cours__classe')
+
+
+@admin.register(PaiementCours)
+class PaiementCoursAdmin(admin.ModelAdmin):
+    list_display = ('etudiant', 'cours', 'montant', 'mode_paiement', 'statut', 'date_paiement', 'date_validation', 'est_cours_med6_gratuit')
+    list_filter = ('statut', 'mode_paiement', 'date_paiement', 'cours__classe')
+    search_fields = ('etudiant__username', 'etudiant__email', 'cours__titre', 'reference_paiement')
+    date_hierarchy = 'date_paiement'
+    readonly_fields = ('date_paiement', 'date_creation', 'date_modification', 'est_cours_med6_gratuit')
+    
+    fieldsets = (
+        ('Informations générales', {
+            'fields': ('cours', 'etudiant', 'montant', 'mode_paiement', 'statut')
+        }),
+        ('Paiement', {
+            'fields': ('reference_paiement', 'preuve_paiement', 'date_paiement')
+        }),
+        ('Validation', {
+            'fields': ('valideur', 'date_validation', 'commentaires')
+        }),
+        ('Informations', {
+            'fields': ('est_cours_med6_gratuit',),
+            'classes': ('collapse',)
+        }),
+        ('Dates', {
+            'fields': ('date_creation', 'date_modification'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        """Optimise les requêtes en préchargeant les relations"""
+        qs = super().get_queryset(request)
+        return qs.select_related('cours', 'cours__classe', 'etudiant', 'valideur')
+    
+    def est_cours_med6_gratuit(self, obj):
+        """Vérifie si le cours est un cours Med6 gratuit pour cet étudiant"""
+        if not obj.cours or not obj.cours.classe:
+            return "N/A"
+        if 'Médecine 6' in obj.cours.classe.nom:
+            from core.views_med6 import a_acces_gratuit_med6
+            if a_acces_gratuit_med6(obj.etudiant):
+                return "⚠️ Oui (cours gratuit - étudiant dans liste active)"
+        return "Non"
+    est_cours_med6_gratuit.short_description = "Cours Med6 gratuit"
+    
+    def save_model(self, request, obj, form, change):
+        """Valide avant de sauvegarder"""
+        # Vérifier si c'est un cours Med6 et si l'étudiant a accès gratuit
+        if obj.cours and obj.cours.classe and 'Médecine 6' in obj.cours.classe.nom:
+            from core.views_med6 import a_acces_gratuit_med6
+            if a_acces_gratuit_med6(obj.etudiant):
+                from django.contrib import messages
+                messages.warning(
+                    request,
+                    f"⚠️ Attention : Le cours '{obj.cours.titre}' est gratuit pour {obj.etudiant.get_full_name()} "
+                    "car il/elle est dans la liste active des étudiants de Médecine 6. "
+                    "Le paiement a été enregistré mais n'est normalement pas nécessaire."
+                )
+        super().save_model(request, obj, form, change)
+    
+    actions = ['valider_paiements', 'refuser_paiements']
+    
+    @admin.action(description="Valider les paiements sélectionnés")
+    def valider_paiements(self, request, queryset):
+        """Action pour valider plusieurs paiements"""
+        from django.utils import timezone
+        count = 0
+        for paiement in queryset.filter(statut='en_attente'):
+            paiement.statut = 'valide'
+            paiement.valideur = request.user
+            paiement.date_validation = timezone.now()
+            paiement.save()
+            count += 1
+        self.message_user(request, f"{count} paiement(s) validé(s).")
+    valider_paiements.short_description = "Valider les paiements sélectionnés"
+    
+    @admin.action(description="Refuser les paiements sélectionnés")
+    def refuser_paiements(self, request, queryset):
+        """Action pour refuser plusieurs paiements"""
+        count = queryset.filter(statut='en_attente').update(statut='refuse')
+        self.message_user(request, f"{count} paiement(s) refusé(s).")
+    refuser_paiements.short_description = "Refuser les paiements sélectionnés"
 
 
 # Les autres modèles sont enregistrés dans leurs fichiers admin respectifs

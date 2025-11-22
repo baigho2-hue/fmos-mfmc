@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Refuser le paiement - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Refuser le paiement</h5>
+        </div>
+        <div class="card-body">
+            <p class="alert alert-warning">Êtes-vous sûr de vouloir refuser ce paiement ?</p>
+            
+            <table class="table">
+                <tr>
+                    <th>Cours :</th>
+                    <td>{{ paiement.cours.titre }}</td>
+                </tr>
+                <tr>
+                    <th>Étudiant :</th>
+                    <td>{{ paiement.etudiant.get_full_name|default:paiement.etudiant.username }}</td>
+                </tr>
+                <tr>
+                    <th>Montant :</th>
+                    <td><strong>{{ paiement.montant|floatformat:0 }} FCFA</strong></td>
+                </tr>
+                <tr>
+                    <th>Mode de paiement :</th>
+                    <td>{{ paiement.get_mode_paiement_display }}</td>
+                </tr>
+            </table>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="commentaires">Raison du refus (optionnel) :</label>
+                    <textarea name="commentaires" id="commentaires" class="form-control" rows="3" 
+                              placeholder="Expliquez pourquoi ce paiement est refusé..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-times"></i> Confirmer le refus
+                </button>
+                <a href="{% url 'detail_paiement' paiement.id %}" class="btn btn-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

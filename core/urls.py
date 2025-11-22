@@ -10,6 +10,7 @@ from core import views_med6
 from core import views_carnet_stage
 from core import views_superviseur_stage
 from core import views_2fa
+from core import views_paiements
 from core import views_setup  # noqa: F401 - Vues temporaires pour la configuration Render
 from django.urls import include
 
@@ -54,6 +55,13 @@ urlpatterns = [
     path('etudiant/cours/<int:cours_id>/', views.detail_cours, name='detail_cours'),
     path('etudiant/progression/', views.ma_progression, name='ma_progression'),
     path('etudiant/planification/', views.ma_planification, name='ma_planification'),
+    
+    # Paiements de cours
+    path('etudiant/paiements/', views_paiements.mes_paiements, name='mes_paiements'),
+    path('etudiant/paiements/creer/', views_paiements.creer_paiement, name='creer_paiement'),
+    path('etudiant/paiements/<int:paiement_id>/', views_paiements.detail_paiement, name='detail_paiement'),
+    path('etudiant/paiements/<int:paiement_id>/valider/', views_paiements.valider_paiement, name='valider_paiement'),
+    path('etudiant/paiements/<int:paiement_id>/refuser/', views_paiements.refuser_paiement, name='refuser_paiement'),
     
     # Vues pour les leçons
     path('lecon/<int:lecon_id>/marquer-vue/', views_lecons.marquer_lecon_vue, name='marquer_lecon_vue'),

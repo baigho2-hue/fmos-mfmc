@@ -1018,3 +1018,97 @@ class AlerteLecon(models.Model):
     
     def __str__(self):
         return f"Alerte {self.get_type_alerte_display()} - {self.lecon.titre} - {self.enseignant.get_full_name()}"
+
+
+class PaiementCours(models.Model):
+    """Modèle représentant un paiement pour un cours"""
+    MODE_PAIEMENT_CHOICES = [
+        ('bancaire', 'Bancaire'),
+        ('espece', 'Espèce'),
+        ('orange_money', 'Orange Money'),
+    ]
+    
+    STATUT_CHOICES = [
+        ('en_attente', 'En attente'),
+        ('valide', 'Validé'),
+        ('refuse', 'Refusé'),
+    ]
+    
+    cours = models.ForeignKey(
+        Cours,
+        on_delete=models.CASCADE,
+        related_name='paiements',
+        verbose_name='Cours'
+    )
+    etudiant = models.ForeignKey(
+        Utilisateur,
+        on_delete=models.CASCADE,
+        limit_choices_to={'type_utilisateur': 'etudiant'},
+        related_name='paiements_cours',
+        verbose_name='Étudiant'
+    )
+    montant = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        verbose_name='Montant'
+    )
+    mode_paiement = models.CharField(
+        max_length=20,
+        choices=MODE_PAIEMENT_CHOICES,
+        default='bancaire',
+        verbose_name='Mode de paiement'
+    )
+    statut = models.CharField(
+        max_length=20,
+        choices=STATUT_CHOICES,
+        default='en_attente',
+        verbose_name='Statut'
+    )
+    reference_paiement = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Référence du paiement (numéro de transaction, etc.)",
+        verbose_name='Référence de paiement'
+    )
+    preuve_paiement = models.FileField(
+        upload_to='cours/preuves_paiement/',
+        blank=True,
+        null=True,
+        help_text="Capture d'écran, reçu, etc.",
+        verbose_name='Preuve de paiement'
+    )
+    date_paiement = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Date de paiement'
+    )
+    date_validation = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name='Date de validation'
+    )
+    valideur = models.ForeignKey(
+        Utilisateur,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='paiements_cours_valides',
+        verbose_name='Validateur'
+    )
+    commentaires = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name='Commentaires'
+    )
+    date_creation = models.DateTimeField(auto_now_add=True)
+    date_modification = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Paiement de cours'
+        verbose_name_plural = 'Paiements de cours'
+        ordering = ['-date_paiement']
+        unique_together = [['cours', 'etudiant']]
+    
+    def __str__(self):
+        return f"{self.etudiant.get_full_name()} - {self.cours.titre} - {self.montant} FCFA ({self.get_mode_paiement_display()})"

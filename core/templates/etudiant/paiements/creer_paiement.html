@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Créer un paiement - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="page-header mb-4">
+        <h1>Nouveau paiement de cours</h1>
+        <a href="{% url 'mes_paiements' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Informations du paiement</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label for="{{ form.cours.id_for_label }}">{{ form.cours.label }} *</label>
+                            {{ form.cours }}
+                            {% if form.cours.errors %}
+                                <div class="text-danger">{{ form.cours.errors }}</div>
+                            {% endif %}
+                            {% if form.cours.help_text %}
+                                <small class="form-text text-muted">{{ form.cours.help_text }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.montant.id_for_label }}">{{ form.montant.label }} *</label>
+                            {{ form.montant }}
+                            {% if form.montant.errors %}
+                                <div class="text-danger">{{ form.montant.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.mode_paiement.id_for_label }}">{{ form.mode_paiement.label }} *</label>
+                            {{ form.mode_paiement }}
+                            {% if form.mode_paiement.errors %}
+                                <div class="text-danger">{{ form.mode_paiement.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.reference_paiement.id_for_label }}">{{ form.reference_paiement.label }}</label>
+                            {{ form.reference_paiement }}
+                            {% if form.reference_paiement.errors %}
+                                <div class="text-danger">{{ form.reference_paiement.errors }}</div>
+                            {% endif %}
+                            {% if form.reference_paiement.help_text %}
+                                <small class="form-text text-muted">{{ form.reference_paiement.help_text }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.preuve_paiement.id_for_label }}">{{ form.preuve_paiement.label }}</label>
+                            {{ form.preuve_paiement }}
+                            {% if form.preuve_paiement.errors %}
+                                <div class="text-danger">{{ form.preuve_paiement.errors }}</div>
+                            {% endif %}
+                            {% if form.preuve_paiement.help_text %}
+                                <small class="form-text text-muted">{{ form.preuve_paiement.help_text }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.commentaires.id_for_label }}">{{ form.commentaires.label }}</label>
+                            {{ form.commentaires }}
+                            {% if form.commentaires.errors %}
+                                <div class="text-danger">{{ form.commentaires.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i> Enregistrer le paiement
+                            </button>
+                            <a href="{% url 'mes_paiements' %}" class="btn btn-secondary">Annuler</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Informations importantes</h5>
+                </div>
+                <div class="card-body">
+                    {% if acces_gratuit_med6 %}
+                    <div class="alert alert-success mb-3">
+                        <i class="fas fa-check-circle"></i> <strong>Cours Médecine 6 gratuits</strong><br>
+                        Vous êtes dans la liste active des étudiants de Médecine 6. 
+                        Les cours de Médecine 6 sont <strong>gratuits</strong> pour vous. 
+                        Aucun paiement n'est nécessaire.
+                    </div>
+                    {% endif %}
+                    
+                    <h6>Modes de paiement acceptés :</h6>
+                    <ul>
+                        <li><strong>Bancaire :</strong> Virement bancaire</li>
+                        <li><strong>Espèce :</strong> Paiement en espèces au secrétariat</li>
+                        <li><strong>Orange Money :</strong> Paiement mobile</li>
+                    </ul>
+                    
+                    <hr>
+                    
+                    <h6>Instructions :</h6>
+                    <ol>
+                        <li>Sélectionnez le cours concerné</li>
+                        <li>Indiquez le montant payé</li>
+                        <li>Choisissez votre mode de paiement</li>
+                        <li>Ajoutez la référence de transaction (si disponible)</li>
+                        <li>Uploadez une preuve de paiement (reçu, capture d'écran, etc.)</li>
+                    </ol>
+                    
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle"></i> Votre paiement sera en attente de validation par l'administration.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+</style>
+{% endblock %}
+

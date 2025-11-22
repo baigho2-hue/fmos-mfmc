@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Valider le paiement - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Valider le paiement</h5>
+        </div>
+        <div class="card-body">
+            <p>Êtes-vous sûr de vouloir valider ce paiement ?</p>
+            
+            <table class="table">
+                <tr>
+                    <th>Cours :</th>
+                    <td>{{ paiement.cours.titre }}</td>
+                </tr>
+                <tr>
+                    <th>Étudiant :</th>
+                    <td>{{ paiement.etudiant.get_full_name|default:paiement.etudiant.username }}</td>
+                </tr>
+                <tr>
+                    <th>Montant :</th>
+                    <td><strong>{{ paiement.montant|floatformat:0 }} FCFA</strong></td>
+                </tr>
+                <tr>
+                    <th>Mode de paiement :</th>
+                    <td>{{ paiement.get_mode_paiement_display }}</td>
+                </tr>
+            </table>
+
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check"></i> Confirmer la validation
+                </button>
+                <a href="{% url 'detail_paiement' paiement.id %}" class="btn btn-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
