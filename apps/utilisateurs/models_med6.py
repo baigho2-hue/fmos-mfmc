@@ -150,6 +150,7 @@ class EtudiantMed6(models.Model):
         """
         Vérifie si les informations fournies correspondent à cet étudiant
         Comparaison insensible à la casse, aux accents et aux espaces multiples
+        Gère aussi le cas où les champs matricule/prénom sont inversés dans la base
         """
         import unicodedata
         import re
@@ -171,11 +172,30 @@ class EtudiantMed6(models.Model):
             text = ''.join(c for c in text if unicodedata.category(c) != 'Mn')
             return text
         
-        matricule_match = normalize_text(self.matricule) == normalize_text(matricule)
-        prenom_match = normalize_text(self.prenom) == normalize_text(prenom)
-        nom_match = normalize_text(self.nom) == normalize_text(nom)
+        # Normaliser les valeurs
+        matricule_norm = normalize_text(matricule)
+        prenom_norm = normalize_text(prenom)
+        nom_norm = normalize_text(nom)
         
-        return matricule_match and prenom_match and nom_match
+        matricule_db_norm = normalize_text(self.matricule)
+        prenom_db_norm = normalize_text(self.prenom)
+        nom_db_norm = normalize_text(self.nom)
+        
+        # Vérification normale (matricule = matricule, prenom = prenom)
+        match_normal = (
+            matricule_db_norm == matricule_norm and
+            prenom_db_norm == prenom_norm and
+            nom_db_norm == nom_norm
+        )
+        
+        # Vérification inversée (matricule = prenom, prenom = matricule) - pour gérer les données mal importées
+        match_inverse = (
+            matricule_db_norm == prenom_norm and
+            prenom_db_norm == matricule_norm and
+            nom_db_norm == nom_norm
+        )
+        
+        return match_normal or match_inverse
     
     @classmethod
     def get_etudiant_actif(cls, matricule, prenom, nom):
@@ -208,30 +228,29 @@ class EtudiantMed6(models.Model):
         if not matricule or not prenom or not nom:
             return None
         
-        # Chercher dans les listes actives et non expirées
+        # Chercher dans les listes actives (même si expirées, on permet l'accès)
+        # Note: On ne filtre plus par expiration pour permettre l'accès même si la liste est expirée
         listes_actives = ListeMed6.objects.filter(active=True)
-        listes_valides = [l for l in listes_actives if not l.est_expiree()]
         
-        if not listes_valides:
+        if not listes_actives.exists():
             return None
         
-        # Chercher l'étudiant dans les listes valides
+        # Chercher l'étudiant dans les listes actives
         # IMPORTANT: On cherche d'abord par matricule, puis on valide nom ET prénom
-        for liste in listes_valides:
+        # On essaie aussi avec prenom au cas où les champs sont inversés
+        for liste in listes_actives:
+            # Essai 1: Chercher par matricule dans le champ matricule
             try:
-                # Recherche insensible à la casse pour le matricule
                 etudiant = cls.objects.get(
                     liste=liste,
                     matricule__iexact=matricule,
                     actif=True
                 )
-                # VALIDATION STRICTE: Vérifier que le matricule, nom ET prénom correspondent
                 if etudiant.verifier_identite(matricule, prenom, nom):
                     return etudiant
             except cls.DoesNotExist:
-                continue
+                pass
             except cls.MultipleObjectsReturned:
-                # Si plusieurs étudiants avec le même matricule, chercher celui qui correspond
                 etudiants = cls.objects.filter(
                     liste=liste,
                     matricule__iexact=matricule,
@@ -240,10 +259,31 @@ class EtudiantMed6(models.Model):
                 for etudiant in etudiants:
                     if etudiant.verifier_identite(matricule, prenom, nom):
                         return etudiant
+            
+            # Essai 2: Chercher par matricule dans le champ prenom (si les champs sont inversés)
+            try:
+                etudiant = cls.objects.get(
+                    liste=liste,
+                    prenom__iexact=matricule,
+                    actif=True
+                )
+                if etudiant.verifier_identite(matricule, prenom, nom):
+                    return etudiant
+            except cls.DoesNotExist:
+                pass
+            except cls.MultipleObjectsReturned:
+                etudiants = cls.objects.filter(
+                    liste=liste,
+                    prenom__iexact=matricule,
+                    actif=True
+                )
+                for etudiant in etudiants:
+                    if etudiant.verifier_identite(matricule, prenom, nom):
+                        return etudiant
         
-        # Si pas trouvé par matricule exact, essayer une recherche plus flexible
+        # Si pas trouvé par recherche directe, essayer une recherche exhaustive
         # en cherchant tous les étudiants actifs et en comparant les noms normalisés
-        for liste in listes_valides:
+        for liste in listes_actives:
             etudiants = cls.objects.filter(
                 liste=liste,
                 actif=True

@@ -147,11 +147,7 @@ def est_etudiant_med6(user):
         if not etudiant_med6.liste:
             return False
         
-        # Vérifier que la liste n'est pas expirée
-        if etudiant_med6.liste.est_expiree():
-            return False
-        
-        # Vérifier que la liste est active
+        # Vérifier que la liste est active (on ne vérifie plus l'expiration pour permettre l'accès)
         if not etudiant_med6.liste.active:
             return False
         

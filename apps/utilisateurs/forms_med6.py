@@ -69,12 +69,12 @@ class LoginMed6Form(forms.Form):
                 "❌ Aucun étudiant de 6ème année de médecine trouvé avec ces informations dans la liste Excel active. "
                 "Ce cours est réservé UNIQUEMENT aux étudiants en 6ème année de médecine.\n\n"
                 "Veuillez vérifier :\n"
-                "- Votre matricule\n"
+                "- Votre matricule (exactement comme dans la liste officielle)\n"
                 "- Votre nom (exactement comme dans la liste officielle)\n"
                 "- Votre prénom (exactement comme dans la liste officielle)\n\n"
+                "Note: La comparaison est insensible à la casse et aux accents, mais les valeurs doivent correspondre exactement.\n\n"
                 "Si vous êtes bien un étudiant de 6ème année de médecine et que vos informations sont correctes "
-                "mais que vous ne pouvez pas vous connecter, contactez l'administration.\n\n"
-                "Note: Les listes expirent 3 mois après la clôture de l'année universitaire."
+                "mais que vous ne pouvez pas vous connecter, contactez l'administration."
             )
         
         # Vérification supplémentaire (redondante mais sécurisée)
@@ -84,12 +84,8 @@ class LoginMed6Form(forms.Form):
                 "Vérifiez votre matricule, votre nom et votre prénom."
             )
         
-        # Vérifier que la liste n'est pas expirée
-        if etudiant.liste.est_expiree():
-            raise ValidationError(
-                f"❌ La liste Med 6 pour l'année {etudiant.liste.annee_universitaire} est expirée. "
-                "Contactez l'administration pour mettre à jour la liste."
-            )
+        # Note: On ne vérifie plus l'expiration de la liste pour permettre l'accès même si expirée
+        # La vérification d'expiration est désactivée pour éviter de bloquer les étudiants
         
         # Vérifier que la liste est active
         if not etudiant.liste.active:

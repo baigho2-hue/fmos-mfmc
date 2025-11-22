@@ -11,6 +11,7 @@ class CoutFormation(models.Model):
     
     NIVEAU_CHOICES = [
         ('diu', 'DIU (Diplôme Inter-Universitaire)'),
+        ('du', 'DU (Diplôme Universitaire)'),
         ('licence', 'Licence'),
         ('master', 'Master'),
         ('annuel', 'Par année'),
