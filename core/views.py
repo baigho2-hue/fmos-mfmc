@@ -91,24 +91,20 @@ def contact(request):
     return render(request, 'contact.html')
 
 def inscription(request):
-    from apps.utilisateurs.forms import InscriptionEtudiantForm, InscriptionEnseignantForm
+    from apps.utilisateurs.forms import InscriptionEtudiantForm
     
     if request.method == 'POST':
-        type_utilisateur = request.POST.get('type_utilisateur', 'etudiant')
-        
-        if type_utilisateur == 'etudiant':
-            form = InscriptionEtudiantForm(request.POST)
-        else:
-            form = InscriptionEnseignantForm(request.POST)
+        # Seuls les étudiants peuvent s'inscrire via cette page
+        form = InscriptionEtudiantForm(request.POST)
         
         if form.is_valid():
             user = form.save()
-            messages.success(request, f"Compte {type_utilisateur} créé avec succès ! Vous pouvez maintenant vous connecter.")
+            messages.success(request, "Compte étudiant créé avec succès ! Vous pouvez maintenant vous connecter.")
             return redirect('login')
         else:
             messages.error(request, "Erreur lors de la création du compte. Veuillez vérifier vos informations.")
     else:
-        form = None
+        form = InscriptionEtudiantForm()
     
     return render(request, 'inscription.html', {'form': form})
 

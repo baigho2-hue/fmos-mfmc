@@ -4,116 +4,91 @@
 {% block title %}Inscription - FMOS MFMC{% endblock %}
 
 {% block content %}
-<h2>Inscription</h2>
-<p class="intro-inscription">Choisissez votre type de compte pour commencer votre inscription.</p>
-
-<div class="inscription-tabs">
-    <button class="tab-button active" onclick="showTab('etudiant')">Étudiant</button>
-    <button class="tab-button" onclick="showTab('enseignant')">Enseignant</button>
-</div>
+<h2>Inscription Étudiant</h2>
+<p class="intro-inscription">Créez votre compte étudiant pour accéder aux cours et formations.</p>
 
 <!-- Formulaire Étudiant -->
 <div id="form-etudiant" class="inscription-form active">
-    <h3>Inscription Étudiant</h3>
+    {% if form %}
     <form method="POST" id="etudiant-form">
         {% csrf_token %}
-        <input type="hidden" name="type_utilisateur" value="etudiant">
+        
+        {% if form.errors %}
+        <div class="alert alert-error">
+            <strong>Erreurs dans le formulaire :</strong>
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ field }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
         
         <div class="form-group">
-            <label for="id_username_etudiant">Nom d'utilisateur *</label>
-            <input type="text" name="username" id="id_username_etudiant" class="form-control" required>
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }} *</label>
+            {{ form.username }}
+            {% if form.username.help_text %}
+                <small class="form-help">{{ form.username.help_text }}</small>
+            {% endif %}
         </div>
         
         <div class="form-group">
-            <label for="id_first_name_etudiant">Prénom *</label>
-            <input type="text" name="first_name" id="id_first_name_etudiant" class="form-control" required>
+            <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }} *</label>
+            {{ form.first_name }}
         </div>
         
         <div class="form-group">
-            <label for="id_last_name_etudiant">Nom *</label>
-            <input type="text" name="last_name" id="id_last_name_etudiant" class="form-control" required>
+            <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }} *</label>
+            {{ form.last_name }}
         </div>
         
         <div class="form-group">
-            <label for="id_email_etudiant">Adresse e-mail *</label>
-            <input type="email" name="email" id="id_email_etudiant" class="form-control" required>
+            <label for="{{ form.email.id_for_label }}">{{ form.email.label }} *</label>
+            {{ form.email }}
         </div>
         
         <div class="form-group">
-            <label for="id_email_confirmation_etudiant">Confirmer l'adresse e-mail *</label>
-            <input type="email" name="email_confirmation" id="id_email_confirmation_etudiant" class="form-control" required>
+            <label for="{{ form.email_confirmation.id_for_label }}">{{ form.email_confirmation.label }} *</label>
+            {{ form.email_confirmation }}
         </div>
         
         <div class="form-group">
-            <label for="id_classe_etudiant">Classe *</label>
-            <input type="text" name="classe" id="id_classe_etudiant" class="form-control" required placeholder="Ex: Médecine 6, DESMFMC 1ère année">
-            <small class="form-help">Indiquez votre classe ou niveau de formation</small>
+            <label for="{{ form.classe.id_for_label }}">{{ form.classe.label }} *</label>
+            {{ form.classe }}
+            {% if form.classe.help_text %}
+                <small class="form-help">{{ form.classe.help_text }}</small>
+            {% endif %}
         </div>
         
         <div class="form-group">
-            <label for="id_password1_etudiant">Mot de passe *</label>
-            <input type="password" name="password1" id="id_password1_etudiant" class="form-control" required>
+            <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }} *</label>
+            {{ form.password1 }}
+            {% if form.password1.help_text %}
+                <small class="form-help">{{ form.password1.help_text }}</small>
+            {% endif %}
         </div>
         
         <div class="form-group">
-            <label for="id_password2_etudiant">Confirmer le mot de passe *</label>
-            <input type="password" name="password2" id="id_password2_etudiant" class="form-control" required>
+            <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }} *</label>
+            {{ form.password2 }}
+            {% if form.password2.help_text %}
+                <small class="form-help">{{ form.password2.help_text }}</small>
+            {% endif %}
         </div>
         
-        <button type="submit" class="btn-submit">S'inscrire en tant qu'étudiant</button>
+        <button type="submit" class="btn-submit">S'inscrire</button>
     </form>
+    {% endif %}
 </div>
 
-<!-- Formulaire Enseignant -->
-<div id="form-enseignant" class="inscription-form">
-    <h3>Inscription Enseignant</h3>
-    <form method="POST" id="enseignant-form">
-        {% csrf_token %}
-        <input type="hidden" name="type_utilisateur" value="enseignant">
-        
-        <div class="form-group">
-            <label for="id_username_enseignant">Nom d'utilisateur *</label>
-            <input type="text" name="username" id="id_username_enseignant" class="form-control" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="id_first_name_enseignant">Prénom *</label>
-            <input type="text" name="first_name" id="id_first_name_enseignant" class="form-control" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="id_last_name_enseignant">Nom *</label>
-            <input type="text" name="last_name" id="id_last_name_enseignant" class="form-control" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="id_email_enseignant">Adresse e-mail *</label>
-            <input type="email" name="email" id="id_email_enseignant" class="form-control" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="id_email_confirmation_enseignant">Confirmer l'adresse e-mail *</label>
-            <input type="email" name="email_confirmation" id="id_email_confirmation_enseignant" class="form-control" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="id_matieres_enseignant">Matières enseignées *</label>
-            <textarea name="matieres" id="id_matieres_enseignant" class="form-control" rows="3" required placeholder="Ex: Médecine de famille, Santé communautaire, Recherche"></textarea>
-            <small class="form-help">Liste des matières que vous enseignez, séparées par des virgules</small>
-        </div>
-        
-        <div class="form-group">
-            <label for="id_password1_enseignant">Mot de passe *</label>
-            <input type="password" name="password1" id="id_password1_enseignant" class="form-control" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="id_password2_enseignant">Confirmer le mot de passe *</label>
-            <input type="password" name="password2" id="id_password2_enseignant" class="form-control" required>
-        </div>
-        
-        <button type="submit" class="btn-submit">S'inscrire en tant qu'enseignant</button>
-    </form>
+<div class="info-admin">
+    <p class="info-text">
+        <i class="fas fa-info-circle"></i> 
+        <strong>Note :</strong> Les comptes enseignants sont gérés par l'administration. 
+        Si vous êtes enseignant, veuillez contacter l'administration pour obtenir votre compte.
+    </p>
 </div>
 
 <p class="login-link"><a href="{% url 'login' %}">Déjà inscrit ? Connexion</a></p>
@@ -127,32 +102,24 @@
     color: #666;
 }
 
-.inscription-tabs {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    border-bottom: 2px solid #e0e0e0;
+.info-admin {
+    max-width: 600px;
+    margin: 2rem auto 0;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-left: 4px solid #005a9c;
+    border-radius: 4px;
 }
 
-.tab-button {
-    padding: 1rem 2rem;
-    background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    cursor: pointer;
-    font-size: 1.1rem;
-    color: #666;
-    transition: all 0.3s ease;
+.info-text {
+    margin: 0;
+    color: #495057;
+    font-size: 0.95rem;
 }
 
-.tab-button:hover {
+.info-text i {
     color: #005a9c;
-}
-
-.tab-button.active {
-    color: #005a9c;
-    border-bottom-color: #005a9c;
-    font-weight: bold;
+    margin-right: 0.5rem;
 }
 
 .inscription-form {
@@ -236,37 +203,27 @@
     text-decoration: underline;
 }
 
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.alert-error ul {
+    margin: 0.5rem 0 0 1.5rem;
+    padding: 0;
+}
+
 @media screen and (max-width: 768px) {
     .inscription-form {
         padding: 1.5rem;
     }
-    
-    .tab-button {
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-    }
 }
 </style>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-function showTab(type) {
-    // Masquer tous les formulaires
-    document.querySelectorAll('.inscription-form').forEach(form => {
-        form.classList.remove('active');
-    });
-    
-    // Retirer la classe active de tous les boutons
-    document.querySelectorAll('.tab-button').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    // Afficher le formulaire sélectionné
-    document.getElementById('form-' + type).classList.add('active');
-    
-    // Activer le bouton correspondant
-    event.target.classList.add('active');
-}
-</script>
 {% endblock %}
