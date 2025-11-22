@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Détails du paiement - FMOS MFMC{% endblock %}
+{% block title %}Détails du paiement de formation - FMOS MFMC{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -21,10 +21,10 @@
                 <div class="card-body">
                     <table class="table">
                         <tr>
-                            <th width="30%">Cours :</th>
+                            <th width="30%">Formation :</th>
                             <td>
-                                <strong>{{ paiement.cours.titre }}</strong><br>
-                                <small class="text-muted">{{ paiement.cours.code }}</small>
+                                <strong>{{ paiement.formation.nom }}</strong><br>
+                                <small class="text-muted">{{ paiement.formation.code }}</small>
                             </td>
                         </tr>
                         <tr>

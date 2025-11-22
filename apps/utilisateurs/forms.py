@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
 from .models import Utilisateur
-from .models_formation import PaiementCours
+from .models_formation import PaiementFormation
 
 class InscriptionEtudiantForm(UserCreationForm):
     email = forms.EmailField(
@@ -198,14 +198,14 @@ class CodeVerificationForm(forms.Form):
     )
 
 
-class PaiementCoursForm(forms.ModelForm):
-    """Formulaire pour créer un paiement de cours"""
+class PaiementFormationForm(forms.ModelForm):
+    """Formulaire pour créer un paiement de formation"""
     
     class Meta:
-        model = PaiementCours
-        fields = ['cours', 'montant', 'mode_paiement', 'reference_paiement', 'preuve_paiement', 'commentaires']
+        model = PaiementFormation
+        fields = ['formation', 'montant', 'mode_paiement', 'reference_paiement', 'preuve_paiement', 'commentaires']
         widgets = {
-            'cours': forms.Select(attrs={'class': 'form-control'}),
+            'formation': forms.Select(attrs={'class': 'form-control'}),
             'montant': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'step': '0.01',
@@ -228,7 +228,7 @@ class PaiementCoursForm(forms.ModelForm):
             }),
         }
         labels = {
-            'cours': 'Cours',
+            'formation': 'Formation',
             'montant': 'Montant (FCFA)',
             'mode_paiement': 'Mode de paiement',
             'reference_paiement': 'Référence de paiement',
@@ -244,28 +244,15 @@ class PaiementCoursForm(forms.ModelForm):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         
-        # Limiter les cours aux cours accessibles par l'étudiant
+        # Limiter les formations aux formations disponibles
         if user and user.type_utilisateur == 'etudiant':
-            from .models_formation import Cours
-            from core.views_med6 import a_acces_gratuit_med6
+            from .models_formation import Formation
             
-            # Récupérer les cours de la classe de l'étudiant
-            classe_obj = user.get_classe_obj()
-            if classe_obj:
-                queryset = Cours.objects.filter(
-                    classe=classe_obj,
-                    actif=True
-                )
-                
-                # Si l'étudiant a accès gratuit Med6, exclure les cours Med6 (gratuits)
-                if a_acces_gratuit_med6(user):
-                    # Exclure les cours de la classe Med6 (gratuits pour cet étudiant)
-                    queryset = queryset.exclude(classe__nom__icontains='Médecine 6')
-                
-                self.fields['cours'].queryset = queryset.order_by('titre')
-            else:
-                self.fields['cours'].queryset = Cours.objects.none()
+            # Récupérer toutes les formations actives
+            queryset = Formation.objects.filter(actif=True)
+            
+            self.fields['formation'].queryset = queryset.order_by('nom')
         elif user and user.type_utilisateur != 'etudiant':
-            # Pour les admins/enseignants, afficher tous les cours
-            from .models_formation import Cours
-            self.fields['cours'].queryset = Cours.objects.filter(actif=True).order_by('titre')
+            # Pour les admins/enseignants, afficher toutes les formations
+            from .models_formation import Formation
+            self.fields['formation'].queryset = Formation.objects.filter(actif=True).order_by('nom')

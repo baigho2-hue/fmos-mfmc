@@ -11,7 +11,7 @@ from .models_formation import (
     SessionCoursEnLigne, SessionEvaluationEnLigne,
     ProgressionLecon, CommentaireLecon, QuizLecon, QuestionQuiz,
     ReponseQuestion, ReponseEtudiantQuiz, ResultatQuiz, AlerteLecon,
-    PaiementCours
+    PaiementFormation
 )
 from .models_programme_desmfmc import (
     JalonProgramme, ModuleProgramme, CoursProgramme, SuiviProgressionProgramme,
@@ -369,27 +369,23 @@ class LeconAdmin(admin.ModelAdmin):
         return qs.select_related('cours', 'cours__classe')
 
 
-@admin.register(PaiementCours)
-class PaiementCoursAdmin(admin.ModelAdmin):
-    list_display = ('etudiant', 'cours', 'montant', 'mode_paiement', 'statut', 'date_paiement', 'date_validation', 'est_cours_med6_gratuit')
-    list_filter = ('statut', 'mode_paiement', 'date_paiement', 'cours__classe')
-    search_fields = ('etudiant__username', 'etudiant__email', 'cours__titre', 'reference_paiement')
+@admin.register(PaiementFormation)
+class PaiementFormationAdmin(admin.ModelAdmin):
+    list_display = ('etudiant', 'formation', 'montant', 'mode_paiement', 'statut', 'date_paiement', 'date_validation')
+    list_filter = ('statut', 'mode_paiement', 'date_paiement', 'formation')
+    search_fields = ('etudiant__username', 'etudiant__email', 'formation__nom', 'reference_paiement')
     date_hierarchy = 'date_paiement'
-    readonly_fields = ('date_paiement', 'date_creation', 'date_modification', 'est_cours_med6_gratuit')
+    readonly_fields = ('date_paiement', 'date_creation', 'date_modification')
     
     fieldsets = (
         ('Informations générales', {
-            'fields': ('cours', 'etudiant', 'montant', 'mode_paiement', 'statut')
+            'fields': ('formation', 'etudiant', 'montant', 'mode_paiement', 'statut')
         }),
         ('Paiement', {
             'fields': ('reference_paiement', 'preuve_paiement', 'date_paiement')
         }),
         ('Validation', {
             'fields': ('valideur', 'date_validation', 'commentaires')
-        }),
-        ('Informations', {
-            'fields': ('est_cours_med6_gratuit',),
-            'classes': ('collapse',)
         }),
         ('Dates', {
             'fields': ('date_creation', 'date_modification'),
@@ -400,33 +396,7 @@ class PaiementCoursAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         """Optimise les requêtes en préchargeant les relations"""
         qs = super().get_queryset(request)
-        return qs.select_related('cours', 'cours__classe', 'etudiant', 'valideur')
-    
-    def est_cours_med6_gratuit(self, obj):
-        """Vérifie si le cours est un cours Med6 gratuit pour cet étudiant"""
-        if not obj.cours or not obj.cours.classe:
-            return "N/A"
-        if 'Médecine 6' in obj.cours.classe.nom:
-            from core.views_med6 import a_acces_gratuit_med6
-            if a_acces_gratuit_med6(obj.etudiant):
-                return "⚠️ Oui (cours gratuit - étudiant dans liste active)"
-        return "Non"
-    est_cours_med6_gratuit.short_description = "Cours Med6 gratuit"
-    
-    def save_model(self, request, obj, form, change):
-        """Valide avant de sauvegarder"""
-        # Vérifier si c'est un cours Med6 et si l'étudiant a accès gratuit
-        if obj.cours and obj.cours.classe and 'Médecine 6' in obj.cours.classe.nom:
-            from core.views_med6 import a_acces_gratuit_med6
-            if a_acces_gratuit_med6(obj.etudiant):
-                from django.contrib import messages
-                messages.warning(
-                    request,
-                    f"⚠️ Attention : Le cours '{obj.cours.titre}' est gratuit pour {obj.etudiant.get_full_name()} "
-                    "car il/elle est dans la liste active des étudiants de Médecine 6. "
-                    "Le paiement a été enregistré mais n'est normalement pas nécessaire."
-                )
-        super().save_model(request, obj, form, change)
+        return qs.select_related('formation', 'etudiant', 'valideur')
     
     actions = ['valider_paiements', 'refuser_paiements']
     

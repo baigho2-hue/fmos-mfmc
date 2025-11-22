@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Refuser le paiement - FMOS MFMC{% endblock %}
+{% block title %}Refuser le paiement de formation - FMOS MFMC{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -14,8 +14,8 @@
             
             <table class="table">
                 <tr>
-                    <th>Cours :</th>
-                    <td>{{ paiement.cours.titre }}</td>
+                    <th>Formation :</th>
+                    <td>{{ paiement.formation.nom }}</td>
                 </tr>
                 <tr>
                     <th>Étudiant :</th>

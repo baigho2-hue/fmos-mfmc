@@ -1020,8 +1020,8 @@ class AlerteLecon(models.Model):
         return f"Alerte {self.get_type_alerte_display()} - {self.lecon.titre} - {self.enseignant.get_full_name()}"
 
 
-class PaiementCours(models.Model):
-    """Modèle représentant un paiement pour un cours"""
+class PaiementFormation(models.Model):
+    """Modèle représentant un paiement pour une formation"""
     MODE_PAIEMENT_CHOICES = [
         ('bancaire', 'Bancaire'),
         ('espece', 'Espèce'),
@@ -1034,17 +1034,17 @@ class PaiementCours(models.Model):
         ('refuse', 'Refusé'),
     ]
     
-    cours = models.ForeignKey(
-        Cours,
+    formation = models.ForeignKey(
+        Formation,
         on_delete=models.CASCADE,
         related_name='paiements',
-        verbose_name='Cours'
+        verbose_name='Formation'
     )
     etudiant = models.ForeignKey(
         Utilisateur,
         on_delete=models.CASCADE,
         limit_choices_to={'type_utilisateur': 'etudiant'},
-        related_name='paiements_cours',
+        related_name='paiements_formations',
         verbose_name='Étudiant'
     )
     montant = models.DecimalField(
@@ -1073,7 +1073,7 @@ class PaiementCours(models.Model):
         verbose_name='Référence de paiement'
     )
     preuve_paiement = models.FileField(
-        upload_to='cours/preuves_paiement/',
+        upload_to='formations/preuves_paiement/',
         blank=True,
         null=True,
         help_text="Capture d'écran, reçu, etc.",
@@ -1093,7 +1093,7 @@ class PaiementCours(models.Model):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        related_name='paiements_cours_valides',
+        related_name='paiements_formations_valides',
         verbose_name='Validateur'
     )
     commentaires = models.TextField(
@@ -1105,10 +1105,10 @@ class PaiementCours(models.Model):
     date_modification = models.DateTimeField(auto_now=True)
     
     class Meta:
-        verbose_name = 'Paiement de cours'
-        verbose_name_plural = 'Paiements de cours'
+        verbose_name = 'Paiement de formation'
+        verbose_name_plural = 'Paiements de formations'
         ordering = ['-date_paiement']
-        unique_together = [['cours', 'etudiant']]
+        unique_together = [['formation', 'etudiant']]
     
     def __str__(self):
-        return f"{self.etudiant.get_full_name()} - {self.cours.titre} - {self.montant} FCFA ({self.get_mode_paiement_display()})"
+        return f"{self.etudiant.get_full_name()} - {self.formation.nom} - {self.montant} FCFA ({self.get_mode_paiement_display()})"
