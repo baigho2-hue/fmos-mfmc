@@ -34,9 +34,9 @@
             <p><strong>Coût de la formation :</strong> 
                 {% if montant_converti and montant_converti.devise != 'FCFA' %}
                     <span class="cout-montant">{{ montant_converti.montant|floatformat:0 }} {{ montant_converti.symbole }}</span>
-                    <span class="cout-original">(≈ {{ cout_formation.cout_principal|floatformat:0 }} FCFA)</span>
+                    <span class="cout-original">(≈ {{ cout_formation.get_cout_principal_calcule|floatformat:0 }} FCFA{% if cout_formation.bourse_offerte %} - avec bourse{% endif %})</span>
                 {% else %}
-                    <span class="cout-montant">{{ cout_formation.cout_principal|floatformat:0 }} FCFA</span>
+                    <span class="cout-montant">{{ cout_formation.get_cout_principal_calcule|floatformat:0 }} FCFA{% if cout_formation.bourse_offerte %} - avec bourse{% endif %}</span>
                 {% endif %}
             </p>
             <p style="margin-top: 1.5rem;"><strong>Modalité de paiement :</strong> {{ cout_formation.get_modalite_paiement_display }}.{% if cout_formation.conditions_paiement %} {{ cout_formation.conditions_paiement }}{% endif %}</p>

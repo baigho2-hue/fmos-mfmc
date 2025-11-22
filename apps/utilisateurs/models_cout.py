@@ -112,6 +112,13 @@ class CoutFormation(models.Model):
         help_text="Informations complémentaires sur le coût et les modalités"
     )
     
+    # Bourse
+    bourse_offerte = models.BooleanField(
+        default=False,
+        verbose_name="Bourse offerte",
+        help_text="Si une bourse est offerte, le coût sera doublé"
+    )
+    
     actif = models.BooleanField(
         default=True,
         verbose_name="Actif",
@@ -145,17 +152,67 @@ class CoutFormation(models.Model):
         """Méthode pour l'admin"""
         return self.a_plusieurs_niveaux
     
+    def get_cout_principal_calcule(self):
+        """Retourne le coût principal calculé (doublé si bourse offerte)"""
+        from decimal import Decimal
+        cout = Decimal(str(self.cout_principal))
+        if self.bourse_offerte:
+            cout = cout * Decimal('2')
+        return cout
+    
+    def get_cout_diu_calcule(self):
+        """Retourne le coût DIU calculé (doublé si bourse offerte)"""
+        from decimal import Decimal
+        if not self.cout_diu:
+            return None
+        cout = Decimal(str(self.cout_diu))
+        if self.bourse_offerte:
+            cout = cout * Decimal('2')
+        return cout
+    
+    def get_cout_licence_calcule(self):
+        """Retourne le coût Licence calculé (doublé si bourse offerte)"""
+        from decimal import Decimal
+        if not self.cout_licence:
+            return None
+        cout = Decimal(str(self.cout_licence))
+        if self.bourse_offerte:
+            cout = cout * Decimal('2')
+        return cout
+    
+    def get_cout_master_calcule(self):
+        """Retourne le coût Master calculé (doublé si bourse offerte)"""
+        from decimal import Decimal
+        if not self.cout_master:
+            return None
+        cout = Decimal(str(self.cout_master))
+        if self.bourse_offerte:
+            cout = cout * Decimal('2')
+        return cout
+    
     def get_cout_affichage(self):
-        """Retourne le coût formaté pour l'affichage"""
+        """Retourne le coût formaté pour l'affichage (avec bourse si applicable)"""
         if self.a_plusieurs_niveaux:
             niveaux = []
-            if self.cout_diu:
-                niveaux.append(f"DIU: {self.cout_diu:,.0f} FCFA")
-            if self.cout_licence:
-                niveaux.append(f"Licence: {self.cout_licence:,.0f} FCFA")
-            if self.cout_master:
-                niveaux.append(f"Master: {self.cout_master:,.0f} FCFA")
-            return " / ".join(niveaux)
+            cout_diu = self.get_cout_diu_calcule()
+            cout_licence = self.get_cout_licence_calcule()
+            cout_master = self.get_cout_master_calcule()
+            
+            if cout_diu:
+                niveaux.append(f"DIU: {cout_diu:,.0f} FCFA")
+            if cout_licence:
+                niveaux.append(f"Licence: {cout_licence:,.0f} FCFA")
+            if cout_master:
+                niveaux.append(f"Master: {cout_master:,.0f} FCFA")
+            
+            affichage = " / ".join(niveaux)
+            if self.bourse_offerte:
+                affichage += " (avec bourse)"
+            return affichage
         else:
-            return f"{self.cout_principal:,.0f} FCFA"
+            cout = self.get_cout_principal_calcule()
+            affichage = f"{cout:,.0f} FCFA"
+            if self.bourse_offerte:
+                affichage += " (avec bourse)"
+            return affichage
 

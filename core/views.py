@@ -1130,7 +1130,7 @@ def desmfmc_public(request):
         # Convertir le montant selon la localisation
         if cout_formation:
             ip_address = get_client_ip(request)
-            montant_converti = convertir_montant(cout_formation.cout_principal, ip_address=ip_address)
+            montant_converti = convertir_montant(cout_formation.get_cout_principal_calcule(), ip_address=ip_address)
     except CoutFormation.DoesNotExist:
         pass
     
@@ -1172,7 +1172,7 @@ def sante_communautaire_public(request):
                 if cout_formation.cout_master:
                     montant_converti['master'] = convertir_montant(cout_formation.cout_master, ip_address=ip_address)
             else:
-                montant_converti = convertir_montant(cout_formation.cout_principal, ip_address=ip_address)
+                montant_converti = convertir_montant(cout_formation.get_cout_principal_calcule(), ip_address=ip_address)
     except CoutFormation.DoesNotExist:
         pass
     
@@ -1204,7 +1204,7 @@ def recherche_public(request):
         # Convertir le montant selon la localisation
         if cout_formation:
             ip_address = get_client_ip(request)
-            montant_converti = convertir_montant(cout_formation.cout_principal, ip_address=ip_address)
+            montant_converti = convertir_montant(cout_formation.get_cout_principal_calcule(), ip_address=ip_address)
     except CoutFormation.DoesNotExist:
         pass
     
@@ -1236,7 +1236,7 @@ def logiciels_analyse_public(request):
         # Convertir le montant selon la localisation
         if cout_formation:
             ip_address = get_client_ip(request)
-            montant_converti = convertir_montant(cout_formation.cout_principal, ip_address=ip_address)
+            montant_converti = convertir_montant(cout_formation.get_cout_principal_calcule(), ip_address=ip_address)
     except CoutFormation.DoesNotExist:
         pass
     
@@ -1268,7 +1268,7 @@ def echographie_base_public(request):
         # Convertir le montant selon la localisation
         if cout_formation:
             ip_address = get_client_ip(request)
-            montant_converti = convertir_montant(cout_formation.cout_principal, ip_address=ip_address)
+            montant_converti = convertir_montant(cout_formation.get_cout_principal_calcule(), ip_address=ip_address)
     except CoutFormation.DoesNotExist:
         pass
     
@@ -1300,7 +1300,7 @@ def pedagogie_sante_public(request):
         # Convertir le montant selon la localisation
         if cout_formation:
             ip_address = get_client_ip(request)
-            montant_converti = convertir_montant(cout_formation.cout_principal, ip_address=ip_address)
+            montant_converti = convertir_montant(cout_formation.get_cout_principal_calcule(), ip_address=ip_address)
     except CoutFormation.DoesNotExist:
         pass
     

@@ -452,5 +452,69 @@ class PaiementCoursAdmin(admin.ModelAdmin):
     refuser_paiements.short_description = "Refuser les paiements sélectionnés"
 
 
+@admin.register(CoutFormation)
+class CoutFormationAdmin(admin.ModelAdmin):
+    list_display = ('nom_formation', 'formation_slug', 'niveau', 'cout_principal', 'bourse_offerte', 'get_cout_principal_calcule_display', 'actif')
+    list_filter = ('niveau', 'modalite_paiement', 'bourse_offerte', 'actif')
+    search_fields = ('nom_formation', 'formation_slug')
+    readonly_fields = ('date_creation', 'date_modification', 'get_cout_principal_calcule_display', 'get_cout_diu_calcule_display', 'get_cout_licence_calcule_display', 'get_cout_master_calcule_display')
+    
+    fieldsets = (
+        ('Informations générales', {
+            'fields': ('formation_slug', 'nom_formation', 'niveau', 'actif')
+        }),
+        ('Coûts de base', {
+            'fields': ('cout_principal', 'cout_diu', 'cout_licence', 'cout_master')
+        }),
+        ('Bourse', {
+            'fields': ('bourse_offerte',),
+            'description': 'Si une bourse est offerte, tous les coûts seront automatiquement doublés.'
+        }),
+        ('Coûts calculés (avec bourse si applicable)', {
+            'fields': ('get_cout_principal_calcule_display', 'get_cout_diu_calcule_display', 'get_cout_licence_calcule_display', 'get_cout_master_calcule_display'),
+            'classes': ('collapse',)
+        }),
+        ('Modalités de paiement', {
+            'fields': ('modalite_paiement', 'conditions_paiement', 'informations_supplementaires')
+        }),
+        ('Dates', {
+            'fields': ('date_creation', 'date_modification'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_cout_principal_calcule_display(self, obj):
+        """Affiche le coût principal calculé"""
+        if obj:
+            cout = obj.get_cout_principal_calcule()
+            return f"{cout:,.0f} FCFA"
+        return "-"
+    get_cout_principal_calcule_display.short_description = "Coût principal (calculé)"
+    
+    def get_cout_diu_calcule_display(self, obj):
+        """Affiche le coût DIU calculé"""
+        if obj and obj.cout_diu:
+            cout = obj.get_cout_diu_calcule()
+            return f"{cout:,.0f} FCFA"
+        return "-"
+    get_cout_diu_calcule_display.short_description = "Coût DIU (calculé)"
+    
+    def get_cout_licence_calcule_display(self, obj):
+        """Affiche le coût Licence calculé"""
+        if obj and obj.cout_licence:
+            cout = obj.get_cout_licence_calcule()
+            return f"{cout:,.0f} FCFA"
+        return "-"
+    get_cout_licence_calcule_display.short_description = "Coût Licence (calculé)"
+    
+    def get_cout_master_calcule_display(self, obj):
+        """Affiche le coût Master calculé"""
+        if obj and obj.cout_master:
+            cout = obj.get_cout_master_calcule()
+            return f"{cout:,.0f} FCFA"
+        return "-"
+    get_cout_master_calcule_display.short_description = "Coût Master (calculé)"
+
+
 # Les autres modèles sont enregistrés dans leurs fichiers admin respectifs
 # (admin_carnet_stage.py pour les modèles du carnet de stage)

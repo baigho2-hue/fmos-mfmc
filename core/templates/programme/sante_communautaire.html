@@ -68,9 +68,9 @@
                 <p><strong>Coût de la formation :</strong> 
                     {% if montant_converti and montant_converti.devise != 'FCFA' %}
                         <span class="cout-montant">{{ montant_converti.montant|floatformat:0 }} {{ montant_converti.symbole }}{% if cout_formation.niveau == 'annuel' %} par année{% endif %}</span>
-                        <span class="cout-original">(≈ {{ cout_formation.cout_principal|floatformat:0 }} FCFA{% if cout_formation.niveau == 'annuel' %} par année{% endif %})</span>
+                        <span class="cout-original">(≈ {{ cout_formation.get_cout_principal_calcule|floatformat:0 }} FCFA{% if cout_formation.niveau == 'annuel' %} par année{% endif %}{% if cout_formation.bourse_offerte %} - avec bourse{% endif %})</span>
                     {% else %}
-                        <span class="cout-montant">{{ cout_formation.cout_principal|floatformat:0 }} FCFA{% if cout_formation.niveau == 'annuel' %} par année{% endif %}</span>
+                        <span class="cout-montant">{{ cout_formation.get_cout_principal_calcule|floatformat:0 }} FCFA{% if cout_formation.niveau == 'annuel' %} par année{% endif %}{% if cout_formation.bourse_offerte %} - avec bourse{% endif %}</span>
                     {% endif %}
                 </p>
             {% endif %}
