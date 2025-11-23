@@ -56,264 +56,300 @@ class Command(BaseCommand):
         # ============================================
         
         structure_programme = {
-            1: {  # ANNÉE 1
+            1: {  # ANNÉE 1 (144h Théorie + Stages cliniques)
                 1: {  # Semestre 1
-                    'nom': 'Fondamentaux de la médecine de famille',
+                    'nom': 'Fondamentaux et Urgences',
                     'code': 'DESMFMC-A1-S1',
-                    'description': 'Introduction aux concepts fondamentaux de la médecine de famille et aux compétences de base',
+                    'description': 'Formation théorique fondamentale et début des rotations cliniques',
                     'modules': [
                         {
-                            'nom': 'Introduction à la médecine de famille',
-                            'code': 'INTRO-MF-A1-S1',
-                            'volume_horaire': 40,
-                            'description': 'Concepts fondamentaux, histoire, philosophie et valeurs de la médecine de famille'
+                            'nom': 'Soins aux enfants (Pédiatrie)',
+                            'code': 'PED-A1',
+                            'volume_horaire': 20,
+                            'description': 'Problèmes courants chez l\'enfant, maladies fébriles, infections, développement'
                         },
                         {
-                            'nom': 'Médecine générale de base',
-                            'code': 'MGB-A1-S1',
-                            'volume_horaire': 120,
-                            'description': 'Compétences de base en médecine générale, histoire clinique, examen physique, décision clinique'
+                            'nom': 'Soins périnataux',
+                            'code': 'PERI-A1',
+                            'volume_horaire': 15,
+                            'description': 'Grossesse, accouchement, allaitement, planification familiale'
                         },
                         {
-                            'nom': 'Communication médicale',
-                            'code': 'COM-A1-S1',
-                            'volume_horaire': 80,
-                            'description': 'Techniques de communication patient-médecin, entretien clinique, relation thérapeutique'
+                            'nom': 'Soins en santé mentale',
+                            'code': 'PSY-A1',
+                            'volume_horaire': 20,
+                            'description': 'Problèmes de santé mentale courants, anxiété, dépression'
                         },
                         {
-                            'nom': 'Systèmes de santé et santé publique',
-                            'code': 'SSP-A1-S1',
-                            'volume_horaire': 60,
-                            'description': 'Organisation des soins primaires, systèmes de santé, santé publique, épidémiologie de base'
+                            'nom': 'Soins urgents majeurs',
+                            'code': 'URG-A1',
+                            'volume_horaire': 20,
+                            'description': 'Arrêt cardio-respiratoire, coma, traumatisme, choc'
                         },
                         {
-                            'nom': 'Anatomie et physiologie appliquées',
-                            'code': 'ANA-PHY-A1-S1',
-                            'volume_horaire': 60,
-                            'description': 'Anatomie et physiologie appliquées à la pratique clinique'
+                            'nom': 'Réanimation du nouveau-né',
+                            'code': 'REA-NN-A1',
+                            'volume_horaire': 6,
+                            'description': 'Techniques de réanimation néonatale'
+                        },
+                        {
+                            'nom': 'Urgences obstétricales (Niveau I)',
+                            'code': 'URG-OBS1-A1',
+                            'volume_horaire': 21,
+                            'description': 'GESTA - Niveau I'
+                        },
+                        {
+                            'nom': 'Habiletés chirurgicales',
+                            'code': 'CHIR-A1',
+                            'volume_horaire': 35,
+                            'description': 'FIRST - Techniques chirurgicales de base'
                         }
                     ]
                 },
                 2: {  # Semestre 2
-                    'nom': 'Pathologies courantes en médecine de famille',
+                    'nom': 'Pratique Clinique et Éthique',
                     'code': 'DESMFMC-A1-S2',
-                    'description': 'Prise en charge des pathologies les plus fréquentes en médecine de famille',
+                    'description': 'Suite des rotations cliniques et formation éthique',
                     'modules': [
                         {
-                            'nom': 'Pathologies infectieuses',
-                            'code': 'INF-A1-S2',
-                            'volume_horaire': 100,
-                            'description': 'Diagnostic et prise en charge des infections courantes (respiratoires, digestives, urinaires, cutanées)'
+                            'nom': 'Discussions éthiques (Niveau 1)',
+                            'code': 'ETH-A1',
+                            'volume_horaire': 3,
+                            'description': 'Introduction à l\'éthique médicale'
                         },
                         {
-                            'nom': 'Pathologies cardiovasculaires',
-                            'code': 'CARD-A1-S2',
-                            'volume_horaire': 100,
-                            'description': 'Hypertension, insuffisance cardiaque, cardiopathies ischémiques, troubles du rythme'
-                        },
-                        {
-                            'nom': 'Pathologies respiratoires',
-                            'code': 'RESP-A1-S2',
-                            'volume_horaire': 80,
-                            'description': 'Asthme, BPCO, pneumonies, tuberculose, pathologies respiratoires chroniques'
-                        },
-                        {
-                            'nom': 'Pathologies digestives',
-                            'code': 'DIG-A1-S2',
-                            'volume_horaire': 60,
-                            'description': 'Pathologies digestives courantes, hépatites, troubles digestifs fonctionnels'
-                        },
-                        {
-                            'nom': 'Pathologies endocriniennes et métaboliques',
-                            'code': 'ENDO-A1-S2',
-                            'volume_horaire': 60,
-                            'description': 'Diabète, troubles thyroïdiens, obésité, dyslipidémies'
+                            'nom': 'Responsabilités administratives',
+                            'code': 'ADM-A1',
+                            'volume_horaire': 4,
+                            'description': 'Relations avec le personnel et instances locales'
                         }
                     ]
                 }
             },
-            2: {  # ANNÉE 2
+            2: {  # ANNÉE 2 (165h Théorie + CSCOM-U)
                 1: {  # Semestre 1
-                    'nom': 'Médecine spécialisée appliquée',
+                    'nom': 'Pathologies et Urgences Avancées',
                     'code': 'DESMFMC-A2-S1',
-                    'description': 'Application des spécialités médicales en contexte de médecine de famille',
+                    'description': 'Approfondissement des pathologies et urgences',
                     'modules': [
                         {
-                            'nom': 'Pédiatrie en médecine de famille',
-                            'code': 'PED-A2-S1',
-                            'volume_horaire': 120,
-                            'description': 'Soins pédiatriques, croissance et développement, pathologies pédiatriques courantes, vaccination'
+                            'nom': 'Troubles psychiatriques aigus',
+                            'code': 'PSY-AIGU-A2',
+                            'volume_horaire': 6,
+                            'description': 'Psychose aiguë, tentative suicidaire'
                         },
                         {
-                            'nom': 'Gynécologie et obstétrique',
-                            'code': 'GYN-A2-S1',
-                            'volume_horaire': 100,
-                            'description': 'Suivi gynécologique, contraception, suivi de grossesse, accouchement normal, pathologies gynécologiques'
+                            'nom': 'Urgences obstétricales (Niveau II)',
+                            'code': 'URG-OBS2-A2',
+                            'volume_horaire': 21,
+                            'description': 'GESTA - Niveau II'
                         },
                         {
-                            'nom': 'Psychiatrie et santé mentale',
-                            'code': 'PSY-A2-S1',
-                            'volume_horaire': 80,
-                            'description': 'Troubles de l\'humeur, anxiété, psychoses, addictions, santé mentale en soins primaires'
+                            'nom': 'Problèmes urgents courants',
+                            'code': 'URG-COUR-A2',
+                            'volume_horaire': 30,
+                            'description': 'Infections aiguës, traumatismes mineurs, douleur aiguë'
                         },
                         {
-                            'nom': 'Dermatologie',
-                            'code': 'DERM-A2-S1',
-                            'volume_horaire': 60,
-                            'description': 'Pathologies dermatologiques courantes, infections cutanées, eczémas, dermatoses'
+                            'nom': 'Cardiologie',
+                            'code': 'CARD-A2',
+                            'volume_horaire': 18,
+                            'description': 'HTA, arythmies, insuffisance cardiaque'
+                        },
+                        {
+                            'nom': 'Pneumologie',
+                            'code': 'PNEU-A2',
+                            'volume_horaire': 12,
+                            'description': 'Toux, épanchements pleuraux'
                         }
                     ]
                 },
                 2: {  # Semestre 2
-                    'nom': 'Médecine d\'urgence et soins critiques',
+                    'nom': 'Médecine Spécialisée et Chronique',
                     'code': 'DESMFMC-A2-S2',
-                    'description': 'Prise en charge des urgences médicales et situations critiques',
+                    'description': 'Prise en charge des maladies chroniques et spécialités',
                     'modules': [
                         {
-                            'nom': 'Urgences médicales',
-                            'code': 'URG-A2-S2',
-                            'volume_horaire': 120,
-                            'description': 'Prise en charge des urgences médicales en soins primaires, triage, gestes d\'urgence'
+                            'nom': 'Endocrinologie',
+                            'code': 'ENDO-A2',
+                            'volume_horaire': 14,
+                            'description': 'Diabète, désordres thyroïdiens'
                         },
                         {
-                            'nom': 'Réanimation et soins critiques',
-                            'code': 'REA-A2-S2',
-                            'volume_horaire': 80,
-                            'description': 'Bases de la réanimation, support vital de base et avancé, soins critiques'
+                            'nom': 'Santé des femmes',
+                            'code': 'FEM-A2',
+                            'volume_horaire': 20,
+                            'description': 'Gynécologie courante, ménopause, violence'
                         },
                         {
-                            'nom': 'Traumatologie',
-                            'code': 'TRAUMA-A2-S2',
-                            'volume_horaire': 60,
-                            'description': 'Prise en charge des traumatismes, fractures, plaies, brûlures'
+                            'nom': 'Problèmes fréquents adulte/ado',
+                            'code': 'FREQ-A2',
+                            'volume_horaire': 20,
+                            'description': 'Asthme, dermato, gastro, locomoteur'
                         },
                         {
-                            'nom': 'Toxicologie et intoxications',
-                            'code': 'TOX-A2-S2',
-                            'volume_horaire': 40,
-                            'description': 'Intoxications aiguës, morsures, piqûres, toxicologie clinique'
+                            'nom': 'Suivi maladies chroniques',
+                            'code': 'CHRON-A2',
+                            'volume_horaire': 20,
+                            'description': 'HTA, diabète, VIH, Tuberculose'
+                        },
+                        {
+                            'nom': 'Discussions éthiques (Niveau 2)',
+                            'code': 'ETH-A2',
+                            'volume_horaire': 4,
+                            'description': 'Éthique clinique'
                         }
                     ]
                 }
             },
-            3: {  # ANNÉE 3
+            3: {  # ANNÉE 3 (175h Théorie + CSCOM-U)
                 1: {  # Semestre 1
-                    'nom': 'Médecine communautaire et santé publique',
+                    'nom': 'Gériatrie et Communication',
                     'code': 'DESMFMC-A3-S1',
-                    'description': 'Approches communautaires de la santé et santé publique',
+                    'description': 'Soins aux personnes âgées et communication',
                     'modules': [
                         {
-                            'nom': 'Santé communautaire',
-                            'code': 'SCOM-A3-S1',
-                            'volume_horaire': 120,
-                            'description': 'Approches communautaires de la santé, promotion de la santé, participation communautaire'
+                            'nom': 'Soins aux personnes âgées',
+                            'code': 'GER-A3',
+                            'volume_horaire': 24,
+                            'description': 'Problèmes gériatriques, démence, chutes'
                         },
                         {
-                            'nom': 'Épidémiologie et recherche',
-                            'code': 'EPI-A3-S1',
-                            'volume_horaire': 100,
-                            'description': 'Méthodes épidémiologiques, recherche en santé, statistiques appliquées, lecture critique'
+                            'nom': 'Soins en fin de vie',
+                            'code': 'PAL-A3',
+                            'volume_horaire': 30,
+                            'description': 'Gestion de la douleur et problèmes de fin de vie'
                         },
                         {
-                            'nom': 'Médecine préventive',
-                            'code': 'PREV-A3-S1',
-                            'volume_horaire': 80,
-                            'description': 'Dépistage, prévention primaire, secondaire, tertiaire, vaccination, éducation pour la santé'
+                            'nom': 'Communication médecin-patient',
+                            'code': 'COM-PAT-A3',
+                            'volume_horaire': 18,
+                            'description': 'Entrevue, approche centrée patient'
                         },
                         {
-                            'nom': 'Santé environnementale',
-                            'code': 'ENV-A3-S1',
-                            'volume_horaire': 40,
-                            'description': 'Impact de l\'environnement sur la santé, santé au travail'
+                            'nom': 'Communication et sc. comportementales',
+                            'code': 'COM-COMP-A3',
+                            'volume_horaire': 21,
+                            'description': 'Troubles psychiques, annonce mauvaise nouvelle'
                         }
                     ]
                 },
                 2: {  # Semestre 2
-                    'nom': 'Gestion et leadership en santé',
+                    'nom': 'Santé Publique et Recherche',
                     'code': 'DESMFMC-A3-S2',
-                    'description': 'Compétences en gestion et leadership pour la pratique médicale',
+                    'description': 'Santé communautaire, gestion et recherche',
                     'modules': [
                         {
-                            'nom': 'Gestion des structures de santé',
-                            'code': 'GEST-A3-S2',
-                            'volume_horaire': 100,
-                            'description': 'Gestion administrative, financière et logistique des structures de santé'
+                            'nom': 'Communication (Deuil/Mort)',
+                            'code': 'COM-DEUIL-A3',
+                            'volume_horaire': 9,
+                            'description': 'Deuil, mort, souffrance, approche familiale'
                         },
                         {
-                            'nom': 'Leadership et management d\'équipe',
-                            'code': 'LEAD-A3-S2',
-                            'volume_horaire': 80,
-                            'description': 'Compétences en leadership, gestion d\'équipe médicale, communication professionnelle'
+                            'nom': 'Santé publique/communautaire',
+                            'code': 'SP-A3',
+                            'volume_horaire': 20,
+                            'description': 'Indicateurs, politique sectorielle, PMA'
                         },
                         {
-                            'nom': 'Qualité et sécurité des soins',
-                            'code': 'QUAL-A3-S2',
-                            'volume_horaire': 60,
-                            'description': 'Assurance qualité, gestion des risques, sécurité des patients'
+                            'nom': 'Suivi enfant et prévention',
+                            'code': 'PREV-A3',
+                            'volume_horaire': 9,
+                            'description': 'Vaccination, examen périodique'
                         },
                         {
-                            'nom': 'Économie de la santé',
-                            'code': 'ECO-A3-S2',
-                            'volume_horaire': 40,
-                            'description': 'Économie de la santé, financement, coûts des soins, efficience'
+                            'nom': 'Modification habitudes de vie',
+                            'code': 'HAB-A3',
+                            'volume_horaire': 6,
+                            'description': 'Modèles de changement'
+                        },
+                        {
+                            'nom': 'Planification et réunions',
+                            'code': 'PLAN-A3',
+                            'volume_horaire': 9,
+                            'description': 'Animation de réunions, rapports'
+                        },
+                        {
+                            'nom': 'Informatique médicale',
+                            'code': 'INFO-A3',
+                            'volume_horaire': 10,
+                            'description': 'Outils informatiques'
+                        },
+                        {
+                            'nom': 'Méthodologie de la recherche',
+                            'code': 'RECH-A3',
+                            'volume_horaire': 10,
+                            'description': 'Bases de la recherche'
+                        },
+                        {
+                            'nom': 'Clubs de lecture (Niveau 1)',
+                            'code': 'CLUB-A3',
+                            'volume_horaire': 10,
+                            'description': 'Analyse critique'
                         }
                     ]
                 }
             },
-            4: {  # ANNÉE 4
+            4: {  # ANNÉE 4 (133h Théorie + CSCOM non-U)
                 1: {  # Semestre 1
-                    'nom': 'Stage clinique avancé et spécialisation',
+                    'nom': 'Gestion et Professionnalisme',
                     'code': 'DESMFMC-A4-S1',
-                    'description': 'Stage pratique approfondi et travail de recherche',
+                    'description': 'Gestion pratique et aspects légaux',
                     'modules': [
                         {
-                            'nom': 'Stage en médecine de famille',
-                            'code': 'STAGE-A4-S1',
-                            'volume_horaire': 200,
-                            'description': 'Stage pratique approfondi en médecine de famille dans les CSCom-U et structures de soins primaires'
+                            'nom': 'Gestion pratique',
+                            'code': 'GEST-A4',
+                            'volume_horaire': 30,
+                            'description': 'Planification budgétaire, gestion personnel'
                         },
                         {
-                            'nom': 'Mémoire de fin d\'études',
-                            'code': 'MEM-A4-S1',
-                            'volume_horaire': 100,
-                            'description': 'Travail de recherche, rédaction et soutenance du mémoire de fin d\'études'
+                            'nom': 'Clubs de lecture (Niveau 2)',
+                            'code': 'CLUB-A4',
+                            'volume_horaire': 10,
+                            'description': 'Analyse critique avancée'
                         },
                         {
-                            'nom': 'Préparation aux examens',
-                            'code': 'EXAM-A4-S1',
-                            'volume_horaire': 40,
-                            'description': 'Préparation aux examens de fin de formation, révision, simulation'
+                            'nom': 'Rédaction scientifique',
+                            'code': 'RED-A4',
+                            'volume_horaire': 30,
+                            'description': 'Rédaction mémoire/thèse'
+                        },
+                        {
+                            'nom': 'Anglais médical',
+                            'code': 'ANG-A4',
+                            'volume_horaire': 20,
+                            'description': 'Anglais professionnel'
                         }
                     ]
                 },
                 2: {  # Semestre 2
-                    'nom': 'Préparation à la pratique professionnelle',
+                    'nom': 'Éthique et Déontologie',
                     'code': 'DESMFMC-A4-S2',
-                    'description': 'Finalisation de la formation et préparation à l\'insertion professionnelle',
+                    'description': 'Aspects légaux et déontologiques',
                     'modules': [
                         {
-                            'nom': 'Éthique et déontologie médicale',
-                            'code': 'ETH-A4-S2',
-                            'volume_horaire': 60,
-                            'description': 'Éthique médicale, déontologie, responsabilité professionnelle, droits des patients'
+                            'nom': 'Droit éthique et santé',
+                            'code': 'DROIT-A4',
+                            'volume_horaire': 10,
+                            'description': 'Droit médical'
                         },
                         {
-                            'nom': 'Insertion professionnelle',
-                            'code': 'INS-A4-S2',
-                            'volume_horaire': 80,
-                            'description': 'Préparation à l\'insertion professionnelle, développement de carrière, réseaux professionnels'
+                            'nom': 'Médecine légale',
+                            'code': 'LEG-A4',
+                            'volume_horaire': 10,
+                            'description': 'Bases de médecine légale'
                         },
                         {
-                            'nom': 'Formation continue et développement professionnel',
-                            'code': 'FCDP-A4-S2',
-                            'volume_horaire': 40,
-                            'description': 'Stratégies de formation continue, développement professionnel continu, veille scientifique'
+                            'nom': 'Aspects déontologiques',
+                            'code': 'DEON-A4',
+                            'volume_horaire': 6,
+                            'description': 'Code de déontologie, responsabilité'
                         },
                         {
-                            'nom': 'Projet professionnel',
-                            'code': 'PROJ-A4-S2',
-                            'volume_horaire': 40,
-                            'description': 'Élaboration du projet professionnel, planification de carrière'
+                            'nom': 'Discussions éthiques (Final)',
+                            'code': 'ETH-A4',
+                            'volume_horaire': 17,
+                            'description': 'Synthèse éthique'
                         }
                     ]
                 }
