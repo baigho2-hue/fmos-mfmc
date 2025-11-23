@@ -1,0 +1,188 @@
+=== Recherche des étudiants de Médecine 6 ===
+Classes trouvées en base : [None, 'DESMFMC 1ère année', 'Médecine 6']
+37 étudiants trouvés.
+
+Étudiant : BADA AZO AQUILAS
+Matricule (Username) : ML20171124721CI
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : ABOUBACAR YOUSSOUFA
+Matricule (Username) : ML20181242752ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : ADIAWIAKOYE FATOUMA MAMOUD
+Matricule (Username) : ML20182239903ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : ADJAGBA LEONARD
+Matricule (Username) : ML20181258362BJ
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : AFANOU MAWUKO SIKA
+Matricule (Username) : ML20192286758TG
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : AHMED ABDALLA AG
+Matricule (Username) : ML20191269067ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : AISSAH MATANYIRE SANDRINE
+Matricule (Username) : ML20182248631TG
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : AKA N'GUETTA ELIE FRANCK
+Matricule (Username) : ML20181256513CI
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : AKAKPO ABLA DANIELA
+Matricule (Username) : ML20182233700ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : ALMIHIDI ALI AG
+Matricule (Username) : ML2017193881ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : ALOUMON KOULAVO ROBERT
+Matricule (Username) : ML20191286678ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : AOUSSI EVE DITE ADJOA
+Matricule (Username) : ML20182239739ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : ATEZI ALIMA AUDREY FLORA
+Matricule (Username) : ML20182258102CM
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : ATSOU YAOGAN TCHEGNONWOU
+Matricule (Username) : ML20191286782TG
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : AVA MBAZOA MARIE SUZANNE
+Matricule (Username) : ML20192286704CM
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BA FADIMA
+Matricule (Username) : ML20172100763ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BA MAMADOU BOYE
+Matricule (Username) : ML2017194057ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BABY MOHAMED
+Matricule (Username) : ML2017193657ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BADIMI LALLA AICHA
+Matricule (Username) : ML20182234221ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BAGAYOKO ADAMA
+Matricule (Username) : ML20181126334ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BAGAYOKO DAOUDA DIT PAPA
+Matricule (Username) : ML2017198960ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BAGAYOKO KADIDIATOU
+Matricule (Username) : ML20172101386ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BAH PAPA ABDOULAYE
+Matricule (Username) : ML2017197500ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BAMANI AMINATA
+Matricule (Username) : ML2017294025ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BAMANI FATOUMATA
+Matricule (Username) : ML2017293942ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BAMBA AICHATA
+Matricule (Username) : ML20192268997ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BARRO LOUTA
+Matricule (Username) : ML20191286669ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BARRY OUMOU
+Matricule (Username) : ML20182126039ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BARRY YOUBA
+Matricule (Username) : ML20191271312ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BASSOUM AMADOU
+Matricule (Username) : ML20191272222ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BAYA BAKARY
+Matricule (Username) : ML20191272765ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BEDA YAO ANDRE LIONNEL
+Matricule (Username) : ML20171124701CI
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BEKONDO BONG HANS
+Matricule (Username) : ML20191286716CM
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BENGALY KALILOU
+Matricule (Username) : ML2017194648ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BERTHE AMINATA
+Matricule (Username) : ML20182234242ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BERTHE MOUSSA
+Matricule (Username) : ML20191269044ML
+Classe : Médecine 6
+  Aucun cours associé.
+
+Étudiant : BERTHE SOULEYMANE
+Matricule (Username) : ML20181237328ML
+Classe : Médecine 6
+  Aucun cours associé.

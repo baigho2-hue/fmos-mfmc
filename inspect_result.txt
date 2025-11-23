@@ -1,0 +1,10 @@
+Feuille active: Feuil1
+=== Colonnes (En-têtes) ===
+['None', 'None', 'None', 'Med6_2024-2025', 'None', 'None', 'None', 'None']
+
+=== 5 premières lignes de données ===
+('N°', 'Matricule', 'Nom', 'Prénom', 'Sexe', 'Date de nais', 'Classe', 'N°_CENOU')
+(1, 'ML20181242752ML', 'ABOUBACAR', 'YOUSSOUFA', 'M', '31/12/1999', '6ème Année Médecine Générale', '18Q1M05408Y')
+(2, 'ML20182239903ML', 'ADIAWIAKOYE', 'FATOUMA MAMOUD', 'F', '29/10/2001', '6ème Année Médecine Générale', '18F1F28746O')
+(3, 'ML20181258362BJ', 'ADJAGBA', 'LEONARD', 'M', '06/11/1999', '6ème Année Médecine Générale', '')
+(4, 'ML20192286758TG', 'AFANOU', 'MAWUKO SIKA', 'M', '21/01/2000', '6ème Année Médecine Générale', '')

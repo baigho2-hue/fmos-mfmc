@@ -1,0 +1,6 @@
+=== Recherche élargie ===
+Total étudiants: 2
+- [admin]   | Classe: 'None' | Actif: True
+- [etudiant1] Diallo Amadou | Classe: 'DESMFMC 1ère année' | Actif: True
+
+=== Recherche de '6' ===
