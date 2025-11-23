@@ -48,13 +48,17 @@
             <form method="POST" class="login-med6-form-inline">
                 {% csrf_token %}
                 
-                {% if form.errors %}
+                {% if form.non_field_errors %}
                 <div class="alert alert-error">
-                    {% for field, errors in form.errors.items %}
-                        {% for error in errors %}
-                            <p>{{ error|linebreaks }}</p>
-                        {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error|linebreaks }}</p>
                     {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if form.errors and not form.non_field_errors %}
+                <div class="alert alert-error">
+                    <p>Veuillez corriger les erreurs ci-dessous.</p>
                 </div>
                 {% endif %}
                 
@@ -70,54 +74,50 @@
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="id_matricule">
-                            <span class="label-text">Matricule</span>
+                        <label for="{{ form.matricule.id_for_label }}">
+                            <span class="label-text">{{ form.matricule.label }}</span>
                             <span class="label-required">*</span>
                         </label>
-                        <input 
-                            type="text" 
-                            name="matricule" 
-                            id="id_matricule" 
-                            class="form-control" 
-                            required 
-                            autofocus 
-                            placeholder="Ex: MED2024001"
-                            title="Entrez votre numéro de matricule"
-                        >
+                        {{ form.matricule }}
+                        {% if form.matricule.errors %}
+                            <div class="field-errors">
+                                {% for error in form.matricule.errors %}
+                                    <span class="error-text">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                         <small class="form-help">Numéro de matricule de la liste officielle</small>
                     </div>
                     
                     <div class="form-group">
-                        <label for="id_nom">
-                            <span class="label-text">Nom</span>
+                        <label for="{{ form.nom.id_for_label }}">
+                            <span class="label-text">{{ form.nom.label }}</span>
                             <span class="label-required">*</span>
                         </label>
-                        <input 
-                            type="text" 
-                            name="nom" 
-                            id="id_nom" 
-                            class="form-control" 
-                            required 
-                            placeholder="Ex: TRAORE"
-                            title="Entrez votre nom de famille"
-                        >
+                        {{ form.nom }}
+                        {% if form.nom.errors %}
+                            <div class="field-errors">
+                                {% for error in form.nom.errors %}
+                                    <span class="error-text">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                         <small class="form-help">Nom de famille (exactement comme dans la liste)</small>
                     </div>
                     
                     <div class="form-group">
-                        <label for="id_prenom">
-                            <span class="label-text">Prénom</span>
+                        <label for="{{ form.prenom.id_for_label }}">
+                            <span class="label-text">{{ form.prenom.label }}</span>
                             <span class="label-required">*</span>
                         </label>
-                        <input 
-                            type="text" 
-                            name="prenom" 
-                            id="id_prenom" 
-                            class="form-control" 
-                            required 
-                            placeholder="Ex: Fatoumata"
-                            title="Entrez votre prénom"
-                        >
+                        {{ form.prenom }}
+                        {% if form.prenom.errors %}
+                            <div class="field-errors">
+                                {% for error in form.prenom.errors %}
+                                    <span class="error-text">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                         <small class="form-help">Prénom (exactement comme dans la liste)</small>
                     </div>
                 </div>
@@ -424,6 +424,17 @@
     background-color: #ffebee;
     border: 2px solid #f44336;
     color: #c62828;
+}
+
+.field-errors {
+    margin-top: 0.25rem;
+}
+
+.error-text {
+    display: block;
+    color: #c62828;
+    font-size: 0.85rem;
+    font-weight: 500;
 }
 
 @media screen and (max-width: 768px) {

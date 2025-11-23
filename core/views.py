@@ -1339,6 +1339,7 @@ def cours_med6(request):
         return redirect('mes_cours')
     
     # Gérer le formulaire de connexion Med 6
+    form = LoginMed6Form()
     if request.method == 'POST':
         form = LoginMed6Form(request.POST)
         if form.is_valid():
@@ -1404,8 +1405,6 @@ def cours_med6(request):
             )
             
             return redirect('mes_cours')
-    else:
-        form = LoginMed6Form()
     
     # Vérifier si l'utilisateur connecté a accès Med6
     a_acces_gratuit_med6 = False
