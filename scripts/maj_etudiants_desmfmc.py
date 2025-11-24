@@ -66,23 +66,28 @@ def trouver_utilisateur(identifiant):
 
 def mettre_a_jour_resultat(user, formation, annee):
     """Crée/actualise le ResultatAnneeDES correspondant."""
+    defaults = {
+        'decision': 'admis',
+        'decision_forcee': True,
+        'cours_theoriques_valides': True,
+        'presence_validee': True,
+        'stages_valides': True,
+        'note_theorique': Decimal('10.00'),
+        'note_pratique': Decimal('10.00'),
+        'date_decision': timezone.now().date(),
+    }
+
     resultat, cree = ResultatAnneeDES.objects.get_or_create(
         etudiant=user,
         formation=formation,
         annee=annee,
-        defaults={
-            'decision': 'admis',
-            'cours_theoriques_valides': True,
-            'presence_validee': True,
-            'stages_valides': True,
-            'note_theorique': Decimal('10.00'),
-            'note_pratique': Decimal('10.00'),
-        },
+        defaults=defaults,
     )
 
     # Si déjà existant, on force la décision à "admis"
     if not cree:
         resultat.decision = 'admis'
+        resultat.decision_forcee = True
         resultat.cours_theoriques_valides = True
         resultat.presence_validee = True
         resultat.stages_valides = True
@@ -90,6 +95,8 @@ def mettre_a_jour_resultat(user, formation, annee):
             resultat.note_theorique = Decimal('10.00')
         if resultat.note_pratique is None:
             resultat.note_pratique = Decimal('10.00')
+        if resultat.date_decision is None:
+            resultat.date_decision = timezone.now().date()
         resultat.save()
 
     return resultat, cree
