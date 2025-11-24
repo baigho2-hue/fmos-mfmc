@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Uploader un document - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="admissions-container">
+    <div class="page-header">
+        <h1>📎 Uploader un document</h1>
+        <p class="document-name">{{ document_requis.nom }}</p>
+    </div>
+
+    <div class="upload-form-container">
+        <div class="document-info-card">
+            <h3>Document requis</h3>
+            <div class="document-details">
+                <p><strong>Nom :</strong> {{ document_requis.nom }}</p>
+                <p><strong>Description :</strong> {{ document_requis.description }}</p>
+                {% if document_requis.obligatoire %}
+                <p><span class="badge badge-warning">⚠️ Obligatoire</span></p>
+                {% endif %}
+            </div>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="upload-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.fichier.id_for_label }}">Fichier *</label>
+                {{ form.fichier }}
+                {% if form.fichier.errors %}
+                <div class="error-message">{{ form.fichier.errors }}</div>
+                {% endif %}
+                <small class="form-text">
+                    Formats acceptés: PDF, DOC, DOCX, JPG, JPEG, PNG (max 10MB)
+                </small>
+            </div>
+
+            {{ form.document_requis }}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    📤 Uploader le document
+                </button>
+                <a href="{% url 'admissions:voir_dossier' dossier.id %}" class="btn btn-secondary">
+                    Annuler
+                </a>
+            </div>
+        </form>
+
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.admissions-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.page-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.document-name {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.upload-form-container {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.document-info-card {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.document-info-card h3 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.document-details p {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.upload-form {
+    margin-top: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px dashed #ddd;
+    border-radius: 4px;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input[type="file"]:hover {
+    border-color: #005a9c;
+}
+
+.form-text {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: #005a9c;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #004080;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #333;
+}
+</style>
+{% endblock %}
+

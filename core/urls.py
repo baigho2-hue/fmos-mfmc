@@ -46,6 +46,9 @@ urlpatterns = [
     
     # Messagerie interne
     path('messagerie/', include('apps.communications.urls')),
+    
+    # Admissions et inscriptions
+    path('admissions/', include('apps.admissions.urls')),
     path('login/', views.login_view, name='login'),
     path('login/med6/', views_med6.login_med6, name='login_med6'),
     path('logout/', views.logout_view, name='logout'),

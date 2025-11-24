@@ -7,6 +7,104 @@ from apps.utilisateurs.models import Utilisateur
 from apps.utilisateurs.models_formation import Formation
 
 
+class DocumentRequis(models.Model):
+    """Modèle définissant les documents requis pour un type de formation."""
+    
+    TYPE_FORMATION_CHOICES = [
+        ('DESMFMC', 'DESMFMC'),
+        ('autre', 'Autre formation'),
+    ]
+    
+    type_formation = models.CharField(
+        max_length=20,
+        choices=TYPE_FORMATION_CHOICES,
+        verbose_name="Type de formation"
+    )
+    nom = models.CharField(
+        max_length=200,
+        verbose_name="Nom du document"
+    )
+    description = models.TextField(
+        verbose_name="Description du document requis"
+    )
+    obligatoire = models.BooleanField(
+        default=True,
+        verbose_name="Obligatoire"
+    )
+    ordre = models.IntegerField(
+        default=0,
+        verbose_name="Ordre d'affichage"
+    )
+    actif = models.BooleanField(
+        default=True,
+        verbose_name="Actif"
+    )
+    
+    class Meta:
+        verbose_name = "Document requis"
+        verbose_name_plural = "Documents requis"
+        ordering = ['type_formation', 'ordre', 'nom']
+    
+    def __str__(self):
+        return f"{self.get_type_formation_display()} - {self.nom}"
+
+
+class DocumentDossier(models.Model):
+    """Document uploadé par un candidat pour son dossier de candidature."""
+    
+    dossier = models.ForeignKey(
+        'DossierCandidature',
+        on_delete=models.CASCADE,
+        related_name='documents',
+        verbose_name="Dossier de candidature"
+    )
+    document_requis = models.ForeignKey(
+        DocumentRequis,
+        on_delete=models.CASCADE,
+        related_name='documents_uploades',
+        verbose_name="Document requis"
+    )
+    fichier = models.FileField(
+        upload_to='dossiers_candidature/documents/',
+        verbose_name="Fichier"
+    )
+    date_upload = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Date d'upload"
+    )
+    valide = models.BooleanField(
+        default=False,
+        verbose_name="Document validé"
+    )
+    commentaire_validation = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Commentaire de validation"
+    )
+    valide_par = models.ForeignKey(
+        Utilisateur,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='documents_valides',
+        verbose_name="Validé par"
+    )
+    date_validation = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Date de validation"
+    )
+    
+    class Meta:
+        verbose_name = "Document du dossier"
+        verbose_name_plural = "Documents des dossiers"
+        ordering = ['dossier', 'document_requis__ordre']
+        unique_together = [['dossier', 'document_requis']]
+    
+    def __str__(self):
+        return f"{self.dossier.reference} - {self.document_requis.nom}"
+
+
 class DossierCandidature(models.Model):
     """Dossier de candidature déposé au décana de la FMOS pour intégrer le DESMFMC."""
 
@@ -53,6 +151,19 @@ class DossierCandidature(models.Model):
         blank=True,
         verbose_name="Pièces manquantes"
     )
+    
+    # Informations spécifiques pour DESMFMC
+    prise_en_charge_bourse = models.BooleanField(
+        default=False,
+        verbose_name="Études prises en charge par une bourse",
+        help_text="Préciser si les études sont prises en charge par une bourse"
+    )
+    details_bourse = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Détails de la bourse",
+        help_text="Préciser les détails de la bourse si applicable"
+    )
 
     class Meta:
         verbose_name = "Dossier de candidature"
@@ -61,6 +172,49 @@ class DossierCandidature(models.Model):
 
     def __str__(self):
         return f"{self.reference} - {self.candidat.get_full_name() or self.candidat.username}"
+    
+    def est_desmfmc(self):
+        """Vérifie si le dossier est pour DESMFMC"""
+        return self.formation.code == 'DESMFMC'
+    
+    def verifier_completude(self):
+        """Vérifie si tous les documents requis sont présents et validés"""
+        if not self.est_desmfmc():
+            # Pour les autres formations, on vérifie juste qu'il y a des documents
+            return self.documents.exists()
+        
+        # Pour DESMFMC, vérifier tous les documents obligatoires
+        documents_requis = DocumentRequis.objects.filter(
+            type_formation='DESMFMC',
+            obligatoire=True,
+            actif=True
+        )
+        
+        for doc_requis in documents_requis:
+            doc_upload = self.documents.filter(document_requis=doc_requis).first()
+            if not doc_upload or not doc_upload.valide:
+                return False
+        
+        return True
+    
+    def get_documents_manquants(self):
+        """Retourne la liste des documents manquants"""
+        if not self.est_desmfmc():
+            return []
+        
+        documents_requis = DocumentRequis.objects.filter(
+            type_formation='DESMFMC',
+            obligatoire=True,
+            actif=True
+        )
+        documents_manquants = []
+        
+        for doc_requis in documents_requis:
+            doc_upload = self.documents.filter(document_requis=doc_requis).first()
+            if not doc_upload or not doc_upload.valide:
+                documents_manquants.append(doc_requis)
+        
+        return documents_manquants
 
 
 class ExamenProbatoire(models.Model):
@@ -201,6 +355,16 @@ class DecisionAdmission(models.Model):
     confirmations_envoyees = models.BooleanField(
         default=False,
         verbose_name="Courriel de confirmation envoyé"
+    )
+    email_confirmation_envoye = models.BooleanField(
+        default=False,
+        verbose_name="Email de confirmation envoyé",
+        help_text="Indique si l'email de confirmation d'admission a été envoyé au candidat"
+    )
+    date_envoi_email = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Date d'envoi de l'email"
     )
 
     class Meta:

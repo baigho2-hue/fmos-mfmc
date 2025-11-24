@@ -1,0 +1,403 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Inscription - {{ dossier.reference }} - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="admissions-container">
+    <div class="page-header">
+        <h1>✅ Inscription administrative</h1>
+        <p class="dossier-reference">Dossier: {{ dossier.reference }} - {{ dossier.formation.nom }}</p>
+    </div>
+
+    {% if decision.decision == 'admis' %}
+    <div class="alert alert-success">
+        <h3>🎉 Félicitations !</h3>
+        <p>Votre candidature a été acceptée. Veuillez compléter votre inscription administrative.</p>
+    </div>
+
+    <div class="inscription-status">
+        <h2>Statut de l'inscription</h2>
+        <div class="status-card">
+            <div class="status-item">
+                <strong>Statut actuel :</strong>
+                <span class="badge badge-{{ inscription.statut }}">
+                    {{ inscription.get_statut_display }}
+                </span>
+            </div>
+            
+            <div class="validation-steps">
+                <div class="step {% if inscription.validee_par_coordination %}completed{% endif %}">
+                    <span class="step-icon">{% if inscription.validee_par_coordination %}✅{% else %}⏳{% endif %}</span>
+                    <div class="step-content">
+                        <strong>Validation Coordination MFMC</strong>
+                        {% if inscription.validee_par_coordination %}
+                        <small>Validé le {{ inscription.date_validation_coordination|date:"d/m/Y à H:i" }}</small>
+                        {% else %}
+                        <small>En attente</small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="step {% if inscription.validee_par_decanat %}completed{% endif %}">
+                    <span class="step-icon">{% if inscription.validee_par_decanat %}✅{% else %}⏳{% endif %}</span>
+                    <div class="step-content">
+                        <strong>Validation Décanat</strong>
+                        {% if inscription.validee_par_decanat %}
+                        <small>Validé le {{ inscription.date_validation_decanat|date:"d/m/Y à H:i" }}</small>
+                        {% else %}
+                        <small>En attente</small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if inscription.est_certifiante %}
+                <div class="step {% if inscription.paiement_valide %}completed{% endif %}">
+                    <span class="step-icon">{% if inscription.paiement_valide %}✅{% else %}⏳{% endif %}</span>
+                    <div class="step-content">
+                        <strong>Paiement</strong>
+                        {% if inscription.paiement_valide %}
+                        <small>Validé le {{ inscription.date_validation_paiement|date:"d/m/Y à H:i" }}</small>
+                        {% else %}
+                        <small>En attente</small>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if inscription.est_certifiante and inscription.peut_payer and not inscription.paiement_valide %}
+    <div class="paiement-section">
+        <h2>💳 Paiement de l'inscription</h2>
+        <div class="info-box">
+            <p><strong>Montant à payer :</strong> {{ inscription.montant_inscription|default:"Non défini" }} FCFA</p>
+            <p>Veuillez effectuer le paiement et uploader la preuve de paiement ci-dessous.</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="paiement-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form_paiement.mode_paiement.id_for_label }}">{{ form_paiement.mode_paiement.label }} *</label>
+                {{ form_paiement.mode_paiement }}
+                {% if form_paiement.mode_paiement.errors %}
+                <div class="error-message">{{ form_paiement.mode_paiement.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form_paiement.reference_paiement.id_for_label }}">{{ form_paiement.reference_paiement.label }}</label>
+                {{ form_paiement.reference_paiement }}
+                {% if form_paiement.reference_paiement.errors %}
+                <div class="error-message">{{ form_paiement.reference_paiement.errors }}</div>
+                {% endif %}
+                <small class="form-text">Numéro de transaction, référence Orange Money, etc.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form_paiement.preuve_paiement.id_for_label }}">{{ form_paiement.preuve_paiement.label }} *</label>
+                {{ form_paiement.preuve_paiement }}
+                {% if form_paiement.preuve_paiement.errors %}
+                <div class="error-message">{{ form_paiement.preuve_paiement.errors }}</div>
+                {% endif %}
+                <small class="form-text">Capture d'écran, reçu, etc. (PDF, JPG, PNG - max 5MB)</small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Enregistrer les informations de paiement</button>
+            </div>
+        </form>
+    </div>
+    {% elif inscription.est_certifiante and not inscription.peut_payer %}
+    <div class="info-box">
+        <p>⏳ Le paiement sera disponible une fois que votre inscription aura été validée par la Coordination MFMC et le Décanat.</p>
+    </div>
+    {% endif %}
+
+    {% if inscription.commentaires_validation %}
+    <div class="commentaires-section">
+        <h2>📝 Commentaires</h2>
+        <div class="commentaires-box">
+            {{ inscription.commentaires_validation|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if inscription.est_complete %}
+    <div class="alert alert-success">
+        <h3>✅ Inscription complète !</h3>
+        <p>Votre inscription est complète. Vous recevrez prochainement les informations pour accéder à la formation.</p>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="alert alert-warning">
+        <p>Vous devez être admis pour accéder à l'inscription.</p>
+    </div>
+    {% endif %}
+
+    <div class="actions-bar">
+        <a href="{% url 'admissions:voir_dossier' dossier.id %}" class="btn btn-secondary">
+            ← Retour au dossier
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.admissions-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.page-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.dossier-reference {
+    color: #666;
+    font-size: 1rem;
+}
+
+.alert {
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+}
+
+.inscription-status {
+    margin-bottom: 2rem;
+}
+
+.inscription-status h2 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.status-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.status-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.validation-steps {
+    display: grid;
+    gap: 1rem;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #ddd;
+}
+
+.step.completed {
+    background: #d4edda;
+    border-left-color: #28a745;
+}
+
+.step-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: #333;
+}
+
+.step-content small {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.paiement-section {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.paiement-section h2 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.info-box {
+    background: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-box p {
+    margin: 0.5rem 0;
+}
+
+.paiement-form {
+    margin-top: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group select,
+.form-group input[type="text"],
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group input[type="file"] {
+    border: 2px dashed #ddd;
+    background: #f8f9fa;
+    cursor: pointer;
+}
+
+.form-text {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.commentaires-section {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.commentaires-section h2 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.commentaires-box {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    color: #555;
+}
+
+.form-actions {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.actions-bar {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.badge-en_attente { background-color: #6c757d; color: white; }
+.badge-validee_coordination { background-color: #17a2b8; color: white; }
+.badge-validee_decanat { background-color: #17a2b8; color: white; }
+.badge-validee_complete { background-color: #17a2b8; color: white; }
+.badge-paiement_en_attente { background-color: #ffc107; color: #333; }
+.badge-paiement_valide { background-color: #28a745; color: white; }
+.badge-inscription_complete { background-color: #28a745; color: white; }
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: #005a9c;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #004080;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+</style>
+{% endblock %}
+

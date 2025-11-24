@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Créer un dossier de candidature - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="admissions-container">
+    <div class="page-header">
+        <h1>📝 Créer un dossier de candidature</h1>
+        <p>Remplissez le formulaire pour créer votre dossier de candidature</p>
+    </div>
+
+    <form method="post" class="dossier-form" id="dossierForm">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <h2>Informations générales</h2>
+            
+            <div class="form-group">
+                <label for="{{ form.formation.id_for_label }}">{{ form.formation.label }} *</label>
+                {{ form.formation }}
+                {% if form.formation.errors %}
+                <div class="error-message">{{ form.formation.errors }}</div>
+                {% endif %}
+                <small class="form-text">Sélectionnez la formation pour laquelle vous souhaitez candidater</small>
+            </div>
+        </div>
+
+        <div class="form-section" id="bourseSection" style="display: none;">
+            <h2>Informations sur la prise en charge</h2>
+            
+            <div class="form-group">
+                <label>
+                    {{ form.prise_en_charge_bourse }}
+                    {{ form.prise_en_charge_bourse.label }}
+                </label>
+                {% if form.prise_en_charge_bourse.errors %}
+                <div class="error-message">{{ form.prise_en_charge_bourse.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group" id="detailsBourseGroup" style="display: none;">
+                <label for="{{ form.details_bourse.id_for_label }}">{{ form.details_bourse.label }}</label>
+                {{ form.details_bourse }}
+                {% if form.details_bourse.errors %}
+                <div class="error-message">{{ form.details_bourse.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if documents_requis %}
+        <div class="form-section">
+            <h2>Documents requis</h2>
+            <p class="info-text">Vous devrez uploader ces documents après la création du dossier.</p>
+            <ul class="documents-list">
+                {% for doc in documents_requis %}
+                <li>
+                    <strong>{{ doc.nom }}</strong>
+                    {% if doc.obligatoire %}
+                    <span class="badge badge-warning">Obligatoire</span>
+                    {% endif %}
+                    <br>
+                    <small>{{ doc.description }}</small>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Créer le dossier</button>
+            <a href="{% url 'admissions:mes_dossiers' %}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.admissions-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.page-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.dossier-form {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.form-section h2 {
+    color: #005a9c;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-text {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.info-text {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.documents-list {
+    list-style: none;
+    padding: 0;
+}
+
+.documents-list li {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background: #f8f9fa;
+    border-left: 4px solid #005a9c;
+    border-radius: 4px;
+}
+
+.documents-list li strong {
+    color: #005a9c;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #333;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: #005a9c;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #004080;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const formationSelect = document.getElementById('{{ form.formation.id_for_label }}');
+    const bourseSection = document.getElementById('bourseSection');
+    const detailsBourseGroup = document.getElementById('detailsBourseGroup');
+    const priseEnChargeCheckbox = document.getElementById('{{ form.prise_en_charge_bourse.id_for_label }}');
+    
+    // Charger les documents requis quand la formation change
+    formationSelect.addEventListener('change', function() {
+        const formationCode = this.value;
+        if (formationCode) {
+            // Afficher la section bourse si DESMFMC
+            if (formationCode === 'DESMFMC') {
+                bourseSection.style.display = 'block';
+            } else {
+                bourseSection.style.display = 'none';
+            }
+            
+            // Charger les documents requis via AJAX
+            fetch(`{% url 'admissions:ajax_documents_requis' %}?formation_code=${formationCode}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Mettre à jour la liste des documents requis
+                    // (peut être implémenté si nécessaire)
+                });
+        }
+    });
+    
+    // Afficher/masquer les détails bourse
+    if (priseEnChargeCheckbox) {
+        priseEnChargeCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                detailsBourseGroup.style.display = 'block';
+            } else {
+                detailsBourseGroup.style.display = 'none';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+

@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mes dossiers de candidature - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="admissions-container">
+    <div class="page-header">
+        <h1>📋 Mes dossiers de candidature</h1>
+        <p>Gérez vos dossiers de candidature pour les formations</p>
+    </div>
+
+    <div class="actions-bar">
+        <a href="{% url 'admissions:creer_dossier' %}" class="btn btn-primary">
+            ➕ Créer un nouveau dossier
+        </a>
+    </div>
+
+    {% if dossiers %}
+    <div class="dossiers-list">
+        {% for dossier in dossiers %}
+        <div class="dossier-card">
+            <div class="dossier-header">
+                <div class="dossier-info">
+                    <h3>{{ dossier.formation.nom }}</h3>
+                    <span class="dossier-reference">Réf: {{ dossier.reference }}</span>
+                </div>
+                <div class="dossier-status">
+                    <span class="badge badge-{{ dossier.statut }}">
+                        {{ dossier.get_statut_display }}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="dossier-details">
+                <div class="detail-item">
+                    <strong>📅 Date de dépôt :</strong> {{ dossier.date_depot|date:"d/m/Y" }}
+                </div>
+                {% if dossier.prise_en_charge_bourse %}
+                <div class="detail-item">
+                    <strong>💰 Bourse :</strong> Oui
+                    {% if dossier.details_bourse %}
+                    <br><small>{{ dossier.details_bourse|truncatewords:20 }}</small>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="dossier-actions">
+                <a href="{% url 'admissions:voir_dossier' dossier.id %}" class="btn btn-sm btn-info">
+                    👁️ Voir le dossier
+                </a>
+                {% if dossier.decision_admission %}
+                    {% if dossier.decision_admission.decision == 'admis' %}
+                    <a href="{% url 'admissions:inscription' dossier.id %}" class="btn btn-sm btn-success">
+                        ✅ Inscription
+                    </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-dossiers">
+        <p>Vous n'avez pas encore de dossier de candidature.</p>
+        <a href="{% url 'admissions:creer_dossier' %}" class="btn btn-primary">
+            Créer votre premier dossier
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.admissions-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.page-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.actions-bar {
+    margin-bottom: 2rem;
+    text-align: right;
+}
+
+.dossiers-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.dossier-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.dossier-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.dossier-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.dossier-info h3 {
+    margin: 0 0 0.5rem 0;
+    color: #005a9c;
+}
+
+.dossier-reference {
+    font-size: 0.9rem;
+    color: #666;
+    font-family: monospace;
+}
+
+.dossier-status {
+    flex-shrink: 0;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.badge-soumis {
+    background-color: #007bff;
+    color: white;
+}
+
+.badge-incomplet {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.badge-verifie {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-rejete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.dossier-details {
+    margin-bottom: 1rem;
+}
+
+.detail-item {
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.dossier-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background-color: #005a9c;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #004080;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.no-dossiers {
+    text-align: center;
+    padding: 3rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.no-dossiers p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+</style>
+{% endblock %}
+

@@ -6,16 +6,37 @@ from .models import (
     EntretienIndividuel,
     DecisionAdmission,
     Inscription,
+    DocumentRequis,
+    DocumentDossier,
 )
 
 
 @admin.register(DossierCandidature)
 class DossierCandidatureAdmin(admin.ModelAdmin):
-    list_display = ('reference', 'candidat', 'formation', 'statut', 'date_depot')
-    list_filter = ('formation', 'statut', 'date_depot')
-    search_fields = ('reference', 'candidat__username', 'candidat__nom', 'candidat__prenom')
+    list_display = ('reference', 'candidat', 'formation', 'statut', 'date_depot', 'prise_en_charge_bourse')
+    list_filter = ('formation', 'statut', 'date_depot', 'prise_en_charge_bourse')
+    search_fields = ('reference', 'candidat__username', 'candidat__first_name', 'candidat__last_name')
     ordering = ('-date_depot',)
     autocomplete_fields = ('candidat', 'formation')
+    readonly_fields = ('est_desmfmc',)
+    
+    fieldsets = (
+        ('Informations générales', {
+            'fields': ('candidat', 'formation', 'reference', 'date_depot', 'statut', 'est_desmfmc')
+        }),
+        ('Informations spécifiques DESMFMC', {
+            'fields': ('prise_en_charge_bourse', 'details_bourse'),
+            'classes': ('collapse',)
+        }),
+        ('Observations', {
+            'fields': ('observations', 'pieces_manquantes')
+        }),
+    )
+    
+    def est_desmfmc(self, obj):
+        return obj.est_desmfmc() if obj.pk else False
+    est_desmfmc.boolean = True
+    est_desmfmc.short_description = "Formation DESMFMC"
 
 
 @admin.register(ExamenProbatoire)
@@ -49,8 +70,8 @@ class EntretienIndividuelAdmin(admin.ModelAdmin):
 
 @admin.register(DecisionAdmission)
 class DecisionAdmissionAdmin(admin.ModelAdmin):
-    list_display = ('dossier', 'date_decision', 'decision', 'note_finale', 'confirmations_envoyees')
-    list_filter = ('decision', 'date_decision')
+    list_display = ('dossier', 'date_decision', 'decision', 'note_finale', 'email_confirmation_envoye', 'date_envoi_email')
+    list_filter = ('decision', 'date_decision', 'email_confirmation_envoye')
     search_fields = ('dossier__reference', 'dossier__candidat__username')
     ordering = ('-date_decision',)
     autocomplete_fields = ('dossier',)
@@ -135,3 +156,22 @@ class InscriptionAdmin(admin.ModelAdmin):
         return obj.est_complete
     est_complete.boolean = True
     est_complete.short_description = "Inscription complète"
+
+
+@admin.register(DocumentRequis)
+class DocumentRequisAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'type_formation', 'obligatoire', 'ordre', 'actif')
+    list_filter = ('type_formation', 'obligatoire', 'actif')
+    search_fields = ('nom', 'description')
+    ordering = ('type_formation', 'ordre', 'nom')
+    list_editable = ('ordre', 'actif', 'obligatoire')
+
+
+@admin.register(DocumentDossier)
+class DocumentDossierAdmin(admin.ModelAdmin):
+    list_display = ('dossier', 'document_requis', 'date_upload', 'valide', 'valide_par')
+    list_filter = ('valide', 'date_upload', 'document_requis__type_formation')
+    search_fields = ('dossier__reference', 'document_requis__nom')
+    ordering = ('-date_upload',)
+    autocomplete_fields = ('dossier', 'document_requis', 'valide_par')
+    readonly_fields = ('date_upload',)

@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dossier {{ dossier.reference }} - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="admissions-container">
+    <div class="page-header">
+        <h1>📋 Dossier de candidature</h1>
+        <p class="dossier-reference">Référence: {{ dossier.reference }}</p>
+    </div>
+
+    <div class="dossier-overview">
+        <div class="overview-card">
+            <h2>Informations générales</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Formation :</strong> {{ dossier.formation.nom }}
+                </div>
+                <div class="info-item">
+                    <strong>Date de dépôt :</strong> {{ dossier.date_depot|date:"d/m/Y" }}
+                </div>
+                <div class="info-item">
+                    <strong>Statut :</strong>
+                    <span class="badge badge-{{ dossier.statut }}">
+                        {{ dossier.get_statut_display }}
+                    </span>
+                </div>
+                {% if dossier.prise_en_charge_bourse %}
+                <div class="info-item">
+                    <strong>Prise en charge bourse :</strong> Oui
+                    {% if dossier.details_bourse %}
+                    <br><small>{{ dossier.details_bourse }}</small>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if est_complet %}
+        <div class="alert alert-success">
+            ✅ Votre dossier est complet et prêt pour l'examen.
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+            ⚠️ Votre dossier est incomplet. Veuillez uploader tous les documents requis.
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="documents-section">
+        <div class="section-header">
+            <h2>📎 Documents du dossier</h2>
+            {% if not est_complet %}
+            <a href="{% url 'admissions:creer_dossier' %}" class="btn btn-sm btn-primary">
+                ➕ Ajouter un document
+            </a>
+            {% endif %}
+        </div>
+
+        {% if documents_uploades %}
+        <div class="documents-list">
+            {% for doc in documents_uploades %}
+            <div class="document-item">
+                <div class="document-info">
+                    <h4>{{ doc.document_requis.nom }}</h4>
+                    <p class="document-description">{{ doc.document_requis.description }}</p>
+                    <div class="document-meta">
+                        <span>📅 Uploadé le {{ doc.date_upload|date:"d/m/Y à H:i" }}</span>
+                        {% if doc.valide %}
+                        <span class="badge badge-success">✅ Validé</span>
+                        {% else %}
+                        <span class="badge badge-warning">⏳ En attente de validation</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="document-actions">
+                    <a href="{{ doc.fichier.url }}" target="_blank" class="btn btn-sm btn-info">
+                        👁️ Voir
+                    </a>
+                    <a href="{% url 'admissions:uploader_document' dossier.id %}?document_requis_id={{ doc.document_requis.id }}" class="btn btn-sm btn-secondary">
+                        🔄 Modifier
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-documents">
+            <p>Aucun document uploadé pour le moment.</p>
+        </div>
+        {% endif %}
+
+        {% if documents_manquants %}
+        <div class="documents-manquants">
+            <h3>📋 Documents manquants</h3>
+            <ul>
+                {% for doc in documents_manquants %}
+                <li>
+                    <strong>{{ doc.nom }}</strong>
+                    <br>
+                    <small>{{ doc.description }}</small>
+                    <a href="{% url 'admissions:uploader_document' dossier.id %}?document_requis_id={{ doc.id }}" class="btn btn-sm btn-primary">
+                        ➕ Uploader
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if decision %}
+    <div class="decision-section">
+        <h2>📊 Décision d'admission</h2>
+        <div class="decision-card">
+            <div class="decision-status">
+                <span class="badge badge-{{ decision.decision }}">
+                    {{ decision.get_decision_display }}
+                </span>
+                <span class="decision-date">Date: {{ decision.date_decision|date:"d/m/Y" }}</span>
+            </div>
+            {% if decision.note_finale %}
+            <div class="decision-note">
+                <strong>Note finale :</strong> {{ decision.note_finale }}/20
+            </div>
+            {% endif %}
+            {% if decision.commentaire %}
+            <div class="decision-comment">
+                <strong>Commentaire :</strong>
+                <p>{{ decision.commentaire }}</p>
+            </div>
+            {% endif %}
+            {% if decision.decision == 'admis' %}
+            <div class="decision-actions">
+                <a href="{% url 'admissions:inscription' dossier.id %}" class="btn btn-success">
+                    ✅ Procéder à l'inscription
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if inscription %}
+    <div class="inscription-section">
+        <h2>📝 Inscription</h2>
+        <div class="inscription-card">
+            <div class="inscription-status">
+                <strong>Statut :</strong>
+                <span class="badge badge-{{ inscription.statut }}">
+                    {{ inscription.get_statut_display }}
+                </span>
+            </div>
+            <div class="inscription-actions">
+                <a href="{% url 'admissions:inscription' dossier.id %}" class="btn btn-primary">
+                    Voir les détails de l'inscription
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="actions-bar">
+        <a href="{% url 'admissions:mes_dossiers' %}" class="btn btn-secondary">
+            ← Retour à mes dossiers
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.admissions-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.page-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.dossier-reference {
+    font-family: monospace;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.dossier-overview {
+    margin-bottom: 2rem;
+}
+
+.overview-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.overview-card h2 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.info-item {
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+}
+
+.documents-section,
+.decision-section,
+.inscription-section {
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-header h2 {
+    color: #005a9c;
+    margin: 0;
+}
+
+.documents-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.document-item {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.document-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: #005a9c;
+}
+
+.document-description {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
+}
+
+.document-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.document-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.documents-manquants {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.documents-manquants h3 {
+    color: #856404;
+    margin-bottom: 1rem;
+}
+
+.documents-manquants ul {
+    list-style: none;
+    padding: 0;
+}
+
+.documents-manquants li {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background: white;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.decision-card,
+.inscription-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.decision-status {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.decision-note {
+    margin: 1rem 0;
+    font-size: 1.1rem;
+}
+
+.decision-comment {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.decision-actions,
+.inscription-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.actions-bar {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.badge-soumis { background-color: #007bff; color: white; }
+.badge-incomplet { background-color: #ffc107; color: #333; }
+.badge-verifie { background-color: #28a745; color: white; }
+.badge-rejete { background-color: #dc3545; color: white; }
+.badge-en_attente { background-color: #6c757d; color: white; }
+.badge-admis { background-color: #28a745; color: white; }
+.badge-liste_attente { background-color: #ffc107; color: #333; }
+.badge-refuse { background-color: #dc3545; color: white; }
+.badge-success { background-color: #28a745; color: white; }
+.badge-warning { background-color: #ffc107; color: #333; }
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-primary { background-color: #005a9c; color: white; }
+.btn-primary:hover { background-color: #004080; }
+.btn-secondary { background-color: #6c757d; color: white; }
+.btn-secondary:hover { background-color: #5a6268; }
+.btn-success { background-color: #28a745; color: white; }
+.btn-success:hover { background-color: #218838; }
+.btn-info { background-color: #17a2b8; color: white; }
+.btn-info:hover { background-color: #138496; }
+.btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+</style>
+{% endblock %}
+
