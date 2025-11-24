@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Script interactif pour ajouter manuellement des étudiants en cours de formation
 avant la création du site. Permet de :
@@ -14,7 +15,19 @@ Le script boucle tant que l'on saisit des informations d'étudiants.
 Appuyer sur Entrée sans rien saisir pour quitter.
 """
 import os
+import sys
 from decimal import Decimal
+
+# Configurer l'encodage pour Windows
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+
+# Ajouter le répertoire racine du projet au PYTHONPATH
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 

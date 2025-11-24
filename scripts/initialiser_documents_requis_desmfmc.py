@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Script pour initialiser les documents requis pour le dossier DESMFMC.
 
@@ -6,6 +7,18 @@ Usage :
     python scripts/initialiser_documents_requis_desmfmc.py
 """
 import os
+import sys
+
+# Configurer l'encodage pour Windows
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+
+# Ajouter le répertoire racine du projet au PYTHONPATH
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
@@ -67,7 +80,7 @@ def initialiser_documents_desmfmc():
         )
         
         if cree:
-            print(f"✅ Créé: {doc.nom}")
+            print(f"[OK] Cree: {doc.nom}")
         else:
             # Mettre à jour si nécessaire
             doc.description = doc_data['description']
@@ -75,16 +88,16 @@ def initialiser_documents_desmfmc():
             doc.obligatoire = True
             doc.actif = True
             doc.save()
-            print(f"🔄 Mis à jour: {doc.nom}")
+            print(f"[UPDATE] Mis a jour: {doc.nom}")
     
-    print(f"\n✅ {len(documents)} documents requis initialisés pour DESMFMC.")
+    print(f"\n[OK] {len(documents)} documents requis initialises pour DESMFMC.")
 
 
 if __name__ == "__main__":
     try:
         initialiser_documents_desmfmc()
     except Exception as e:
-        print(f"❌ Erreur: {e}")
+        print(f"[ERREUR] Erreur: {e}")
         import traceback
         traceback.print_exc()
 
