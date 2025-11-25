@@ -330,12 +330,18 @@
       </nav>
     </div>
     <div class="header-right">
-      {% if not user.is_authenticated %}
+      {% with request.resolver_match.url_name as current_url %}
+      {% if not user.is_authenticated and (current_url == 'formations' or current_url == 'programmes') %}
       <div class="header-buttons">
         <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription">Demande de candidature</a>
         <a href="{% url 'login' %}" class="btn-connexion">Connexion</a>
       </div>
+      {% elif not user.is_authenticated %}
+      <div class="header-buttons">
+        <a href="{% url 'login' %}" class="btn-connexion">Connexion</a>
+      </div>
       {% endif %}
+      {% endwith %}
       <img src="{% static 'images/logo_adobe_express.png' %}" alt="Logo FMOS" class="header-logo" onerror="this.style.display='none'">
     </div>
     <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
