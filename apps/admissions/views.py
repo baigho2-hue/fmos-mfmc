@@ -10,7 +10,6 @@ from django.utils import timezone
 from django.db import transaction
 from django.db.models import Count, Q
 from django.utils.dateparse import parse_date
-from django.contrib.auth import get_user_model, login
 
 from apps.utilisateurs.models_formation import Formation
 from .models import (
@@ -47,28 +46,6 @@ def creer_dossier(request):
         form = DossierCandidatureForm(request.POST, candidat=request.user if request.user.is_authenticated else None, user=request.user)
         if form.is_valid():
             with transaction.atomic():
-                if not request.user.is_authenticated:
-                    UserModel = get_user_model()
-                    email = form.cleaned_data['email']
-                    username = email
-                    counter = 1
-                    while UserModel.objects.filter(username=username).exists():
-                        username = f"{email.split('@')[0]}{counter}"
-                        counter += 1
-                    new_user = UserModel.objects.create_user(
-                        username=username,
-                        email=email,
-                        password=form.cleaned_data['password1'],
-                        first_name=form.cleaned_data['first_name'],
-                        last_name=form.cleaned_data['last_name'],
-                    )
-                    telephone = form.cleaned_data.get('telephone')
-                    if telephone:
-                        new_user.telephone = telephone
-                    new_user.type_utilisateur = 'etudiant'
-                    new_user.save()
-                    login(request, new_user)
-
                 formation = form.cleaned_data['formation']
                 formation_code = formation.code or 'DOS'
                 annee = timezone.now().year
@@ -163,6 +140,9 @@ def suivi_dossiers_formation(request):
                 | Q(candidat__first_name__icontains=search_query)
                 | Q(candidat__last_name__icontains=search_query)
                 | Q(reference__icontains=search_query)
+                | Q(nom_candidat__icontains=search_query)
+                | Q(prenom_candidat__icontains=search_query)
+                | Q(email_contact__icontains=search_query)
             )
         if start_date:
             dossiers_queryset = dossiers_queryset.filter(date_depot__gte=start_date)
@@ -695,8 +675,8 @@ def _export_dossiers_csv(dossiers_queryset, formation):
         inscription = dossier.inscriptions.first()
         writer.writerow([
             dossier.reference,
-            dossier.candidat.get_full_name() or dossier.candidat.username,
-            dossier.candidat.email,
+            dossier.nom_affichage,
+            dossier.email_affichage or '',
             dossier.date_depot.strftime('%Y-%m-%d'),
             dossier.get_statut_display(),
             'Oui' if dossier.verifier_completude() else 'Non',

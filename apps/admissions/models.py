@@ -1,6 +1,10 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.crypto import get_random_string
 from decimal import Decimal
 
 from apps.utilisateurs.models import Utilisateur
@@ -111,7 +115,7 @@ class DocumentDossier(models.Model):
 
 
 class DossierCandidature(models.Model):
-    """Dossier de candidature déposé au décana de la FMOS pour intégrer le DESMFMC."""
+    """Dossier de candidature déposé au décana de la FMOS pour intégrer les formations."""
 
     STATUTS_DOSSIER = [
         ('soumis', 'Soumis'),
@@ -124,7 +128,9 @@ class DossierCandidature(models.Model):
         Utilisateur,
         on_delete=models.CASCADE,
         related_name='dossiers_candidature',
-        verbose_name="Candidat"
+        verbose_name="Candidat",
+        null=True,
+        blank=True,
     )
     formation = models.ForeignKey(
         Formation,
@@ -156,6 +162,25 @@ class DossierCandidature(models.Model):
         blank=True,
         verbose_name="Pièces manquantes"
     )
+    nom_candidat = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name="Nom du candidat (si non connecté)"
+    )
+    prenom_candidat = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name="Prénom du candidat (si non connecté)"
+    )
+    email_contact = models.EmailField(
+        blank=True,
+        verbose_name="Email de contact"
+    )
+    telephone_contact = models.CharField(
+        max_length=30,
+        blank=True,
+        verbose_name="Téléphone de contact"
+    )
     
     # Informations spécifiques pour DESMFMC
     prise_en_charge_bourse = models.BooleanField(
@@ -176,7 +201,20 @@ class DossierCandidature(models.Model):
         ordering = ['-date_depot']
 
     def __str__(self):
-        return f"{self.reference} - {self.candidat.get_full_name() or self.candidat.username}"
+        return f"{self.reference} - {self.nom_affichage}"
+
+    @property
+    def nom_affichage(self):
+        if self.candidat:
+            return self.candidat.get_full_name() or self.candidat.username
+        pieces = [p for p in [self.prenom_candidat, self.nom_candidat] if p]
+        return " ".join(pieces) or "Candidat"
+
+    @property
+    def email_affichage(self):
+        if self.candidat:
+            return self.candidat.email
+        return self.email_contact
     
     def est_desmfmc(self):
         """Vérifie si le dossier est pour DESMFMC"""
@@ -407,7 +445,88 @@ class DecisionAdmission(models.Model):
 
     def save(self, *args, **kwargs):
         self.calculer_note_finale()
+        if self.pk:
+            previous_decision = DecisionAdmission.objects.filter(pk=self.pk).values_list('decision', flat=True).first()
+        else:
+            previous_decision = None
         super().save(*args, **kwargs)
+        if self.decision == 'admis' and previous_decision != 'admis':
+            self._assurer_creation_compte_et_notifier()
+
+    def _assurer_creation_compte_et_notifier(self):
+        dossier = self.dossier
+        user = dossier.candidat
+        password = None
+        UserModel = get_user_model()
+
+        if not user:
+            email = dossier.email_affichage
+            if not email:
+                return
+            existing_user = UserModel.objects.filter(email__iexact=email).first()
+            if existing_user:
+                user = existing_user
+            else:
+                base_username = (email.split('@')[0] or 'candidat').lower()
+                username = base_username
+                counter = 1
+                while UserModel.objects.filter(username=username).exists():
+                    username = f"{base_username}{counter}"
+                    counter += 1
+                password = get_random_string(10)
+                user = UserModel.objects.create_user(
+                    username=username,
+                    email=email,
+                    password=password,
+                    first_name=dossier.prenom_candidat or '',
+                    last_name=dossier.nom_candidat or '',
+                    type_utilisateur='etudiant',
+                )
+                if dossier.telephone_contact:
+                    user.telephone = dossier.telephone_contact
+                    user.save(update_fields=['telephone'])
+
+            dossier.candidat = user
+            dossier.save(update_fields=['candidat'])
+
+        if user and not self.email_confirmation_envoye:
+            self._envoyer_email_admission(user, password)
+
+    def _envoyer_email_admission(self, user, password=None):
+        sujet = "Votre admission à la FMOS MFMC"
+        message = (
+            f"Bonjour {user.get_full_name() or user.username},\n\n"
+            f"Votre demande de candidature (réf : {self.dossier.reference}) a été acceptée.\n"
+        )
+        if password:
+            message += (
+                "Un compte a été créé pour vous afin d'accéder à la plateforme :\n"
+                f"Identifiant : {user.email}\n"
+                f"Mot de passe temporaire : {password}\n\n"
+                "Veuillez vous connecter et modifier votre mot de passe dès que possible.\n"
+            )
+        else:
+            message += "Vous pouvez utiliser vos identifiants existants pour vous connecter à la plateforme.\n"
+
+        message += "\nCordialement,\nFMOS MFMC"
+
+        try:
+            send_mail(
+                sujet,
+                message,
+                getattr(settings, 'DEFAULT_FROM_EMAIL', None),
+                [user.email],
+                fail_silently=False,
+            )
+            DecisionAdmission.objects.filter(pk=self.pk).update(
+                email_confirmation_envoye=True,
+                date_envoi_email=timezone.now(),
+            )
+            self.email_confirmation_envoye = True
+            self.date_envoi_email = timezone.now()
+        except Exception:  # pylint: disable=broad-except
+            # En cas d'échec d'envoi, on laisse les champs à False pour retenter manuellement
+            pass
 
 
 class Inscription(models.Model):

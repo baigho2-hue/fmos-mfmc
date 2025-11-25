@@ -3,7 +3,6 @@ Formulaires pour les admissions et inscriptions
 """
 from django import forms
 from django.core.exceptions import ValidationError
-from django.contrib.auth import get_user_model, password_validation
 
 from apps.utilisateurs.models import Utilisateur
 from apps.utilisateurs.models_formation import Formation
@@ -18,24 +17,22 @@ from .models import (
 class DossierCandidatureForm(forms.ModelForm):
     """Formulaire pour créer un dossier de candidature."""
 
-    first_name = forms.CharField(label="Prénom", max_length=150, required=False)
-    last_name = forms.CharField(label="Nom", max_length=150, required=False)
-    email = forms.EmailField(label="Email", required=False)
+    first_name = forms.CharField(label="Prénom", max_length=150, required=True)
+    last_name = forms.CharField(label="Nom", max_length=150, required=True)
+    email = forms.EmailField(label="Email", required=True)
     telephone = forms.CharField(label="Téléphone", max_length=30, required=False)
-    password1 = forms.CharField(
-        label="Mot de passe",
-        widget=forms.PasswordInput,
-        required=False,
-    )
-    password2 = forms.CharField(
-        label="Confirmation du mot de passe",
-        widget=forms.PasswordInput,
-        required=False,
-    )
 
     class Meta:
         model = DossierCandidature
-        fields = ['formation', 'prise_en_charge_bourse', 'details_bourse']
+        fields = [
+            'formation',
+            'prise_en_charge_bourse',
+            'details_bourse',
+            'last_name',
+            'first_name',
+            'email',
+            'telephone',
+        ]
         widgets = {
             'formation': forms.Select(attrs={'class': 'form-control'}),
             'prise_en_charge_bourse': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -55,48 +52,26 @@ class DossierCandidatureForm(forms.ModelForm):
         self.fields['formation'].empty_label = "Sélectionner une formation"
         self.fields['details_bourse'].required = False
 
-        self.requires_account = not (self.request_user and self.request_user.is_authenticated)
-        extra_fields = ['first_name', 'last_name', 'email', 'telephone', 'password1', 'password2']
-        if self.requires_account:
-            self.fields['first_name'].required = True
-            self.fields['last_name'].required = True
-            self.fields['email'].required = True
-            self.fields['password1'].required = True
-            self.fields['password2'].required = True
-        else:
-            for field in extra_fields:
-                self.fields[field].widget = forms.HiddenInput()
+        if self.request_user and self.request_user.is_authenticated:
+            self.fields['first_name'].initial = self.request_user.first_name
+            self.fields['last_name'].initial = self.request_user.last_name
+            self.fields['email'].initial = self.request_user.email
+            self.fields['telephone'].initial = getattr(self.request_user, 'telephone', '')
+            for field in ('first_name', 'last_name', 'email', 'telephone'):
                 self.fields[field].required = False
+                self.fields[field].widget = forms.HiddenInput()
 
-    def clean(self):
-        cleaned_data = super().clean()
-        if self.requires_account:
-            email = cleaned_data.get('email')
-            password1 = cleaned_data.get('password1')
-            password2 = cleaned_data.get('password2')
-
-            if not email:
-                self.add_error('email', "L'email est requis.")
-            else:
-                UserModel = get_user_model()
-                if UserModel.objects.filter(email__iexact=email).exists():
-                    self.add_error('email', "Cet email est déjà utilisé.")
-
-            if password1 and password2:
-                if password1 != password2:
-                    self.add_error('password2', "Les mots de passe ne correspondent pas.")
-                else:
-                    try:
-                        password_validation.validate_password(password1)
-                    except ValidationError as exc:
-                        self.add_error('password1', exc)
-            else:
-                if not password1:
-                    self.add_error('password1', "Mot de passe requis.")
-                if not password2:
-                    self.add_error('password2', "Veuillez confirmer le mot de passe.")
-
-        return cleaned_data
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.prenom_candidat = self.cleaned_data.get('first_name')
+        instance.nom_candidat = self.cleaned_data.get('last_name')
+        instance.email_contact = self.cleaned_data.get('email')
+        instance.telephone_contact = self.cleaned_data.get('telephone')
+        if self.request_user and self.request_user.is_authenticated:
+            instance.candidat = self.request_user
+        if commit:
+            instance.save()
+        return instance
 
 
 class DocumentUploadForm(forms.ModelForm):

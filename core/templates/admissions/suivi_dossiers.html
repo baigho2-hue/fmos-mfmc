@@ -107,7 +107,12 @@
         {% with dossier=entry.dossier %}
         <tr>
           <td>{{ dossier.reference }}</td>
-          <td>{{ dossier.candidat.get_full_name|default:dossier.candidat.username }}</td>
+          <td>
+            {{ dossier.nom_affichage }}
+            {% if dossier.email_affichage %}
+            <br><small>{{ dossier.email_affichage }}</small>
+            {% endif %}
+          </td>
           <td>{{ dossier.date_depot|date:"d/m/Y" }}</td>
           <td>
             <span class="badge badge-{{ dossier.statut }}">{{ dossier.get_statut_display }}</span>
