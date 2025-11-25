@@ -27,6 +27,15 @@ Les candidats peuvent créer des dossiers de candidature pour différentes forma
 5. Décision d'admission
 6. Inscription administrative
 
+#### Progression DESMFMC (années 1 → 4)
+
+- **Année 1** : inscription administrative unique (paiement validé via `Inscription`).  
+- **Fin d'année 1** : la validation du `ResultatAnneeDES` (cours, stages, épreuves) + le paiement annuel (enregistré via `PaiementAnneeDES` pour l'année 2) débloquent automatiquement la classe de 2e année.
+- **Années 2 & 3** : même logique – dès que les validations pédagogiques sont « admis » et que les frais annuels sont validés, l'étudiant est automatiquement basculé sur l'année suivante (classe + création du `ResultatAnneeDES` de l'année cible).
+- **Année 4** : en plus des validations précédentes, le mémoire doit être validé pour obtenir la décision « diplômé ».
+
+> Important : les frais d'inscription annuels (PaiementAnneeDES) sont exigés en **fin de chaque année** pour ouvrir l'accès aux cours de l'année suivante. La mise à jour de la classe et du `ResultatAnneeDES` est déclenchée automatiquement dès que le paiement passe en statut « validé ».
+
 #### Pour les autres formations
 1. Dépôt du dossier avec documents recommandés
 2. Vérification du dossier

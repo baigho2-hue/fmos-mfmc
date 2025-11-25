@@ -522,6 +522,44 @@ class ResultatAnneeDES(models.Model):
 
         return 'en_cours'
 
+    def peut_acceder_annee_suivante(self):
+        """
+        Vérifie si l'étudiant peut accéder à l'année suivante.
+        Pour les années 2, 3, 4 : nécessite :
+        1. Résultat de l'année actuelle = 'admis'
+        2. Paiement des frais d'inscription annuels validé pour l'année suivante
+        3. Pour année 4 : mémoire validé
+        """
+        if self.decision != 'admis':
+            return False
+        
+        # Pour l'année 1, l'inscription initiale suffit (gérée par le modèle Inscription)
+        if self.annee == 1:
+            return True
+        
+        # Pour les années 2, 3, 4 : vérifier le paiement annuel
+        annee_suivante = self.annee + 1
+        if annee_suivante > 4:
+            # Année 4 : vérifier le mémoire pour obtenir le diplôme
+            return self.memoire_valide if self.annee == 4 else False
+        
+        # Vérifier le paiement pour l'année suivante
+        try:
+            from apps.admissions.models import PaiementAnneeDES
+            paiement = PaiementAnneeDES.objects.filter(
+                etudiant=self.etudiant,
+                formation=self.formation,
+                annee=annee_suivante
+            ).first()
+            
+            if not paiement or paiement.statut != 'paiement_valide':
+                return False
+            
+            return paiement.peut_valider_passage()
+        except ImportError:
+            # Si le modèle n'existe pas encore, retourner False
+            return False
+    
     def save(self, *args, **kwargs):
         self.calculer_moyenne()
         if not self.decision_forcee:

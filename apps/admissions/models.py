@@ -4,7 +4,8 @@ from django.utils import timezone
 from decimal import Decimal
 
 from apps.utilisateurs.models import Utilisateur
-from apps.utilisateurs.models_formation import Formation
+from apps.utilisateurs.models_formation import Formation, Classe
+from apps.utilisateurs.models_programme_desmfmc import ResultatAnneeDES
 
 
 class DocumentRequis(models.Model):
@@ -615,3 +616,241 @@ class Inscription(models.Model):
         else:
             # Pour les formations non certifiantes : seule la validation est requise
             return validation_complete
+
+
+class PaiementAnneeDES(models.Model):
+    """Paiement des frais d'inscription annuels pour les années 2, 3 et 4 du DESMFMC."""
+    
+    STATUTS_PAIEMENT = [
+        ('en_attente', 'En attente'),
+        ('paiement_effectue', 'Paiement effectué'),
+        ('paiement_valide', 'Paiement validé'),
+        ('refuse', 'Refusé'),
+    ]
+    
+    MODES_PAIEMENT = [
+        ('liquide', 'Espèces (Secrétariat FMOS)'),
+        ('carte_bancaire', 'Carte bancaire'),
+        ('orange_money', 'Orange Money'),
+    ]
+    
+    etudiant = models.ForeignKey(
+        Utilisateur,
+        on_delete=models.CASCADE,
+        related_name='paiements_annee_des',
+        limit_choices_to={'type_utilisateur': 'etudiant'},
+        verbose_name="Étudiant"
+    )
+    formation = models.ForeignKey(
+        Formation,
+        on_delete=models.CASCADE,
+        related_name='paiements_annee_des',
+        verbose_name="Formation"
+    )
+    annee = models.IntegerField(
+        validators=[MinValueValidator(2), MaxValueValidator(4)],
+        verbose_name="Année du DES (2, 3 ou 4)",
+        help_text="Paiement pour l'accès à cette année"
+    )
+    resultat_annee = models.ForeignKey(
+        ResultatAnneeDES,
+        on_delete=models.CASCADE,
+        related_name='paiements',
+        null=True,
+        blank=True,
+        verbose_name="Résultat de l'année précédente",
+        help_text="Résultat de l'année précédente (année-1) qui doit être validé"
+    )
+    montant = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.00'))],
+        verbose_name="Montant des frais d'inscription annuels"
+    )
+    mode_paiement = models.CharField(
+        max_length=20,
+        choices=MODES_PAIEMENT,
+        null=True,
+        blank=True,
+        verbose_name="Mode de paiement"
+    )
+    statut = models.CharField(
+        max_length=30,
+        choices=STATUTS_PAIEMENT,
+        default='en_attente',
+        verbose_name="Statut du paiement"
+    )
+    reference_paiement = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="Référence de paiement",
+        help_text="Numéro de transaction, référence Orange Money, etc."
+    )
+    preuve_paiement = models.FileField(
+        upload_to='paiements_annee_des/preuves/',
+        blank=True,
+        null=True,
+        verbose_name="Preuve de paiement",
+        help_text="Capture d'écran, reçu, etc."
+    )
+    date_paiement = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Date de paiement"
+    )
+    valide_par = models.ForeignKey(
+        Utilisateur,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='paiements_annee_des_valides',
+        verbose_name="Validé par"
+    )
+    date_validation = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Date de validation"
+    )
+    commentaires = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Commentaires"
+    )
+    date_creation = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Date de création"
+    )
+    date_modification = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Date de modification"
+    )
+    
+    class Meta:
+        verbose_name = "Paiement annuel DES"
+        verbose_name_plural = "Paiements annuels DES"
+        ordering = ['-date_creation']
+        unique_together = [['etudiant', 'formation', 'annee']]
+    
+    def __str__(self):
+        return f"Paiement {self.etudiant.username} - Année {self.annee} - {self.get_statut_display()}"
+    
+    def peut_valider_passage(self):
+        """
+        Vérifie si l'étudiant peut passer à l'année suivante après validation du paiement.
+        Conditions :
+        1. Paiement validé
+        2. Résultat de l'année précédente validé (admis)
+        3. Épreuves écrites et pratiques validées (déjà dans ResultatAnneeDES)
+        """
+        if self.statut != 'paiement_valide':
+            return False
+        
+        # Vérifier le résultat de l'année précédente
+        annee_precedente = self.annee - 1
+        resultat_precedent = self.resultat_annee
+        if not resultat_precedent:
+            resultat_precedent = ResultatAnneeDES.objects.filter(
+                etudiant=self.etudiant,
+                formation=self.formation,
+                annee=annee_precedente
+            ).first()
+        
+        if not resultat_precedent:
+            return False
+        
+        # L'année précédente doit être admise
+        if resultat_precedent.decision != 'admis':
+            return False
+        
+        # Vérifier que les exigences pédagogiques ont bien été validées
+        if not (
+            resultat_precedent.cours_theoriques_valides
+            and resultat_precedent.stages_valides
+            and resultat_precedent.presence_validee
+        ):
+            return False
+        
+        return True
+    
+    def acceder_annee_suivante(self):
+        """
+        Donne accès à l'année suivante si toutes les conditions sont remplies.
+        Met à jour la classe de l'étudiant et prépare le ResultatAnneeDES de l'année cible.
+        """
+        if not self.peut_valider_passage():
+            return False
+        
+        # Préparer/obtenir le résultat pour l'année cible
+        resultat_cible, _ = ResultatAnneeDES.objects.get_or_create(
+            etudiant=self.etudiant,
+            formation=self.formation,
+            annee=self.annee,
+            defaults={
+                'decision': 'en_cours',
+            }
+        )
+        
+        # Mettre à jour la classe de l'étudiant
+        classe = Classe.objects.filter(
+            formation=self.formation,
+            annee=self.annee,
+            actif=True
+        ).first()
+        
+        if classe and self.etudiant.classe != classe.nom:
+            update_fields = []
+            if self.etudiant.classe != classe.nom:
+                self.etudiant.classe = classe.nom
+                update_fields.append('classe')
+            if not self.etudiant.date_joined:
+                self.etudiant.date_joined = timezone.now()
+                update_fields.append('date_joined')
+            if update_fields:
+                self.etudiant.save(update_fields=update_fields)
+        
+        return True
+    
+    @property
+    def paiement_valide(self):
+        """Vérifie si le paiement est validé"""
+        return self.statut == 'paiement_valide'
+    
+    @property
+    def est_desmfmc(self):
+        """Vérifie si l'inscription est pour DESMFMC"""
+        return self.formation.code == 'DESMFMC'
+    
+    @property
+    def est_premiere_annee_desmfmc(self):
+        """Pour DESMFMC, l'inscription n'est valable que pour la 1ère année"""
+        if not self.est_desmfmc:
+            return False
+        # Pour DESMFMC, l'inscription est toujours pour la 1ère année
+        return True
+
+    def save(self, *args, **kwargs):
+        """
+        Enregistre le paiement et déclenche automatiquement l'accès à l'année cible
+        lorsqu'il passe à l'état 'paiement_valide'.
+        """
+        previous_statut = None
+        if self.pk:
+            previous_statut = PaiementAnneeDES.objects.filter(pk=self.pk).values_list('statut', flat=True).first()
+
+        # Toujours lier le paiement au résultat de l'année précédente si disponible
+        if not self.resultat_annee and self.annee > 1:
+            self.resultat_annee = ResultatAnneeDES.objects.filter(
+                etudiant=self.etudiant,
+                formation=self.formation,
+                annee=self.annee - 1
+            ).first()
+
+        # Timestamp de validation par défaut si le statut passe à validé
+        if self.statut == 'paiement_valide' and self.date_validation is None:
+            self.date_validation = timezone.now()
+
+        super().save(*args, **kwargs)
+
+        if self.statut == 'paiement_valide' and previous_statut != 'paiement_valide':
+            self.acceder_annee_suivante()
