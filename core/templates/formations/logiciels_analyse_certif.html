@@ -268,7 +268,7 @@
 {% else %}
 <div class="access-restricted">
     <p>🔒 <strong>Contenu réservé aux utilisateurs inscrits</strong></p>
-    <p>Pour accéder au contenu complet de cette formation, veuillez <a href="{% url 'login' %}">vous connecter</a> ou <a href="{% url 'inscription' %}">créer un compte</a>.</p>
+    <p>Pour accéder au contenu complet de cette formation, veuillez <a href="{% url 'login' %}">vous connecter</a> ou <a href="{% url 'admissions:creer_dossier' %}">déposer une demande</a>.</p>
 </div>
 {% endif %}
 {% endblock %}

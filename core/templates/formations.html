@@ -7,7 +7,7 @@
 <h2>Formations</h2>
 {% if not user.is_authenticated %}
 <div class="alert-message">
-    <p>⚠️ <strong>Accès restreint :</strong> Vous devez être connecté pour accéder au contenu détaillé des formations. <a href="{% url 'login' %}">Connectez-vous</a> ou <a href="{% url 'inscription' %}">créez un compte</a> pour continuer.</p>
+    <p>⚠️ <strong>Accès restreint :</strong> Vous devez être connecté pour accéder au contenu détaillé des formations. <a href="{% url 'login' %}">Connectez-vous</a> ou <a href="{% url 'admissions:creer_dossier' %}">déposez une demande</a> pour continuer.</p>
 </div>
 {% else %}
 <div class="inscription-link-box">
@@ -28,7 +28,7 @@
         <div class="formation-card">
             {% if not user.is_authenticated %}
             <div class="formation-card-buttons">
-                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription-small">Demande</a>
                 <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
             </div>
             {% endif %}
@@ -42,7 +42,7 @@
         <div class="formation-card">
             {% if not user.is_authenticated %}
             <div class="formation-card-buttons">
-                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription-small">Demande</a>
                 <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
             </div>
             {% endif %}
@@ -56,7 +56,7 @@
         <div class="formation-card">
             {% if not user.is_authenticated %}
             <div class="formation-card-buttons">
-                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription-small">Demande</a>
                 <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
             </div>
             {% endif %}
@@ -70,7 +70,7 @@
         <div class="formation-card">
             {% if not user.is_authenticated %}
             <div class="formation-card-buttons">
-                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription-small">Demande</a>
                 <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
             </div>
             {% endif %}
@@ -84,7 +84,7 @@
         <div class="formation-card">
             {% if not user.is_authenticated %}
             <div class="formation-card-buttons">
-                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription-small">Demande</a>
                 <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
             </div>
             {% endif %}
@@ -98,7 +98,7 @@
         <div class="formation-card">
             {% if not user.is_authenticated %}
             <div class="formation-card-buttons">
-                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription-small">Demande</a>
                 <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
             </div>
             {% endif %}
@@ -120,7 +120,7 @@
         <div class="formation-card">
             {% if not user.is_authenticated %}
             <div class="formation-card-buttons">
-                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription-small">Demande</a>
                 <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
             </div>
             {% endif %}
@@ -134,7 +134,7 @@
         <div class="formation-card">
             {% if not user.is_authenticated %}
             <div class="formation-card-buttons">
-                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription-small">Demande</a>
                 <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
             </div>
             {% endif %}
@@ -148,7 +148,7 @@
         <div class="formation-card">
             {% if not user.is_authenticated %}
             <div class="formation-card-buttons">
-                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription-small">Demande</a>
                 <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
             </div>
             {% endif %}
@@ -162,7 +162,7 @@
         <div class="formation-card">
             {% if not user.is_authenticated %}
             <div class="formation-card-buttons">
-                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription-small">Demande</a>
                 <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
             </div>
             {% endif %}
@@ -176,7 +176,7 @@
         <div class="formation-card">
             {% if not user.is_authenticated %}
             <div class="formation-card-buttons">
-                <a href="{% url 'inscription' %}" class="btn-inscription-small">Inscription</a>
+                <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription-small">Demande</a>
                 <a href="{% url 'login' %}" class="btn-connexion-small">Connexion</a>
             </div>
             {% endif %}

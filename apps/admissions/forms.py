@@ -3,6 +3,7 @@ Formulaires pour les admissions et inscriptions
 """
 from django import forms
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model, password_validation
 
 from apps.utilisateurs.models import Utilisateur
 from apps.utilisateurs.models_formation import Formation
@@ -16,7 +17,22 @@ from .models import (
 
 class DossierCandidatureForm(forms.ModelForm):
     """Formulaire pour créer un dossier de candidature."""
-    
+
+    first_name = forms.CharField(label="Prénom", max_length=150, required=False)
+    last_name = forms.CharField(label="Nom", max_length=150, required=False)
+    email = forms.EmailField(label="Email", required=False)
+    telephone = forms.CharField(label="Téléphone", max_length=30, required=False)
+    password1 = forms.CharField(
+        label="Mot de passe",
+        widget=forms.PasswordInput,
+        required=False,
+    )
+    password2 = forms.CharField(
+        label="Confirmation du mot de passe",
+        widget=forms.PasswordInput,
+        required=False,
+    )
+
     class Meta:
         model = DossierCandidature
         fields = ['formation', 'prise_en_charge_bourse', 'details_bourse']
@@ -29,17 +45,58 @@ class DossierCandidatureForm(forms.ModelForm):
                 'placeholder': 'Préciser les détails de la bourse si applicable'
             }),
         }
-    
+
     def __init__(self, *args, **kwargs):
         self.candidat = kwargs.pop('candidat', None)
+        self.request_user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        
-        # Filtrer les formations actives
+
         self.fields['formation'].queryset = Formation.objects.filter(actif=True)
         self.fields['formation'].empty_label = "Sélectionner une formation"
-        
-        # Rendre le champ bourse conditionnel
         self.fields['details_bourse'].required = False
+
+        self.requires_account = not (self.request_user and self.request_user.is_authenticated)
+        extra_fields = ['first_name', 'last_name', 'email', 'telephone', 'password1', 'password2']
+        if self.requires_account:
+            self.fields['first_name'].required = True
+            self.fields['last_name'].required = True
+            self.fields['email'].required = True
+            self.fields['password1'].required = True
+            self.fields['password2'].required = True
+        else:
+            for field in extra_fields:
+                self.fields[field].widget = forms.HiddenInput()
+                self.fields[field].required = False
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if self.requires_account:
+            email = cleaned_data.get('email')
+            password1 = cleaned_data.get('password1')
+            password2 = cleaned_data.get('password2')
+
+            if not email:
+                self.add_error('email', "L'email est requis.")
+            else:
+                UserModel = get_user_model()
+                if UserModel.objects.filter(email__iexact=email).exists():
+                    self.add_error('email', "Cet email est déjà utilisé.")
+
+            if password1 and password2:
+                if password1 != password2:
+                    self.add_error('password2', "Les mots de passe ne correspondent pas.")
+                else:
+                    try:
+                        password_validation.validate_password(password1)
+                    except ValidationError as exc:
+                        self.add_error('password1', exc)
+            else:
+                if not password1:
+                    self.add_error('password1', "Mot de passe requis.")
+                if not password2:
+                    self.add_error('password2', "Veuillez confirmer le mot de passe.")
+
+        return cleaned_data
 
 
 class DocumentUploadForm(forms.ModelForm):

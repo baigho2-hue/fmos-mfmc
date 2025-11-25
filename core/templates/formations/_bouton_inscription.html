@@ -9,8 +9,8 @@ Variables requises: formation_slug, est_inscrit
         📚 Ma page de formation
     </a>
     {% else %}
-    <a href="{% url 'inscrire_formation' formation_slug %}" class="btn-formation btn-inscription">
-        ✍️ S'inscrire à cette formation
+    <a href="{% url 'admissions:creer_dossier' %}" class="btn-formation btn-inscription">
+        ✍️ Déposer une demande
     </a>
     {% endif %}
 </div>
@@ -19,8 +19,8 @@ Variables requises: formation_slug, est_inscrit
     <a href="{% url 'login' %}" class="btn-top btn-login">
         🔐 Connexion
     </a>
-    <a href="{% url 'inscription' %}" class="btn-top btn-inscription-top">
-        ✍️ Inscription
+    <a href="{% url 'admissions:creer_dossier' %}" class="btn-top btn-inscription-top">
+        ✍️ Demande de candidature
     </a>
 </div>
 {% endif %}

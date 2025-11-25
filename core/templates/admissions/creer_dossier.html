@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Créer un dossier de candidature - FMOS MFMC{% endblock %}
+{% block title %}Déposer une demande de candidature - FMOS MFMC{% endblock %}
 
 {% block content %}
 <div class="admissions-container">
     <div class="page-header">
-        <h1>📝 Créer un dossier de candidature</h1>
-        <p>Remplissez le formulaire pour créer votre dossier de candidature</p>
+        <h1>📝 Déposer une demande de candidature</h1>
+        <p>Remplissez le formulaire pour déposer votre demande. Vous n'avez pas besoin de compte au préalable.</p>
     </div>
 
     <form method="post" class="dossier-form" id="dossierForm">
@@ -25,6 +25,55 @@
                 <small class="form-text">Sélectionnez la formation pour laquelle vous souhaitez candidater</small>
             </div>
         </div>
+
+        {% if not request.user.is_authenticated %}
+        <div class="form-section">
+            <h2>Vos informations</h2>
+            <p class="info-text">Vous n'avez pas besoin de créer un compte au préalable. Ces informations permettent de suivre votre demande.</p>
+            <div class="form-group">
+                <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }} *</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                <div class="error-message">{{ form.last_name.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }} *</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                <div class="error-message">{{ form.first_name.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">{{ form.email.label }} *</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <div class="error-message">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.telephone.id_for_label }}">{{ form.telephone.label }}</label>
+                {{ form.telephone }}
+                {% if form.telephone.errors %}
+                <div class="error-message">{{ form.telephone.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }} *</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                <div class="error-message">{{ form.password1.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }} *</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                <div class="error-message">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
 
         <div class="form-section" id="bourseSection" style="display: none;">
             <h2>Informations sur la prise en charge</h2>
@@ -68,7 +117,7 @@
         {% endif %}
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Créer le dossier</button>
+            <button type="submit" class="btn btn-primary">Soumettre la demande</button>
             <a href="{% url 'admissions:mes_dossiers' %}" class="btn btn-secondary">Annuler</a>
         </div>
     </form>

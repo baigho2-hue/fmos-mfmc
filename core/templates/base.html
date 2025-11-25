@@ -332,6 +332,7 @@
     <div class="header-right">
       {% if not user.is_authenticated %}
       <div class="header-buttons">
+        <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription">Demande de candidature</a>
         <a href="{% url 'login' %}" class="btn-connexion">Connexion</a>
       </div>
       {% endif %}
