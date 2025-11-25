@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Suivi des dossiers{% endblock %}
+
+{% block content %}
+<div class="suivi-container">
+  <div class="page-header">
+    <h1>📁 Suivi des dossiers par formation</h1>
+    <p>Visualisez en un coup d'œil l'état des dossiers et des documents requis.</p>
+  </div>
+
+  {% if formations %}
+  <form class="filter-form" method="get">
+    <label for="formation-select">Formation :</label>
+    <select id="formation-select" name="formation" onchange="this.form.submit()">
+      {% for formation in formations %}
+      <option value="{{ formation.code }}" {% if formation.code == formation_code %}selected{% endif %}>
+        {{ formation.nom }}
+      </option>
+      {% endfor %}
+    </select>
+  </form>
+  {% endif %}
+
+  {% if formation_selectionnee %}
+  <div class="formation-summary">
+    <h2>{{ formation_selectionnee.nom }}</h2>
+    {% if stats %}
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-number">{{ stats.total|default:0 }}</span>
+        <span class="stat-label">Dossiers</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ stats.soumis|default:0 }}</span>
+        <span class="stat-label">Soumis</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ stats.incomplets|default:0 }}</span>
+        <span class="stat-label">Incomplets</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ stats.verifies|default:0 }}</span>
+        <span class="stat-label">Vérifiés</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ stats.rejetes|default:0 }}</span>
+        <span class="stat-label">Rejetés</span>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if documents_requis %}
+    <div class="documents-summary">
+      <h3>Documents requis</h3>
+      <ul>
+        {% for doc in documents_requis %}
+        <li>
+          <strong>{{ doc.nom }}</strong>
+          <span class="doc-description">{{ doc.description }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if dossiers_data %}
+  <div class="table-wrapper">
+    <table class="dossiers-table">
+      <thead>
+        <tr>
+          <th>Référence</th>
+          <th>Candidat</th>
+          <th>Date dépôt</th>
+          <th>Statut</th>
+          <th>Documents</th>
+          <th>Décision</th>
+          <th>Inscription</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in dossiers_data %}
+        {% with dossier=entry.dossier %}
+        <tr>
+          <td>{{ dossier.reference }}</td>
+          <td>{{ dossier.candidat.get_full_name|default:dossier.candidat.username }}</td>
+          <td>{{ dossier.date_depot|date:"d/m/Y" }}</td>
+          <td>
+            <span class="badge badge-{{ dossier.statut }}">{{ dossier.get_statut_display }}</span>
+            {% if entry.complet %}
+              <span class="badge badge-success">Complet</span>
+            {% else %}
+              <span class="badge badge-warning">Incomplet</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if entry.complet %}
+              ✅ Tous fournis
+            {% else %}
+              <ul class="docs-missing">
+                {% for doc in entry.documents_manquants %}
+                <li>{{ doc.nom }}</li>
+                {% empty %}
+                <li>-</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </td>
+          <td>
+            {% if entry.decision %}
+              {{ entry.decision.get_decision_display }} <br>
+              <small>{{ entry.decision.date_decision|date:"d/m/Y" }}</small>
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td>
+            {% if entry.inscription %}
+              {{ entry.inscription.get_statut_display }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td>
+            <a class="btn-link" href="{% url 'admissions:voir_dossier' dossier.id %}">Voir</a>
+          </td>
+        </tr>
+        {% endwith %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p>Aucun dossier trouvé pour cette formation.</p>
+  </div>
+  {% endif %}
+  {% else %}
+  <div class="empty-state">
+    <p>Aucune formation active disponible pour le moment.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.suivi-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+.page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.filter-form {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.filter-form select {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+.stat-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: block;
+}
+.documents-summary ul {
+  list-style: none;
+  padding: 0;
+}
+.documents-summary li {
+  background: #f8f9fa;
+  border-left: 4px solid #005a9c;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 4px;
+}
+.doc-description {
+  display: block;
+  color: #666;
+  font-size: 0.9rem;
+}
+.table-wrapper {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+.dossiers-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.dossiers-table th,
+.dossiers-table td {
+  border: 1px solid #e4e4e4;
+  padding: 0.75rem;
+  vertical-align: top;
+}
+.dossiers-table th {
+  background: #f5f5f5;
+  text-align: left;
+}
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.badge-soumis { background: #007bff; color: #fff; }
+.badge-incomplet { background: #ffc107; color: #333; }
+.badge-verifie { background: #28a745; color: #fff; }
+.badge-rejete { background: #dc3545; color: #fff; }
+.badge-success { background: #28a745; color: #fff; }
+.badge-warning { background: #ffc107; color: #333; }
+.docs-missing {
+  padding-left: 1rem;
+  margin: 0;
+}
+.docs-missing li {
+  list-style: disc;
+}
+.btn-link {
+  color: #005a9c;
+  text-decoration: none;
+  font-weight: 600;
+}
+.btn-link:hover { text-decoration: underline; }
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 2rem;
+}
+</style>
+{% endblock %}
+

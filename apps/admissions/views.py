@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.http import JsonResponse, Http404
 from django.utils import timezone
 from django.db import transaction
+from django.db.models import Count, Q
 
 from apps.utilisateurs.models_formation import Formation
 from .models import (
@@ -87,6 +88,77 @@ def creer_dossier(request):
         'formation_code': formation_code,
     }
     return render(request, 'admissions/creer_dossier.html', context)
+
+
+@login_required
+def suivi_dossiers_formation(request):
+    """Interface de suivi des dossiers par formation (coordination / staff)."""
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    est_coordination = getattr(request.user, 'est_membre_coordination', lambda: False)()
+    if not (request.user.is_staff or est_coordination):
+        messages.error(request, "Accès réservé à la coordination ou au personnel autorisé.")
+        return redirect('accueil')
+
+    formations = Formation.objects.filter(actif=True).order_by('nom')
+    formation_code = request.GET.get('formation') or (formations.first().code if formations else None)
+    dossiers_data = []
+    stats = None
+    documents_requis = []
+    formation_selectionnee = None
+
+    if formation_code:
+        try:
+            formation_selectionnee = Formation.objects.get(code=formation_code, actif=True)
+        except Formation.DoesNotExist:
+            formation_selectionnee = None
+            messages.error(request, "Formation sélectionnée introuvable.")
+
+    if formation_selectionnee:
+        type_docs = _get_document_type_for_code(formation_selectionnee.code)
+        documents_requis = list(
+            DocumentRequis.objects.filter(type_formation=type_docs, actif=True).order_by('ordre')
+        )
+        dossiers_queryset = (
+            DossierCandidature.objects.filter(formation=formation_selectionnee)
+            .select_related('candidat')
+            .prefetch_related('documents', 'inscriptions')
+            .order_by('-date_depot')
+        )
+
+        stats = dossiers_queryset.aggregate(
+            total=Count('id'),
+            soumis=Count('id', filter=Q(statut='soumis')),
+            incomplets=Count('id', filter=Q(statut='incomplet')),
+            verifies=Count('id', filter=Q(statut='verifie')),
+            rejetes=Count('id', filter=Q(statut='rejete')),
+        )
+
+        for dossier in dossiers_queryset:
+            docs_manquants = dossier.get_documents_manquants()
+            decision = getattr(dossier, 'decision_admission', None)
+            inscription = dossier.inscriptions.first()
+
+            dossiers_data.append(
+                {
+                    'dossier': dossier,
+                    'complet': dossier.verifier_completude(),
+                    'documents_manquants': docs_manquants,
+                    'decision': decision,
+                    'inscription': inscription,
+                }
+            )
+
+    context = {
+        'formations': formations,
+        'formation_selectionnee': formation_selectionnee,
+        'formation_code': formation_code,
+        'dossiers_data': dossiers_data,
+        'stats': stats,
+        'documents_requis': documents_requis,
+    }
+    return render(request, 'admissions/suivi_dossiers.html', context)
 
 
 @login_required

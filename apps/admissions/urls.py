@@ -4,6 +4,7 @@ from . import views
 app_name = 'admissions'
 
 urlpatterns = [
+    path('suivi/', views.suivi_dossiers_formation, name='suivi_dossiers'),
     path('mes-dossiers/', views.mes_dossiers, name='mes_dossiers'),
     path('creer-dossier/', views.creer_dossier, name='creer_dossier'),
     path('dossier/<int:dossier_id>/', views.voir_dossier, name='voir_dossier'),
