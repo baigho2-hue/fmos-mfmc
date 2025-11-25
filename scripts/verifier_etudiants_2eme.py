@@ -28,6 +28,7 @@ emails = [
     'Sangareami99@gmail.com',
     'Tim04diawara@gmail.com',
     'm.coumaré6@gmail.com',
+    'baigho2@gmail.com',
 ]
 
 print("=" * 70)

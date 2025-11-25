@@ -74,6 +74,12 @@ ETUDIANTS = [
         'telephone': '74745503',
         'email': 'm.coumaré6@gmail.com',
     },
+    {
+        'nom': 'Test',
+        'prenom': 'Test',
+        'telephone': '64353290',
+        'email': 'baigho2@gmail.com',
+    },
 ]
 
 PASSWORD = 'etudiant123'
@@ -130,7 +136,7 @@ def creer_ou_mettre_a_jour_etudiant(etudiant_data, formation, classe):
         utilisateur.first_name = etudiant_data['prenom']
         utilisateur.last_name = etudiant_data['nom']
         utilisateur.telephone = etudiant_data['telephone']
-            utilisateur.classe = CLASSE_NOM  # Utiliser "2ème A" comme demandé
+        utilisateur.classe = CLASSE_NOM  # Utiliser "2ème A" comme demandé
         utilisateur.type_utilisateur = 'etudiant'
         utilisateur.email_verifie = True
         utilisateur.is_active = True
