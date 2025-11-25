@@ -232,6 +232,22 @@ class CSComUCentre(models.Model):
         blank=True,
         verbose_name="Localisation / Commune"
     )
+    latitude = models.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        blank=True,
+        null=True,
+        verbose_name="Latitude GPS",
+        help_text="Exemple : 12.639947"
+    )
+    longitude = models.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        blank=True,
+        null=True,
+        verbose_name="Longitude GPS",
+        help_text="Exemple : -7.984300"
+    )
     cec_superviseur_principal = models.CharField(
         max_length=200,
         blank=True,

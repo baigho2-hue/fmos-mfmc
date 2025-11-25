@@ -254,13 +254,13 @@ class FormationAdmin(admin.ModelAdmin):
 
 @admin.register(CSComUCentre)
 class CSComUCentreAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'code', 'type_centre', 'localisation', 'cec_superviseur_principal', 'actif', 'nombre_superviseurs', 'nombre_stages')
+    list_display = ('nom', 'code', 'type_centre', 'localisation', 'latitude', 'longitude', 'cec_superviseur_principal', 'actif', 'nombre_superviseurs', 'nombre_stages')
     list_filter = ('type_centre', 'actif')
     search_fields = ('nom', 'code', 'localisation', 'cec_superviseur_principal')
     
     fieldsets = (
         ('Informations générales', {
-            'fields': ('nom', 'code', 'type_centre', 'localisation', 'actif')
+            'fields': ('nom', 'code', 'type_centre', 'localisation', 'latitude', 'longitude', 'actif')
         }),
         ('Supervision', {
             'fields': ('cec_superviseur_principal',)
