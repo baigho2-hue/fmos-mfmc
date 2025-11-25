@@ -14,6 +14,12 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
+# CSRF trusted origins (important pour Render/production)
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    'CSRF_TRUSTED_ORIGINS',
+    'https://fmos-mfmc.onrender.com'
+).split(',')
+
 # Auth user personnalisé
 AUTH_USER_MODEL = 'utilisateurs.Utilisateur'
 
