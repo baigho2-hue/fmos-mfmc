@@ -120,7 +120,7 @@ def trouver_classe_2eme_annee(formation):
 
 def creer_ou_mettre_a_jour_etudiant(etudiant_data, formation, classe):
     """Crée ou met à jour un étudiant."""
-    email = etudiant_data['email'].strip()
+    email = etudiant_data['email'].strip().lower()
     username = email  # Utiliser l'email comme username
     
     # Vérifier si l'utilisateur existe déjà
