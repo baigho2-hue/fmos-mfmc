@@ -16,6 +16,7 @@ from .models import (
     Inscription,
     DecisionAdmission,
     PaiementAnneeDES,
+    SANTE_COMMUNAUTAIRE_CODE,
 )
 from .forms import (
     DossierCandidatureForm,
@@ -26,6 +27,16 @@ from .forms import (
 from apps.utilisateurs.models_programme_desmfmc import ResultatAnneeDES
 
 
+def _get_document_type_for_code(formation_code: str) -> str:
+    if not formation_code:
+        return 'autre'
+    mapping = {
+        'DESMFMC': 'DESMFMC',
+        SANTE_COMMUNAUTAIRE_CODE: SANTE_COMMUNAUTAIRE_CODE,
+    }
+    return mapping.get(formation_code, 'autre')
+
+
 @login_required
 def creer_dossier(request):
     """Vue pour créer un nouveau dossier de candidature."""
@@ -33,12 +44,14 @@ def creer_dossier(request):
         form = DossierCandidatureForm(request.POST, candidat=request.user)
         if form.is_valid():
             with transaction.atomic():
-                # Générer une référence unique
+                formation = form.cleaned_data['formation']
+                formation_code = formation.code or 'DOS'
                 annee = timezone.now().year
+                prefix = f"{formation_code}-{annee}"
                 dernier_numero = DossierCandidature.objects.filter(
-                    reference__startswith=f"DOS-{annee}-"
+                    reference__startswith=f"{prefix}-"
                 ).count()
-                reference = f"DOS-{annee}-{str(dernier_numero + 1).zfill(3)}"
+                reference = f"{prefix}-{str(dernier_numero + 1).zfill(3)}"
                 
                 dossier = form.save(commit=False)
                 dossier.candidat = request.user
@@ -60,7 +73,7 @@ def creer_dossier(request):
     if formation_code:
         try:
             formation = Formation.objects.get(code=formation_code, actif=True)
-            type_formation = 'DESMFMC' if formation_code == 'DESMFMC' else 'autre'
+            type_formation = _get_document_type_for_code(formation.code)
             documents_requis = DocumentRequis.objects.filter(
                 type_formation=type_formation,
                 actif=True
@@ -289,7 +302,7 @@ def ajax_documents_requis(request):
     
     try:
         formation = Formation.objects.get(code=formation_code, actif=True)
-        type_formation = 'DESMFMC' if formation_code == 'DESMFMC' else 'autre'
+        type_formation = _get_document_type_for_code(formation.code)
         
         documents = DocumentRequis.objects.filter(
             type_formation=type_formation,

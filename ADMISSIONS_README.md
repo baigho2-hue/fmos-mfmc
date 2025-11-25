@@ -36,6 +36,20 @@ Les candidats peuvent créer des dossiers de candidature pour différentes forma
 
 > Important : les frais d'inscription annuels (PaiementAnneeDES) sont exigés en **fin de chaque année** pour ouvrir l'accès aux cours de l'année suivante. La mise à jour de la classe et du `ResultatAnneeDES` est déclenchée automatiquement dès que le paiement passe en statut « validé ».
 
+#### Pour la formation Santé communautaire
+1. Dépôt du dossier avec les documents requis (voir ci-dessous)
+2. Vérification du dossier et décision d'admission
+3. Paiement des frais d'inscription avant le début de la formation
+
+**Documents requis pour Santé communautaire :**
+- Demande manuscrite adressée au Doyen (formation précisée)
+- Attestation prouvant le niveau minimum Licence
+- Extrait d'acte de naissance
+- Copie certifiée du diplôme ou équivalent
+- Attestation de prise en charge des frais de formation
+
+> Astuce : exécuter `python scripts/initialiser_documents_requis_sante_communautaire.py` pour créer ces documents dans la base.
+
 #### Pour les autres formations
 1. Dépôt du dossier avec documents recommandés
 2. Vérification du dossier

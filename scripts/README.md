@@ -51,7 +51,20 @@ python scripts/initialiser_documents_requis_desmfmc.py
 - Crée les 6 documents requis pour DESMFMC
 - Met à jour les documents existants si nécessaire
 
-### 3. `maj_etudiants_desmfmc.py`
+### 3. `initialiser_documents_requis_sante_communautaire.py`
+
+Initialise les documents requis pour la formation Santé communautaire.
+
+**Usage :**
+```bash
+python scripts/initialiser_documents_requis_sante_communautaire.py
+```
+
+**Fonctionnalités :**
+- Crée les documents requis listés pour Santé communautaire
+- Met à jour les documents existants si nécessaire
+
+### 4. `maj_etudiants_desmfmc.py`
 
 Script interactif pour mettre à jour les étudiants DESMFMC des années 2 à 4.
 
@@ -64,7 +77,7 @@ python scripts/maj_etudiants_desmfmc.py
 - Associer la bonne classe (DESMFMC année 2/3/4) sur le modèle Utilisateur
 - Marquer l'année correspondante comme "admis" dans ResultatAnneeDES
 
-### 4. `test_import.py`
+### 5. `test_import.py`
 
 Script de diagnostic pour vérifier que les imports Django fonctionnent correctement.
 

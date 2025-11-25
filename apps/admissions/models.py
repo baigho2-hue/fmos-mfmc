@@ -8,11 +8,15 @@ from apps.utilisateurs.models_formation import Formation, Classe
 from apps.utilisateurs.models_programme_desmfmc import ResultatAnneeDES
 
 
+SANTE_COMMUNAUTAIRE_CODE = 'SANTE_COMMUNAUTAIRE'
+
+
 class DocumentRequis(models.Model):
     """Modèle définissant les documents requis pour un type de formation."""
     
     TYPE_FORMATION_CHOICES = [
         ('DESMFMC', 'DESMFMC'),
+        (SANTE_COMMUNAUTAIRE_CODE, 'Santé communautaire'),
         ('autre', 'Autre formation'),
     ]
     
@@ -178,15 +182,23 @@ class DossierCandidature(models.Model):
         """Vérifie si le dossier est pour DESMFMC"""
         return self.formation.code == 'DESMFMC'
     
+    def est_sante_communautaire(self):
+        """Vérifie si le dossier est pour la formation Santé communautaire"""
+        return self.formation.code == SANTE_COMMUNAUTAIRE_CODE
+    
     def verifier_completude(self):
         """Vérifie si tous les documents requis sont présents et validés"""
-        if not self.est_desmfmc():
+        type_code = None
+        if self.est_desmfmc():
+            type_code = 'DESMFMC'
+        elif self.est_sante_communautaire():
+            type_code = SANTE_COMMUNAUTAIRE_CODE
+        else:
             # Pour les autres formations, on vérifie juste qu'il y a des documents
             return self.documents.exists()
         
-        # Pour DESMFMC, vérifier tous les documents obligatoires
         documents_requis = DocumentRequis.objects.filter(
-            type_formation='DESMFMC',
+            type_formation=type_code,
             obligatoire=True,
             actif=True
         )
@@ -200,11 +212,15 @@ class DossierCandidature(models.Model):
     
     def get_documents_manquants(self):
         """Retourne la liste des documents manquants"""
-        if not self.est_desmfmc():
+        if self.est_desmfmc():
+            type_code = 'DESMFMC'
+        elif self.est_sante_communautaire():
+            type_code = SANTE_COMMUNAUTAIRE_CODE
+        else:
             return []
         
         documents_requis = DocumentRequis.objects.filter(
-            type_formation='DESMFMC',
+            type_formation=type_code,
             obligatoire=True,
             actif=True
         )
