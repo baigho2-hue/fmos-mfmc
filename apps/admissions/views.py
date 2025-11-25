@@ -1,13 +1,15 @@
 """
 Vues pour la gestion des admissions et inscriptions
 """
+import csv
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponse
 from django.utils import timezone
 from django.db import transaction
 from django.db.models import Count, Q
+from django.utils.dateparse import parse_date
 
 from apps.utilisateurs.models_formation import Formation
 from .models import (
@@ -103,6 +105,12 @@ def suivi_dossiers_formation(request):
 
     formations = Formation.objects.filter(actif=True).order_by('nom')
     formation_code = request.GET.get('formation') or (formations.first().code if formations else None)
+    search_query = request.GET.get('q', '').strip()
+    start_date_param = request.GET.get('start_date', '').strip()
+    end_date_param = request.GET.get('end_date', '').strip()
+    export_format = request.GET.get('export')
+    start_date = parse_date(start_date_param) if start_date_param else None
+    end_date = parse_date(end_date_param) if end_date_param else None
     dossiers_data = []
     stats = None
     documents_requis = []
@@ -126,6 +134,17 @@ def suivi_dossiers_formation(request):
             .prefetch_related('documents', 'inscriptions')
             .order_by('-date_depot')
         )
+        if search_query:
+            dossiers_queryset = dossiers_queryset.filter(
+                Q(candidat__username__icontains=search_query)
+                | Q(candidat__first_name__icontains=search_query)
+                | Q(candidat__last_name__icontains=search_query)
+                | Q(reference__icontains=search_query)
+            )
+        if start_date:
+            dossiers_queryset = dossiers_queryset.filter(date_depot__gte=start_date)
+        if end_date:
+            dossiers_queryset = dossiers_queryset.filter(date_depot__lte=end_date)
 
         stats = dossiers_queryset.aggregate(
             total=Count('id'),
@@ -150,6 +169,9 @@ def suivi_dossiers_formation(request):
                 }
             )
 
+        if export_format == 'csv' and dossiers_queryset.exists():
+            return _export_dossiers_csv(dossiers_queryset, formation_selectionnee)
+
     context = {
         'formations': formations,
         'formation_selectionnee': formation_selectionnee,
@@ -157,6 +179,9 @@ def suivi_dossiers_formation(request):
         'dossiers_data': dossiers_data,
         'stats': stats,
         'documents_requis': documents_requis,
+        'search_query': search_query,
+        'start_date': start_date_param,
+        'end_date': end_date_param,
     }
     return render(request, 'admissions/suivi_dossiers.html', context)
 
@@ -631,3 +656,29 @@ def validation_passage_annee(request, annee):
         'formation': formation_desmfmc,
     }
     return render(request, 'admissions/validation_passage_annee.html', context)
+
+
+def _export_dossiers_csv(dossiers_queryset, formation):
+    """Exporte la liste des dossiers en CSV."""
+    response = HttpResponse(content_type='text/csv')
+    filename = f"dossiers_{formation.code.lower()}.csv"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Référence', 'Candidat', 'Email', 'Date dépôt', 'Statut', 'Complet', 'Décision', 'Inscription'])
+
+    for dossier in dossiers_queryset:
+        decision = getattr(dossier, 'decision_admission', None)
+        inscription = dossier.inscriptions.first()
+        writer.writerow([
+            dossier.reference,
+            dossier.candidat.get_full_name() or dossier.candidat.username,
+            dossier.candidat.email,
+            dossier.date_depot.strftime('%Y-%m-%d'),
+            dossier.get_statut_display(),
+            'Oui' if dossier.verifier_completude() else 'Non',
+            decision.get_decision_display() if decision else '',
+            inscription.get_statut_display() if inscription else '',
+        ])
+
+    return response
