@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Validation passage année {{ annee }} - DESMFMC{% endblock %}
+
+{% block content %}
+<div class="admissions-container">
+    <div class="page-header">
+        <h1>📊 Validation du passage à l'année {{ annee }}</h1>
+        <p>Vérification des conditions pour accéder à l'année {{ annee }}</p>
+    </div>
+
+    <div class="validation-status">
+        {% if peut_acceder %}
+        <div class="alert alert-success">
+            <h3>✅ Accès autorisé</h3>
+            <p>Toutes les conditions sont remplies. Vous pouvez accéder à l'année {{ annee }}.</p>
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+            <h3>⏳ En attente de validation</h3>
+            <p>Certaines conditions doivent encore être remplies pour accéder à l'année {{ annee }}.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="conditions-section">
+        <h2>Conditions requises</h2>
+        
+        <div class="conditions-list">
+            {% if conditions_remplies %}
+            <div class="conditions-group">
+                <h3>✅ Conditions remplies</h3>
+                <ul>
+                    {% for condition in conditions_remplies %}
+                    <li>{{ condition }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if conditions_manquantes %}
+            <div class="conditions-group">
+                <h3>❌ Conditions manquantes</h3>
+                <ul>
+                    {% for condition in conditions_manquantes %}
+                    <li>{{ condition }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if resultat_precedent %}
+    <div class="resultat-section">
+        <h2>Résultat de l'année {{ annee_precedente }}</h2>
+        <div class="resultat-card">
+            <div class="resultat-status">
+                <strong>Décision :</strong>
+                <span class="badge badge-{{ resultat_precedent.decision }}">
+                    {{ resultat_precedent.get_decision_display }}
+                </span>
+            </div>
+            
+            <div class="resultat-details">
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <strong>Cours théoriques validés :</strong>
+                        {% if resultat_precedent.cours_theoriques_valides %}
+                        <span class="badge badge-success">✅ Oui</span>
+                        {% else %}
+                        <span class="badge badge-warning">❌ Non</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="detail-item">
+                        <strong>Stages validés :</strong>
+                        {% if resultat_precedent.stages_valides %}
+                        <span class="badge badge-success">✅ Oui</span>
+                        {% else %}
+                        <span class="badge badge-warning">❌ Non</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if resultat_precedent.note_theorique %}
+                    <div class="detail-item">
+                        <strong>Note théorique :</strong> {{ resultat_precedent.note_theorique }}/20
+                    </div>
+                    {% endif %}
+                    
+                    {% if resultat_precedent.note_pratique %}
+                    <div class="detail-item">
+                        <strong>Note pratique :</strong> {{ resultat_precedent.note_pratique }}/20
+                    </div>
+                    {% endif %}
+                    
+                    {% if resultat_precedent.moyenne %}
+                    <div class="detail-item">
+                        <strong>Moyenne :</strong> {{ resultat_precedent.moyenne }}/20
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if paiement %}
+    <div class="paiement-section">
+        <h2>Paiement des frais d'inscription</h2>
+        <div class="paiement-card">
+            <div class="paiement-status">
+                <strong>Statut :</strong>
+                <span class="badge badge-{{ paiement.statut }}">
+                    {{ paiement.get_statut_display }}
+                </span>
+            </div>
+            
+            <div class="paiement-details">
+                <div class="detail-item">
+                    <strong>Montant :</strong> {{ paiement.montant }} FCFA
+                </div>
+                {% if paiement.mode_paiement %}
+                <div class="detail-item">
+                    <strong>Mode de paiement :</strong> {{ paiement.get_mode_paiement_display }}
+                </div>
+                {% endif %}
+                {% if paiement.date_paiement %}
+                <div class="detail-item">
+                    <strong>Date de paiement :</strong> {{ paiement.date_paiement|date:"d/m/Y à H:i" }}
+                </div>
+                {% endif %}
+                {% if paiement.valide_par %}
+                <div class="detail-item">
+                    <strong>Validé par :</strong> {{ paiement.valide_par.get_full_name|default:paiement.valide_par.username }}
+                    {% if paiement.date_validation %}
+                    <br><small>Le {{ paiement.date_validation|date:"d/m/Y à H:i" }}</small>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            {% if paiement.statut != 'paiement_valide' %}
+            <div class="paiement-actions">
+                <a href="{% url 'admissions:creer_paiement_annee_des' annee %}" class="btn btn-primary">
+                    {% if paiement.statut == 'en_attente' %}Déposer le paiement{% else %}Modifier le paiement{% endif %}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="paiement-section">
+        <h2>Paiement des frais d'inscription</h2>
+        <div class="alert alert-warning">
+            <p>Aucun paiement déposé pour l'année {{ annee }}.</p>
+            <a href="{% url 'admissions:creer_paiement_annee_des' annee %}" class="btn btn-primary">
+                Déposer le paiement
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if annee == 4 %}
+    <div class="memoire-section">
+        <h2>Mémoire de fin de formation</h2>
+        {% if resultat_annee_4 %}
+        <div class="memoire-card">
+            <div class="memoire-status">
+                <strong>Statut du mémoire :</strong>
+                {% if resultat_annee_4.memoire_valide %}
+                <span class="badge badge-success">✅ Validé</span>
+                {% else %}
+                <span class="badge badge-warning">⏳ En attente</span>
+                {% endif %}
+            </div>
+            
+            {% if resultat_annee_4.memoire_titre %}
+            <div class="detail-item">
+                <strong>Titre :</strong> {{ resultat_annee_4.memoire_titre }}
+            </div>
+            {% endif %}
+            
+            {% if resultat_annee_4.memoire_date_soutenance %}
+            <div class="detail-item">
+                <strong>Date de soutenance :</strong> {{ resultat_annee_4.memoire_date_soutenance|date:"d/m/Y" }}
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <p>Le mémoire de fin de formation doit être soumis et validé pour obtenir le diplôme.</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="actions-bar">
+        <a href="{% url 'admissions:paiements_annee_des' %}" class="btn btn-secondary">
+            ← Retour aux paiements annuels
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.admissions-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.page-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.validation-status {
+    margin-bottom: 2rem;
+}
+
+.alert {
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    color: #0c5460;
+}
+
+.conditions-section {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.conditions-section h2 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.conditions-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.conditions-group h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.conditions-group ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.conditions-group li {
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.resultat-section,
+.paiement-section,
+.memoire-section {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.resultat-section h2,
+.paiement-section h2,
+.memoire-section h2 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.resultat-card,
+.paiement-card,
+.memoire-card {
+    background: #f8f9fa;
+    border-radius: 4px;
+    padding: 1rem;
+}
+
+.resultat-status,
+.paiement-status,
+.memoire-status {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.detail-item {
+    padding: 0.5rem;
+    background: white;
+    border-radius: 4px;
+}
+
+.paiement-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ddd;
+}
+
+.actions-bar {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.badge-en_cours { background-color: #6c757d; color: white; }
+.badge-admis { background-color: #28a745; color: white; }
+.badge-ajourne { background-color: #dc3545; color: white; }
+.badge-diplome { background-color: #28a745; color: white; }
+.badge-en_attente { background-color: #6c757d; color: white; }
+.badge-paiement_effectue { background-color: #ffc107; color: #333; }
+.badge-paiement_valide { background-color: #28a745; color: white; }
+.badge-refuse { background-color: #dc3545; color: white; }
+.badge-success { background-color: #28a745; color: white; }
+.badge-warning { background-color: #ffc107; color: #333; }
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: #005a9c;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #004080;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+</style>
+{% endblock %}
+

@@ -8,6 +8,7 @@ from .models import (
     Inscription,
     DocumentRequis,
     DocumentDossier,
+    PaiementAnneeDES,
 )
 
 
@@ -175,3 +176,51 @@ class DocumentDossierAdmin(admin.ModelAdmin):
     ordering = ('-date_upload',)
     autocomplete_fields = ('dossier', 'document_requis', 'valide_par')
     readonly_fields = ('date_upload',)
+
+
+@admin.register(PaiementAnneeDES)
+class PaiementAnneeDESAdmin(admin.ModelAdmin):
+    list_display = (
+        'etudiant', 'formation', 'annee', 'montant', 'statut', 
+        'mode_paiement', 'date_paiement', 'valide_par', 'date_validation'
+    )
+    list_filter = ('formation', 'annee', 'statut', 'mode_paiement', 'date_creation')
+    search_fields = (
+        'etudiant__username', 'etudiant__first_name', 'etudiant__last_name',
+        'reference_paiement'
+    )
+    ordering = ('-date_creation',)
+    autocomplete_fields = ('etudiant', 'formation', 'valide_par')
+    readonly_fields = ('date_creation', 'date_modification', 'paiement_valide', 'peut_valider_passage')
+    
+    fieldsets = (
+        ('Informations générales', {
+            'fields': ('etudiant', 'formation', 'annee', 'resultat_annee', 'statut')
+        }),
+        ('Paiement', {
+            'fields': (
+                'montant', 'mode_paiement', 'reference_paiement',
+                'preuve_paiement', 'date_paiement'
+            )
+        }),
+        ('Validation', {
+            'fields': (
+                'valide_par', 'date_validation', 'commentaires',
+                'paiement_valide', 'peut_valider_passage'
+            )
+        }),
+        ('Informations complémentaires', {
+            'fields': ('date_creation', 'date_modification'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def paiement_valide(self, obj):
+        return obj.paiement_valide
+    paiement_valide.boolean = True
+    paiement_valide.short_description = "Paiement validé"
+    
+    def peut_valider_passage(self, obj):
+        return obj.peut_valider_passage() if obj.pk else False
+    peut_valider_passage.boolean = True
+    peut_valider_passage.short_description = "Peut valider passage"

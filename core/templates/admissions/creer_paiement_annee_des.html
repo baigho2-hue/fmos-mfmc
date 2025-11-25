@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Paiement année {{ annee }} - DESMFMC - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="admissions-container">
+    <div class="page-header">
+        <h1>💳 Paiement des frais d'inscription annuels</h1>
+        <p>Année {{ annee }} - DESMFMC</p>
+    </div>
+
+    <div class="info-box">
+        <h3>📋 Conditions préalables</h3>
+        <p>Pour pouvoir payer les frais d'inscription de l'année {{ annee }}, vous devez avoir :</p>
+        <ul>
+            <li>
+                {% if resultat_precedent and resultat_precedent.decision == 'admis' %}
+                ✅ Année {{ annee_precedente }} validée (admis)
+                {% else %}
+                ❌ Année {{ annee_precedente }} non encore validée
+                {% endif %}
+            </li>
+        </ul>
+    </div>
+
+    {% if not resultat_precedent or resultat_precedent.decision != 'admis' %}
+    <div class="alert alert-warning">
+        <p>
+            <strong>⚠️ Attention :</strong> Vous devez d'abord valider l'année {{ annee_precedente }} 
+            avant de pouvoir payer pour l'année {{ annee }}.
+        </p>
+        <p>
+            L'année {{ annee_precedente }} doit être marquée comme "admis" avec validation des épreuves 
+            écrites et pratiques.
+        </p>
+    </div>
+    {% else %}
+    
+    {% if paiement_existant and paiement_existant.statut == 'paiement_valide' %}
+    <div class="alert alert-success">
+        <p>
+            <strong>✅ Paiement validé :</strong> Votre paiement pour l'année {{ annee }} a été validé.
+        </p>
+    </div>
+    {% else %}
+    
+    <form method="post" enctype="multipart/form-data" class="paiement-form">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <h2>Informations de paiement</h2>
+            
+            <div class="form-group">
+                <label for="montant">Montant des frais d'inscription (FCFA) *</label>
+                <input 
+                    type="number" 
+                    id="montant" 
+                    name="montant" 
+                    class="form-control"
+                    value="{% if paiement_existant %}{{ paiement_existant.montant }}{% endif %}"
+                    step="0.01"
+                    min="0"
+                    required
+                >
+                <small class="form-text">Montant à payer pour l'accès à l'année {{ annee }}</small>
+            </div>
+
+            <div class="form-group">
+                <label for="mode_paiement">Mode de paiement *</label>
+                <select id="mode_paiement" name="mode_paiement" class="form-control" required>
+                    <option value="">Sélectionner un mode de paiement</option>
+                    <option value="liquide" {% if paiement_existant and paiement_existant.mode_paiement == 'liquide' %}selected{% endif %}>
+                        Espèces (Secrétariat FMOS)
+                    </option>
+                    <option value="carte_bancaire" {% if paiement_existant and paiement_existant.mode_paiement == 'carte_bancaire' %}selected{% endif %}>
+                        Carte bancaire
+                    </option>
+                    <option value="orange_money" {% if paiement_existant and paiement_existant.mode_paiement == 'orange_money' %}selected{% endif %}>
+                        Orange Money
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="reference_paiement">Référence de paiement</label>
+                <input 
+                    type="text" 
+                    id="reference_paiement" 
+                    name="reference_paiement" 
+                    class="form-control"
+                    value="{% if paiement_existant %}{{ paiement_existant.reference_paiement }}{% endif %}"
+                    placeholder="Numéro de transaction, référence Orange Money, etc."
+                >
+                <small class="form-text">Optionnel : numéro de transaction ou référence de paiement</small>
+            </div>
+
+            <div class="form-group">
+                <label for="preuve_paiement">Preuve de paiement</label>
+                <input 
+                    type="file" 
+                    id="preuve_paiement" 
+                    name="preuve_paiement" 
+                    class="form-control"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                >
+                <small class="form-text">Capture d'écran, reçu, etc. (PDF, JPG, PNG - max 5MB)</small>
+                {% if paiement_existant and paiement_existant.preuve_paiement %}
+                <div class="current-file">
+                    <p>Fichier actuel : 
+                        <a href="{{ paiement_existant.preuve_paiement.url }}" target="_blank">
+                            {{ paiement_existant.preuve_paiement.name|slice:"20:" }}
+                        </a>
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {% if paiement_existant %}Mettre à jour{% else %}Déposer le paiement{% endif %}
+            </button>
+            <a href="{% url 'admissions:paiements_annee_des' %}" class="btn btn-secondary">
+                Annuler
+            </a>
+        </div>
+    </form>
+
+    <div class="info-box" style="margin-top: 2rem;">
+        <h3>ℹ️ Après le dépôt</h3>
+        <p>
+            Une fois le paiement déposé, il sera en attente de validation par l'administration. 
+            Vous recevrez une notification une fois le paiement validé.
+        </p>
+        <p>
+            <strong>Rappel :</strong> Pour accéder à l'année {{ annee }}, vous devez :
+        </p>
+        <ul>
+            <li>✅ Avoir validé l'année {{ annee_precedente }} (déjà fait)</li>
+            <li>⏳ Valider les frais d'inscription annuels (en cours)</li>
+            <li>⏳ Valider les épreuves écrites et pratiques de l'année {{ annee_precedente }}</li>
+            {% if annee == 4 %}
+            <li>⏳ Valider le mémoire de fin de formation</li>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.admissions-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.page-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.info-box {
+    background: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-box h3 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.info-box ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.alert {
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+}
+
+.paiement-form {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section h2 {
+    color: #005a9c;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.form-control[type="file"] {
+    border: 2px dashed #ddd;
+    background: #f8f9fa;
+    cursor: pointer;
+}
+
+.form-text {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.current-file {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: #005a9c;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #004080;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+</style>
+{% endblock %}
+

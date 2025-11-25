@@ -15,6 +15,7 @@ from .models import (
     DocumentRequis,
     Inscription,
     DecisionAdmission,
+    PaiementAnneeDES,
 )
 from .forms import (
     DossierCandidatureForm,
@@ -22,6 +23,7 @@ from .forms import (
     InscriptionForm,
     InscriptionPaiementForm,
 )
+from apps.utilisateurs.models_programme_desmfmc import ResultatAnneeDES
 
 
 @login_required
@@ -181,12 +183,34 @@ def mes_dossiers(request):
 
 @login_required
 def inscription(request, dossier_id):
-    """Vue pour gérer l'inscription après admission."""
+    """Vue pour gérer l'inscription après admission (uniquement 1ère année pour DESMFMC)."""
     dossier = get_object_or_404(
         DossierCandidature,
         id=dossier_id,
         candidat=request.user
     )
+    
+    # Pour DESMFMC, l'inscription n'est valable que pour la 1ère année
+    if dossier.est_desmfmc():
+        # Vérifier si l'étudiant est déjà inscrit et dans quelle année
+        inscription_existante = Inscription.objects.filter(
+            dossier=dossier
+        ).first()
+        
+        if inscription_existante and inscription_existante.est_complete:
+            # Vérifier l'année actuelle de l'étudiant
+            resultat_actuel = ResultatAnneeDES.objects.filter(
+                etudiant=request.user,
+                formation=dossier.formation
+            ).order_by('-annee').first()
+            
+            if resultat_actuel and resultat_actuel.annee > 1:
+                messages.info(
+                    request,
+                    f"Vous êtes déjà inscrit en DESMFMC. Pour l'année {resultat_actuel.annee}, "
+                    f"veuillez utiliser le système de paiements annuels."
+                )
+                return redirect('admissions:paiements_annee_des')
     
     # Vérifier qu'il y a une décision d'admission positive
     try:
@@ -277,3 +301,248 @@ def ajax_documents_requis(request):
         })
     except Formation.DoesNotExist:
         return JsonResponse({'error': 'Formation non trouvée'}, status=404)
+
+
+@login_required
+def paiements_annee_des(request):
+    """Vue pour lister les paiements annuels DESMFMC d'un étudiant."""
+    if not request.user.est_etudiant():
+        messages.error(request, "Accès réservé aux étudiants.")
+        return redirect('accueil')
+    
+    # Récupérer la formation DESMFMC
+    try:
+        formation_desmfmc = Formation.objects.get(code='DESMFMC', actif=True)
+    except Formation.DoesNotExist:
+        messages.error(request, "La formation DESMFMC n'est pas configurée.")
+        return redirect('dashboard_etudiant')
+    
+    # Récupérer les paiements annuels
+    paiements = PaiementAnneeDES.objects.filter(
+        etudiant=request.user,
+        formation=formation_desmfmc
+    ).order_by('-annee', '-date_creation')
+    
+    # Récupérer les résultats annuels pour vérifier les conditions
+    resultats = ResultatAnneeDES.objects.filter(
+        etudiant=request.user,
+        formation=formation_desmfmc
+    ).order_by('annee')
+    
+    resultats_dict = {r.annee: r for r in resultats}
+    paiements_dict = {p.annee: p for p in paiements}
+    
+    # Préparer les données pour les années disponibles (2, 3, 4)
+    annees_disponibles = []
+    for annee_num in [2, 3, 4]:
+        annee_prec = annee_num - 1
+        resultat_prec = resultats_dict.get(annee_prec)
+        paiement = paiements_dict.get(annee_num)
+        
+        annees_disponibles.append({
+            'annee': annee_num,
+            'annee_precedente': annee_prec,
+            'resultat_precedent': resultat_prec,
+            'resultat_valide': resultat_prec and resultat_prec.decision == 'admis',
+            'paiement': paiement,
+            'peut_payer': resultat_prec and resultat_prec.decision == 'admis',
+        })
+    
+    context = {
+        'paiements': paiements,
+        'paiements_dict': paiements_dict,
+        'resultats': resultats,
+        'resultats_dict': resultats_dict,
+        'annees_disponibles': annees_disponibles,
+        'formation': formation_desmfmc,
+    }
+    return render(request, 'admissions/paiements_annee_des.html', context)
+
+
+@login_required
+def creer_paiement_annee_des(request, annee):
+    """Vue pour créer/déposer un paiement annuel pour une année donnée (2, 3 ou 4)."""
+    if not request.user.est_etudiant():
+        messages.error(request, "Accès réservé aux étudiants.")
+        return redirect('accueil')
+    
+    if annee not in [2, 3, 4]:
+        messages.error(request, "Les paiements annuels concernent uniquement les années 2, 3 et 4.")
+        return redirect('admissions:paiements_annee_des')
+    
+    # Récupérer la formation DESMFMC
+    try:
+        formation_desmfmc = Formation.objects.get(code='DESMFMC', actif=True)
+    except Formation.DoesNotExist:
+        messages.error(request, "La formation DESMFMC n'est pas configurée.")
+        return redirect('dashboard_etudiant')
+    
+    # Vérifier que l'année précédente est validée
+    annee_precedente = annee - 1
+    resultat_precedent = ResultatAnneeDES.objects.filter(
+        etudiant=request.user,
+        formation=formation_desmfmc,
+        annee=annee_precedente
+    ).first()
+    
+    if not resultat_precedent:
+        messages.error(
+            request,
+            f"Vous devez d'abord valider l'année {annee_precedente} avant de pouvoir payer pour l'année {annee}."
+        )
+        return redirect('admissions:paiements_annee_des')
+    
+    if resultat_precedent.decision != 'admis':
+        messages.error(
+            request,
+            f"L'année {annee_precedente} n'est pas encore validée. Vous devez être admis pour accéder à l'année {annee}."
+        )
+        return redirect('admissions:paiements_annee_des')
+    
+    # Vérifier si un paiement existe déjà
+    paiement_existant = PaiementAnneeDES.objects.filter(
+        etudiant=request.user,
+        formation=formation_desmfmc,
+        annee=annee
+    ).first()
+    
+    if request.method == 'POST':
+        if paiement_existant and paiement_existant.statut == 'paiement_valide':
+            messages.warning(request, "Le paiement pour cette année est déjà validé.")
+            return redirect('admissions:paiements_annee_des')
+        
+        mode_paiement = request.POST.get('mode_paiement')
+        reference_paiement = request.POST.get('reference_paiement', '')
+        preuve_paiement = request.FILES.get('preuve_paiement')
+        montant = request.POST.get('montant')
+        
+        if not mode_paiement or not montant:
+            messages.error(request, "Veuillez remplir tous les champs obligatoires.")
+        else:
+            with transaction.atomic():
+                if paiement_existant:
+                    # Mettre à jour le paiement existant
+                    paiement_existant.mode_paiement = mode_paiement
+                    paiement_existant.reference_paiement = reference_paiement
+                    paiement_existant.montant = montant
+                    if preuve_paiement:
+                        paiement_existant.preuve_paiement = preuve_paiement
+                    paiement_existant.statut = 'paiement_effectue'
+                    paiement_existant.date_paiement = timezone.now()
+                    paiement_existant.resultat_annee = resultat_precedent
+                    paiement_existant.save()
+                    messages.success(request, "Informations de paiement mises à jour. En attente de validation.")
+                else:
+                    # Créer un nouveau paiement
+                    paiement = PaiementAnneeDES.objects.create(
+                        etudiant=request.user,
+                        formation=formation_desmfmc,
+                        annee=annee,
+                        montant=montant,
+                        mode_paiement=mode_paiement,
+                        reference_paiement=reference_paiement,
+                        preuve_paiement=preuve_paiement,
+                        statut='paiement_effectue',
+                        date_paiement=timezone.now(),
+                        resultat_annee=resultat_precedent,
+                    )
+                    messages.success(request, "Paiement déposé avec succès. En attente de validation.")
+                
+                return redirect('admissions:paiements_annee_des')
+    
+    # Récupérer le résultat de l'année 4 si on est en année 4
+    resultat_annee_4 = None
+    if annee == 4:
+        resultat_annee_4 = ResultatAnneeDES.objects.filter(
+            etudiant=request.user,
+            formation=formation_desmfmc,
+            annee=4
+        ).first()
+    
+    context = {
+        'annee': annee,
+        'annee_precedente': annee_precedente,
+        'resultat_precedent': resultat_precedent,
+        'resultat_annee_4': resultat_annee_4,
+        'paiement_existant': paiement_existant,
+        'formation': formation_desmfmc,
+    }
+    return render(request, 'admissions/creer_paiement_annee_des.html', context)
+
+
+@login_required
+def validation_passage_annee(request, annee):
+    """Vue pour afficher le statut de validation du passage à l'année suivante."""
+    if not request.user.est_etudiant():
+        messages.error(request, "Accès réservé aux étudiants.")
+        return redirect('accueil')
+    
+    if annee not in [2, 3, 4]:
+        messages.error(request, "La validation concerne uniquement les années 2, 3 et 4.")
+        return redirect('admissions:paiements_annee_des')
+    
+    # Récupérer la formation DESMFMC
+    try:
+        formation_desmfmc = Formation.objects.get(code='DESMFMC', actif=True)
+    except Formation.DoesNotExist:
+        messages.error(request, "La formation DESMFMC n'est pas configurée.")
+        return redirect('dashboard_etudiant')
+    
+    # Récupérer le résultat de l'année précédente
+    annee_precedente = annee - 1
+    resultat_precedent = ResultatAnneeDES.objects.filter(
+        etudiant=request.user,
+        formation=formation_desmfmc,
+        annee=annee_precedente
+    ).first()
+    
+    # Récupérer le paiement pour l'année
+    paiement = PaiementAnneeDES.objects.filter(
+        etudiant=request.user,
+        formation=formation_desmfmc,
+        annee=annee
+    ).first()
+    
+    # Vérifier si l'accès est possible
+    peut_acceder = False
+    conditions_remplies = []
+    conditions_manquantes = []
+    
+    if resultat_precedent and resultat_precedent.decision == 'admis':
+        conditions_remplies.append(f"✅ Année {annee_precedente} validée (admis)")
+    else:
+        conditions_manquantes.append(f"❌ Année {annee_precedente} non validée")
+    
+    if paiement and paiement.statut == 'paiement_valide':
+        conditions_remplies.append(f"✅ Paiement des frais d'inscription annuels validé")
+    else:
+        conditions_manquantes.append(f"❌ Paiement des frais d'inscription annuels non validé")
+    
+    if paiement and paiement.peut_valider_passage():
+        peut_acceder = True
+    
+    # Pour l'année 4, vérifier aussi le mémoire
+    resultat_annee_4 = None
+    if annee == 4:
+        resultat_annee_4 = ResultatAnneeDES.objects.filter(
+            etudiant=request.user,
+            formation=formation_desmfmc,
+            annee=4
+        ).first()
+        if resultat_annee_4 and resultat_annee_4.memoire_valide:
+            conditions_remplies.append("✅ Mémoire de fin de formation validé")
+        else:
+            conditions_manquantes.append("❌ Mémoire de fin de formation non validé")
+    
+    context = {
+        'annee': annee,
+        'annee_precedente': annee_precedente,
+        'resultat_precedent': resultat_precedent,
+        'resultat_annee_4': resultat_annee_4,
+        'paiement': paiement,
+        'peut_acceder': peut_acceder,
+        'conditions_remplies': conditions_remplies,
+        'conditions_manquantes': conditions_manquantes,
+        'formation': formation_desmfmc,
+    }
+    return render(request, 'admissions/validation_passage_annee.html', context)

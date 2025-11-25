@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Paiements annuels DESMFMC - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="admissions-container">
+    <div class="page-header">
+        <h1>💳 Paiements annuels DESMFMC</h1>
+        <p>Gestion des frais d'inscription annuels pour les années 2, 3 et 4</p>
+    </div>
+
+    <div class="info-box">
+        <h3>📋 Informations importantes</h3>
+        <p>
+            Pour le DESMFMC, l'inscription se fait <strong>uniquement en première année</strong> après validation 
+            du probatoire et de l'entretien. Pour les années suivantes (2, 3, 4), vous devez :
+        </p>
+        <ul>
+            <li>✅ Valider les frais d'inscription annuels</li>
+            <li>✅ Valider les épreuves écrites et pratiques de l'année précédente</li>
+            <li>✅ Pour l'année 4 : valider le mémoire de fin de formation</li>
+        </ul>
+    </div>
+
+    <div class="paiements-section">
+        <h2>Mes paiements annuels</h2>
+        
+        {% if paiements %}
+        <div class="paiements-list">
+            {% for paiement in paiements %}
+            <div class="paiement-card">
+                <div class="paiement-header">
+                    <h3>Année {{ paiement.annee }}</h3>
+                    <span class="badge badge-{{ paiement.statut }}">
+                        {{ paiement.get_statut_display }}
+                    </span>
+                </div>
+                
+                <div class="paiement-details">
+                    <div class="detail-item">
+                        <strong>Montant :</strong> {{ paiement.montant }} FCFA
+                    </div>
+                    {% if paiement.mode_paiement %}
+                    <div class="detail-item">
+                        <strong>Mode de paiement :</strong> {{ paiement.get_mode_paiement_display }}
+                    </div>
+                    {% endif %}
+                    {% if paiement.reference_paiement %}
+                    <div class="detail-item">
+                        <strong>Référence :</strong> {{ paiement.reference_paiement }}
+                    </div>
+                    {% endif %}
+                    {% if paiement.date_paiement %}
+                    <div class="detail-item">
+                        <strong>Date de paiement :</strong> {{ paiement.date_paiement|date:"d/m/Y à H:i" }}
+                    </div>
+                    {% endif %}
+                    {% if paiement.valide_par %}
+                    <div class="detail-item">
+                        <strong>Validé par :</strong> {{ paiement.valide_par.get_full_name|default:paiement.valide_par.username }}
+                        {% if paiement.date_validation %}
+                        <br><small>Le {{ paiement.date_validation|date:"d/m/Y à H:i" }}</small>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="paiement-actions">
+                    {% if paiement.statut == 'en_attente' or paiement.statut == 'paiement_effectue' %}
+                    <a href="{% url 'admissions:creer_paiement_annee_des' paiement.annee %}" class="btn btn-sm btn-secondary">
+                        🔄 Modifier
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'admissions:validation_passage_annee' paiement.annee %}" class="btn btn-sm btn-info">
+                        📊 Voir validation
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-paiements">
+            <p>Vous n'avez pas encore de paiement annuel enregistré.</p>
+        </div>
+        {% endif %}
+
+        <div class="annees-disponibles">
+            <h3>Paiements disponibles</h3>
+            <div class="annees-grid">
+                {% for annee_info in annees_disponibles %}
+                {% if annee_info.peut_payer %}
+                <div class="annee-card">
+                    <h4>Année {{ annee_info.annee }}</h4>
+                    <p>Paiement pour accéder à l'année {{ annee_info.annee }}</p>
+                    <p class="condition">
+                        ✅ Année {{ annee_info.annee_precedente }} validée
+                    </p>
+                    {% if annee_info.paiement %}
+                    <a href="{% url 'admissions:creer_paiement_annee_des' annee_info.annee %}" class="btn btn-sm btn-secondary">
+                        Voir/Modifier
+                    </a>
+                    {% else %}
+                    <a href="{% url 'admissions:creer_paiement_annee_des' annee_info.annee %}" class="btn btn-sm btn-primary">
+                        Déposer le paiement
+                    </a>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="annee-card disabled">
+                    <h4>Année {{ annee_info.annee }}</h4>
+                    <p class="condition">
+                        ⏳ Année {{ annee_info.annee_precedente }} non encore validée
+                    </p>
+                    <p class="disabled-text">Vous devez d'abord valider l'année précédente</p>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.admissions-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.page-header h1 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.info-box {
+    background: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-box h3 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.info-box ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.paiements-section h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+}
+
+.paiements-list {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.paiement-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.paiement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.paiement-header h3 {
+    margin: 0;
+    color: #005a9c;
+}
+
+.paiement-details {
+    margin-bottom: 1rem;
+}
+
+.detail-item {
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.paiement-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.annees-disponibles {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.annees-disponibles h3 {
+    color: #005a9c;
+    margin-bottom: 1rem;
+}
+
+.annees-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.annee-card {
+    background: #fff;
+    border: 2px solid #005a9c;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.annee-card.disabled {
+    border-color: #ccc;
+    background: #f8f9fa;
+    opacity: 0.7;
+}
+
+.annee-card h4 {
+    color: #005a9c;
+    margin-bottom: 0.5rem;
+}
+
+.condition {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0.5rem 0;
+}
+
+.disabled-text {
+    color: #999;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.badge-en_attente { background-color: #6c757d; color: white; }
+.badge-paiement_effectue { background-color: #ffc107; color: #333; }
+.badge-paiement_valide { background-color: #28a745; color: white; }
+.badge-refuse { background-color: #dc3545; color: white; }
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.btn-primary { background-color: #005a9c; color: white; }
+.btn-primary:hover { background-color: #004080; }
+.btn-secondary { background-color: #6c757d; color: white; }
+.btn-secondary:hover { background-color: #5a6268; }
+.btn-info { background-color: #17a2b8; color: white; }
+.btn-info:hover { background-color: #138496; }
+.btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+
+.no-paiements {
+    text-align: center;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+</style>
+{% endblock %}
+

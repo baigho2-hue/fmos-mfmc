@@ -10,4 +10,9 @@ urlpatterns = [
     path('dossier/<int:dossier_id>/upload-document/', views.uploader_document, name='uploader_document'),
     path('dossier/<int:dossier_id>/inscription/', views.inscription, name='inscription'),
     path('ajax/documents-requis/', views.ajax_documents_requis, name='ajax_documents_requis'),
+    
+    # Paiements annuels DESMFMC (années 2, 3, 4)
+    path('paiements-annee-des/', views.paiements_annee_des, name='paiements_annee_des'),
+    path('paiements-annee-des/<int:annee>/creer/', views.creer_paiement_annee_des, name='creer_paiement_annee_des'),
+    path('validation-passage/<int:annee>/', views.validation_passage_annee, name='validation_passage_annee'),
 ]
