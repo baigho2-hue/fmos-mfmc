@@ -1,5 +1,5 @@
-"""
-Vues pour la gestion des admissions et inscriptions
+""" 
+Vues pour la gestion des admissions et demandes de candidature
 """
 import csv
 from django.shortcuts import render, redirect, get_object_or_404
@@ -64,7 +64,7 @@ def creer_dossier(request):
                 
                 messages.success(
                     request,
-                    f"Dossier créé avec succès. Référence: {reference}"
+                    f"Demande déposée avec succès. Référence : {reference}"
                 )
                 return redirect('admissions:voir_dossier', dossier_id=dossier.id)
     else:
@@ -293,7 +293,7 @@ def mes_dossiers(request):
 
 @login_required
 def inscription(request, dossier_id):
-    """Vue pour gérer l'inscription après admission (uniquement 1ère année pour DESMFMC)."""
+    """Vue pour suivre la demande après admission (uniquement 1ère année pour DESMFMC)."""
     dossier = get_object_or_404(
         DossierCandidature,
         id=dossier_id,
@@ -302,7 +302,7 @@ def inscription(request, dossier_id):
     
     # Pour DESMFMC, l'inscription n'est valable que pour la 1ère année
     if dossier.est_desmfmc():
-        # Vérifier si l'étudiant est déjà inscrit et dans quelle année
+        # Vérifier si l'étudiant a déjà une demande finalisée et dans quelle année
         inscription_existante = Inscription.objects.filter(
             dossier=dossier
         ).first()
@@ -317,7 +317,7 @@ def inscription(request, dossier_id):
             if resultat_actuel and resultat_actuel.annee > 1:
                 messages.info(
                     request,
-                    f"Vous êtes déjà inscrit en DESMFMC. Pour l'année {resultat_actuel.annee}, "
+                    f"Votre demande pour le DESMFMC est déjà validée. Pour l'année {resultat_actuel.annee}, "
                     f"veuillez utiliser le système de paiements annuels."
                 )
                 return redirect('admissions:paiements_annee_des')
@@ -328,7 +328,7 @@ def inscription(request, dossier_id):
         if decision.decision != 'admis':
             messages.warning(
                 request,
-                "Vous devez être admis pour accéder à l'inscription."
+                "Vous devez être admis pour suivre cette demande."
             )
             return redirect('admissions:voir_dossier', dossier_id=dossier_id)
     except DecisionAdmission.DoesNotExist:
@@ -367,13 +367,13 @@ def inscription(request, dossier_id):
                 )
                 return redirect('admissions:inscription', dossier_id=dossier_id)
         else:
-            # Formulaire d'inscription standard
+            # Formulaire de suivi standard
             form_inscription = InscriptionForm(request.POST, instance=inscription_obj)
             form_paiement = InscriptionPaiementForm(instance=inscription_obj)
             
             if form_inscription.is_valid():
                 form_inscription.save()
-                messages.success(request, "Inscription mise à jour.")
+                messages.success(request, "Demande mise à jour.")
                 return redirect('admissions:inscription', dossier_id=dossier_id)
     else:
         form_inscription = InscriptionForm(instance=inscription_obj)
@@ -665,7 +665,7 @@ def _export_dossiers_csv(dossiers_queryset, formation):
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
     writer = csv.writer(response)
-    writer.writerow(['Référence', 'Candidat', 'Email', 'Date dépôt', 'Statut', 'Complet', 'Décision', 'Inscription'])
+    writer.writerow(['Référence', 'Candidat', 'Email', 'Date dépôt', 'Statut', 'Complet', 'Décision', 'Suivi administratif (DES)'])
 
     for dossier in dossiers_queryset:
         decision = getattr(dossier, 'decision_admission', None)

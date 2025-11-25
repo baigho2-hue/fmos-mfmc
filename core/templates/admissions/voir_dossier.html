@@ -134,7 +134,7 @@
             {% if decision.decision == 'admis' %}
             <div class="decision-actions">
                 <a href="{% url 'admissions:inscription' dossier.id %}" class="btn btn-success">
-                    ✅ Procéder à l'inscription
+                    ✅ Suivre la demande (DES)
                 </a>
             </div>
             {% endif %}
@@ -144,7 +144,7 @@
 
     {% if inscription %}
     <div class="inscription-section">
-        <h2>📝 Inscription</h2>
+        <h2>📝 Suivi administratif (DES)</h2>
         <div class="inscription-card">
             <div class="inscription-status">
                 <strong>Statut :</strong>
@@ -154,7 +154,7 @@
             </div>
             <div class="inscription-actions">
                 <a href="{% url 'admissions:inscription' dossier.id %}" class="btn btn-primary">
-                    Voir les détails de l'inscription
+                    Voir les détails de la demande
                 </a>
             </div>
         </div>

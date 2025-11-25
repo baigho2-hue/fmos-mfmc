@@ -108,7 +108,7 @@
 
     {% if paiement %}
     <div class="paiement-section">
-        <h2>Paiement des frais d'inscription</h2>
+        <h2>Paiement des frais annuels</h2>
         <div class="paiement-card">
             <div class="paiement-status">
                 <strong>Statut :</strong>
@@ -152,7 +152,7 @@
     </div>
     {% else %}
     <div class="paiement-section">
-        <h2>Paiement des frais d'inscription</h2>
+        <h2>Paiement des frais annuels</h2>
         <div class="alert alert-warning">
             <p>Aucun paiement déposé pour l'année {{ annee }}.</p>
             <a href="{% url 'admissions:creer_paiement_annee_des' annee %}" class="btn btn-primary">

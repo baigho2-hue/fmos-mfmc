@@ -6,8 +6,8 @@
 {% block content %}
 <div class="suivi-container">
   <div class="page-header">
-    <h1>📁 Suivi des dossiers par formation</h1>
-    <p>Visualisez en un coup d'œil l'état des dossiers et des documents requis.</p>
+    <h1>📁 Suivi des demandes par formation</h1>
+    <p>Visualisez en un coup d'œil l'état des demandes et des documents requis.</p>
   </div>
 
   {% if formations %}
@@ -51,7 +51,7 @@
     <div class="stats-grid">
       <div class="stat-card">
         <span class="stat-number">{{ stats.total|default:0 }}</span>
-        <span class="stat-label">Dossiers</span>
+        <span class="stat-label">Demandes</span>
       </div>
       <div class="stat-card">
         <span class="stat-number">{{ stats.soumis|default:0 }}</span>
@@ -98,7 +98,7 @@
           <th>Statut</th>
           <th>Documents</th>
           <th>Décision</th>
-          <th>Inscription</th>
+          <th>Suivi administratif (DES)</th>
           <th>Actions</th>
         </tr>
       </thead>

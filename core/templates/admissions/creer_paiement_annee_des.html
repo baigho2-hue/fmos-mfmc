@@ -6,13 +6,13 @@
 {% block content %}
 <div class="admissions-container">
     <div class="page-header">
-        <h1>💳 Paiement des frais d'inscription annuels</h1>
+        <h1>💳 Paiement des frais annuels</h1>
         <p>Année {{ annee }} - DESMFMC</p>
     </div>
 
     <div class="info-box">
         <h3>📋 Conditions préalables</h3>
-        <p>Pour pouvoir payer les frais d'inscription de l'année {{ annee }}, vous devez avoir :</p>
+        <p>Pour pouvoir payer les frais de l'année {{ annee }}, vous devez avoir :</p>
         <ul>
             <li>
                 {% if resultat_precedent and resultat_precedent.decision == 'admis' %}
@@ -52,7 +52,7 @@
             <h2>Informations de paiement</h2>
             
             <div class="form-group">
-                <label for="montant">Montant des frais d'inscription (FCFA) *</label>
+                <label for="montant">Montant des frais annuels (FCFA) *</label>
                 <input 
                     type="number" 
                     id="montant" 
@@ -138,7 +138,7 @@
         </p>
         <ul>
             <li>✅ Avoir validé l'année {{ annee_precedente }} (déjà fait)</li>
-            <li>⏳ Valider les frais d'inscription annuels (en cours)</li>
+            <li>⏳ Valider les frais annuels (en cours)</li>
             <li>⏳ Valider les épreuves écrites et pratiques de l'année {{ annee_precedente }}</li>
             {% if annee == 4 %}
             <li>⏳ Valider le mémoire de fin de formation</li>

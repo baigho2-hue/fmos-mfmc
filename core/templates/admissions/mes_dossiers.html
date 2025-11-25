@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Mes dossiers de candidature - FMOS MFMC{% endblock %}
+{% block title %}Mes demandes de candidature - FMOS MFMC{% endblock %}
 
 {% block content %}
 <div class="admissions-container">
     <div class="page-header">
-        <h1>📋 Mes dossiers de candidature</h1>
-        <p>Gérez vos dossiers de candidature pour les formations</p>
+        <h1>📋 Mes demandes de candidature</h1>
+        <p>Gérez vos demandes de candidature pour les formations</p>
     </div>
 
     <div class="actions-bar">
         <a href="{% url 'admissions:creer_dossier' %}" class="btn btn-primary">
-            ➕ Créer un nouveau dossier
+            ➕ Déposer une nouvelle demande
         </a>
     </div>
 
@@ -53,7 +53,7 @@
                 {% if dossier.decision_admission %}
                     {% if dossier.decision_admission.decision == 'admis' %}
                     <a href="{% url 'admissions:inscription' dossier.id %}" class="btn btn-sm btn-success">
-                        ✅ Inscription
+                        ✅ Suivre la demande (DES)
                     </a>
                     {% endif %}
                 {% endif %}
@@ -63,9 +63,9 @@
     </div>
     {% else %}
     <div class="no-dossiers">
-        <p>Vous n'avez pas encore de dossier de candidature.</p>
+        <p>Vous n'avez pas encore de demande de candidature.</p>
         <a href="{% url 'admissions:creer_dossier' %}" class="btn btn-primary">
-            Créer votre premier dossier
+            Déposer votre première demande
         </a>
     </div>
     {% endif %}

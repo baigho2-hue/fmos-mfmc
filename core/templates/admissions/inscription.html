@@ -1,23 +1,23 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Inscription - {{ dossier.reference }} - FMOS MFMC{% endblock %}
+{% block title %}Suivi de la demande - {{ dossier.reference }} - FMOS MFMC{% endblock %}
 
 {% block content %}
 <div class="admissions-container">
     <div class="page-header">
-        <h1>✅ Inscription administrative</h1>
+        <h1>✅ Suivi de la demande (DES)</h1>
         <p class="dossier-reference">Dossier: {{ dossier.reference }} - {{ dossier.formation.nom }}</p>
     </div>
 
     {% if decision.decision == 'admis' %}
     <div class="alert alert-success">
         <h3>🎉 Félicitations !</h3>
-        <p>Votre candidature a été acceptée. Veuillez compléter votre inscription administrative.</p>
+        <p>Votre candidature a été acceptée. Veuillez finaliser votre demande (validation administrative et paiement).</p>
     </div>
 
     <div class="inscription-status">
-        <h2>Statut de l'inscription</h2>
+        <h2>Statut de la demande</h2>
         <div class="status-card">
             <div class="status-item">
                 <strong>Statut actuel :</strong>
@@ -70,7 +70,7 @@
 
     {% if inscription.est_certifiante and inscription.peut_payer and not inscription.paiement_valide %}
     <div class="paiement-section">
-        <h2>💳 Paiement de l'inscription</h2>
+        <h2>💳 Paiement administratif</h2>
         <div class="info-box">
             <p><strong>Montant à payer :</strong> {{ inscription.montant_inscription|default:"Non défini" }} FCFA</p>
             <p>Veuillez effectuer le paiement et uploader la preuve de paiement ci-dessous.</p>
@@ -112,7 +112,7 @@
     </div>
     {% elif inscription.est_certifiante and not inscription.peut_payer %}
     <div class="info-box">
-        <p>⏳ Le paiement sera disponible une fois que votre inscription aura été validée par la Coordination MFMC et le Décanat.</p>
+        <p>⏳ Le paiement sera disponible une fois que votre demande aura été validée par la Coordination MFMC et le Décanat.</p>
     </div>
     {% endif %}
 
@@ -127,14 +127,14 @@
 
     {% if inscription.est_complete %}
     <div class="alert alert-success">
-        <h3>✅ Inscription complète !</h3>
-        <p>Votre inscription est complète. Vous recevrez prochainement les informations pour accéder à la formation.</p>
+        <h3>✅ Demande finalisée !</h3>
+        <p>Votre demande est finalisée. Vous recevrez prochainement les informations pour accéder à la formation.</p>
     </div>
     {% endif %}
 
     {% else %}
     <div class="alert alert-warning">
-        <p>Vous devez être admis pour accéder à l'inscription.</p>
+        <p>Vous devez être admis pour suivre cette demande.</p>
     </div>
     {% endif %}
 
