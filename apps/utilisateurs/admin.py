@@ -152,10 +152,35 @@ class EtudiantMed6Admin(admin.ModelAdmin):
     )
 
 
+class ClasseFilter(admin.SimpleListFilter):
+    """Filtre personnalisé pour les classes DESMFMC"""
+    title = 'Classe DESMFMC'
+    parameter_name = 'classe_desmfmc'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('2eme', '2ème A'),
+            ('3eme', '3ème A'),
+            ('4eme', '4ème A'),
+            ('1ere', '1ère année'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == '2eme':
+            return queryset.filter(classe__icontains='2')
+        if self.value() == '3eme':
+            return queryset.filter(classe__icontains='3')
+        if self.value() == '4eme':
+            return queryset.filter(classe__icontains='4')
+        if self.value() == '1ere':
+            return queryset.filter(classe__icontains='1ère')
+        return queryset
+
+
 @admin.register(Utilisateur)
 class UtilisateurAdmin(UserAdmin):
-    list_display = ('username', 'email', 'type_utilisateur', 'classe', 'niveau_acces', 'email_verifie', 'superviseur_cec', 'centre_supervision', 'membre_coordination', 'is_staff', 'is_active')
-    list_filter = ('type_utilisateur', 'niveau_acces', 'email_verifie', 'superviseur_cec', 'centre_supervision', 'membre_coordination', 'is_staff', 'is_active', 'groups')
+    list_display = ('username', 'get_full_name', 'email', 'type_utilisateur', 'classe', 'niveau_acces', 'email_verifie', 'superviseur_cec', 'centre_supervision', 'membre_coordination', 'is_staff', 'is_active')
+    list_filter = ('type_utilisateur', ClasseFilter, 'niveau_acces', 'email_verifie', 'superviseur_cec', 'centre_supervision', 'membre_coordination', 'is_staff', 'is_active', 'groups')
     search_fields = ('username', 'email', 'telephone', 'first_name', 'last_name', 'classe', 'matieres')
     ordering = ('username',)
     filter_horizontal = ('groups', 'user_permissions')
@@ -190,6 +215,11 @@ class UtilisateurAdmin(UserAdmin):
             'fields': ('is_staff', 'is_active', 'is_superuser'),
         }),
     )
+    
+    def get_queryset(self, request):
+        """Surcharge pour s'assurer que tous les étudiants sont visibles"""
+        qs = super().get_queryset(request)
+        return qs
 
 
 @admin.register(CodeVerification)
