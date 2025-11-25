@@ -187,7 +187,7 @@ class ClasseFilter(admin.SimpleListFilter):
 
 @admin.register(Utilisateur)
 class UtilisateurAdmin(UserAdmin):
-    list_display = ('username', 'get_full_name', 'email', 'type_utilisateur', 'classe', 'niveau_acces', 'email_verifie', 'superviseur_cec', 'centre_supervision', 'membre_coordination', 'is_staff', 'is_active')
+    list_display = ('username', 'get_full_name', 'first_name', 'last_name', 'email', 'type_utilisateur', 'classe', 'email_verifie', 'is_active')
     list_filter = ('type_utilisateur', ClasseFilter, 'niveau_acces', 'email_verifie', 'superviseur_cec', 'centre_supervision', 'membre_coordination', 'is_staff', 'is_active', 'groups')
     search_fields = ('username', 'email', 'telephone', 'first_name', 'last_name', 'classe', 'matieres')
     ordering = ('username',)
@@ -232,7 +232,16 @@ class UtilisateurAdmin(UserAdmin):
     
     def get_full_name(self, obj):
         """Affiche le nom complet de l'utilisateur"""
-        return obj.get_full_name() or obj.username
+        if obj.first_name and obj.last_name:
+            return f"{obj.first_name} {obj.last_name}"
+        elif obj.first_name:
+            return obj.first_name
+        elif obj.last_name:
+            return obj.last_name
+        elif obj.email:
+            # Extraire le nom de l'email si disponible
+            return obj.email.split('@')[0]
+        return obj.username or "Sans nom"
     get_full_name.short_description = 'Nom complet'
     get_full_name.admin_order_field = 'last_name'
 
