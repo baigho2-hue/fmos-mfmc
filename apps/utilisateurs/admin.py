@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
+from django.db.models import Q
 from .models import Utilisateur, CodeVerification, Code2FA
 from .admin_filters import ClasseWithCoursFilter
 from .models_formation import (
@@ -154,7 +155,7 @@ class EtudiantMed6Admin(admin.ModelAdmin):
 
 class ClasseFilter(admin.SimpleListFilter):
     """Filtre personnalisé pour les classes DESMFMC"""
-    title = 'Classe DESMFMC'
+    title = '📚 Classe DESMFMC'
     parameter_name = 'classe_desmfmc'
 
     def lookups(self, request, model_admin):
@@ -163,6 +164,7 @@ class ClasseFilter(admin.SimpleListFilter):
             ('3eme', '3ème A'),
             ('4eme', '4ème A'),
             ('1ere', '1ère année'),
+            ('tous_des', 'Tous DESMFMC (2/3/4)'),
         )
 
     def queryset(self, request, queryset):
@@ -174,6 +176,12 @@ class ClasseFilter(admin.SimpleListFilter):
             return queryset.filter(classe__icontains='4')
         if self.value() == '1ere':
             return queryset.filter(classe__icontains='1ère')
+        if self.value() == 'tous_des':
+            return queryset.filter(
+                type_utilisateur='etudiant'
+            ).filter(
+                Q(classe__icontains='2') | Q(classe__icontains='3') | Q(classe__icontains='4')
+            )
         return queryset
 
 
@@ -184,6 +192,7 @@ class UtilisateurAdmin(UserAdmin):
     search_fields = ('username', 'email', 'telephone', 'first_name', 'last_name', 'classe', 'matieres')
     ordering = ('username',)
     filter_horizontal = ('groups', 'user_permissions')
+    list_per_page = 100  # Augmenter la pagination pour voir plus d'étudiants
     
     fieldsets = (
         (None, {'fields': ('username', 'email', 'password')}),
@@ -220,6 +229,12 @@ class UtilisateurAdmin(UserAdmin):
         """Surcharge pour s'assurer que tous les étudiants sont visibles"""
         qs = super().get_queryset(request)
         return qs
+    
+    def get_full_name(self, obj):
+        """Affiche le nom complet de l'utilisateur"""
+        return obj.get_full_name() or obj.username
+    get_full_name.short_description = 'Nom complet'
+    get_full_name.admin_order_field = 'last_name'
 
 
 @admin.register(CodeVerification)
