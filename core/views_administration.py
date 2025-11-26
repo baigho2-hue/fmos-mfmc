@@ -230,6 +230,90 @@ def resultats_evaluations(request):
 
 
 @coordination_required
+def liste_etudiants_par_formation(request):
+    """Liste complète de tous les étudiants organisés par formation et classe"""
+    # Filtres
+    formation_id = request.GET.get('formation')
+    classe_id = request.GET.get('classe')
+    recherche = request.GET.get('recherche', '').strip()
+    
+    # Récupérer toutes les formations actives
+    formations = Formation.objects.filter(actif=True).order_by('nom')
+    
+    # Filtrer par formation si spécifié
+    if formation_id:
+        formations = formations.filter(pk=formation_id)
+    
+    # Organiser les données par formation
+    formations_data = []
+    total_etudiants_global = 0
+    
+    for formation in formations:
+        classes = Classe.objects.filter(formation=formation, actif=True).order_by('nom', 'annee')
+        
+        # Filtrer par classe si spécifié
+        if classe_id:
+            classes = classes.filter(pk=classe_id)
+        
+        classes_data = []
+        total_etudiants_formation = 0
+        
+        for classe in classes:
+            # Récupérer les étudiants de cette classe
+            etudiants_query = Utilisateur.objects.filter(
+                type_utilisateur='etudiant',
+                classe__icontains=classe.nom,
+                is_active=True
+            )
+            
+            # Recherche par nom, prénom, email
+            if recherche:
+                etudiants_query = etudiants_query.filter(
+                    Q(first_name__icontains=recherche) |
+                    Q(last_name__icontains=recherche) |
+                    Q(username__icontains=recherche) |
+                    Q(email__icontains=recherche)
+                )
+            
+            etudiants = etudiants_query.order_by('last_name', 'first_name')
+            nb_etudiants = etudiants.count()
+            total_etudiants_formation += nb_etudiants
+            
+            # Statistiques pour cette classe
+            cours_classe = Cours.objects.filter(classe=classe, actif=True)
+            progressions = ProgressionEtudiant.objects.filter(cours__in=cours_classe)
+            moyenne_progression = progressions.aggregate(Avg('pourcentage_completion'))['pourcentage_completion__avg'] or 0
+            
+            classes_data.append({
+                'classe': classe,
+                'etudiants': etudiants,
+                'nb_etudiants': nb_etudiants,
+                'nb_cours': cours_classe.count(),
+                'moyenne_progression': round(moyenne_progression, 1),
+            })
+        
+        if classes_data or not classe_id:  # Afficher même si pas d'étudiants
+            formations_data.append({
+                'formation': formation,
+                'classes': classes_data,
+                'total_etudiants': total_etudiants_formation,
+                'total_classes': len(classes_data),
+            })
+            total_etudiants_global += total_etudiants_formation
+    
+    context = {
+        'formations_data': formations_data,
+        'total_etudiants_global': total_etudiants_global,
+        'toutes_formations': Formation.objects.filter(actif=True).order_by('nom'),
+        'formation_filtre': int(formation_id) if formation_id else None,
+        'classe_filtre': int(classe_id) if classe_id else None,
+        'recherche': recherche,
+    }
+    
+    return render(request, 'administration/liste_etudiants_par_formation.html', context)
+
+
+@coordination_required
 def gestion_inscriptions(request):
     """Gestion des inscriptions aux formations"""
     formations = Formation.objects.filter(actif=True).order_by('nom')
