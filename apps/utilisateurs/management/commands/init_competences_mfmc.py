@@ -14,125 +14,83 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('=== Initialisation des 7 compétences de base MFMC ===\n'))
         
-        # Les 7 compétences de base du MFMC (CanMEDS adapté)
+        # Les 7 compétences générales de base du DESMFMC
         competences_mfmc = [
             {
-                'libelle': 'Expert médical',
+                'libelle': 'Expert médical en MF/MC',
                 'domaine': 'savoir_faire',
                 'description': textwrap.dedent("""
-                    Le médecin de famille et communautaire est un expert médical qui :
-                    • Dispense des soins curatifs, préventifs et promotionnels de première ligne
-                    • Prend en charge les besoins de santé des populations dans divers contextes
-                    • Développe des compétences approfondies en médecine générale
-                    • Maîtrise les soins aux enfants, aux femmes, aux adultes et aux personnes âgées
-                    • Gère les urgences et les cas complexes en contexte de ressources limitées
+                    Dispenser l'ensemble des soins curatifs, préventifs et promotionnels de première
+                    ligne dans une aire de santé ou auprès d'une population dont il a la responsabilité.
                 """).strip(),
                 'niveau_attendu': textwrap.dedent("""
-                    Maîtrise des compétences cliniques essentielles en médecine de famille, capacité à 
-                    diagnostiquer et traiter les problèmes de santé courants et complexes, aptitude à 
-                    gérer les situations d'urgence en contexte de soins primaires.
+                    Maîtrise opérationnelle à l'issue du programme.
                 """).strip(),
             },
             {
                 'libelle': 'Communicateur',
                 'domaine': 'savoir_etre',
                 'description': textwrap.dedent("""
-                    Le médecin de famille et communautaire est un communicateur qui :
-                    • Établit une relation thérapeutique continue et personnalisée avec les patients
-                    • Communique efficacement avec les patients, les familles et les communautés
-                    • Adapte sa communication au contexte culturel et linguistique
-                    • Facilite la compréhension et l'adhésion aux soins
-                    • Transmet des informations de santé de manière claire et accessible
+                    Développer une relation de confiance, continue et personnalisée avec les patients et
+                    leur communauté, basée sur la compréhension globale de leur réalité et leurs perspectives.
                 """).strip(),
                 'niveau_attendu': textwrap.dedent("""
-                    Capacité à établir une relation de confiance avec les patients et leur famille, 
-                    maîtrise des techniques de communication thérapeutique, aptitude à adapter le 
-                    message selon le niveau de compréhension et le contexte culturel.
+                    Maîtrise opérationnelle à l'issue du programme.
                 """).strip(),
             },
             {
                 'libelle': 'Collaborateur',
                 'domaine': 'savoir_etre',
                 'description': textwrap.dedent("""
-                    Le médecin de famille et communautaire est un collaborateur qui :
-                    • Travaille en équipe avec les professionnels de santé et les acteurs communautaires
-                    • Collabore avec les ressources professionnelles et communautaires du réseau de soins
-                    • Participe activement aux équipes multidisciplinaires
-                    • Coordonne les soins avec les autres intervenants du système de santé
-                    • Développe des partenariats efficaces pour améliorer l'accès aux soins
+                    Travailler en étroite collaboration avec les différentes ressources professionnelles et
+                    communautaires de son milieu de même qu'avec celles du réseau de soins.
                 """).strip(),
                 'niveau_attendu': textwrap.dedent("""
-                    Capacité à travailler en équipe, aptitude à coordonner les soins avec d'autres 
-                    professionnels, compétence à développer et maintenir des partenariats efficaces 
-                    dans le réseau de soins.
+                    Maîtrise opérationnelle à l'issue du programme.
                 """).strip(),
             },
             {
                 'libelle': 'Promoteur de la santé',
                 'domaine': 'savoir_faire',
                 'description': textwrap.dedent("""
-                    Le médecin de famille et communautaire est un promoteur de la santé qui :
-                    • Assure le leadership en prévention, promotion de la santé et intervention communautaire
-                    • Développe et met en œuvre des programmes de promotion de la santé
-                    • Éduque les patients et les communautés sur les comportements favorables à la santé
-                    • Participe aux activités de santé publique et d'éducation sanitaire
-                    • Contribue à l'amélioration de la santé de la population
+                    Assumer un leadership en matière de prévention, de promotion de la santé et
+                    d'intervention communautaire auprès de la population qu'il dessert.
                 """).strip(),
                 'niveau_attendu': textwrap.dedent("""
-                    Capacité à concevoir et mettre en œuvre des interventions de promotion de la santé, 
-                    aptitude à éduquer et sensibiliser les populations, compétence à développer des 
-                    programmes de prévention adaptés au contexte communautaire.
+                    Maîtrise opérationnelle à l'issue du programme.
                 """).strip(),
             },
             {
                 'libelle': 'Gestionnaire',
                 'domaine': 'savoir_faire',
                 'description': textwrap.dedent("""
-                    Le médecin de famille et communautaire est un gestionnaire qui :
-                    • Gère et organise des services de santé accessibles, disponibles et de qualité
-                    • Assure la gestion des services de première ligne et des programmes nationaux
-                    • Optimise l'utilisation des ressources disponibles
-                    • Planifie et coordonne les activités de soins
-                    • Assure la continuité et la qualité des soins
+                    Gérer la planification et la mise en œuvre de services de qualité et de stratégies
+                    avancées efficaces en fonction des besoins de la communauté.
                 """).strip(),
                 'niveau_attendu': textwrap.dedent("""
-                    Capacité à gérer efficacement les ressources humaines, matérielles et financières, 
-                    aptitude à organiser et coordonner les services de santé, compétence à assurer 
-                    la qualité et la continuité des soins.
-                """).strip(),
-            },
-            {
-                'libelle': 'Érudit',
-                'domaine': 'savoir',
-                'description': textwrap.dedent("""
-                    Le médecin de famille et communautaire est un érudit qui :
-                    • Maintient et développe ses compétences par une démarche d'auto-apprentissage
-                    • Pratique la médecine fondée sur les preuves (evidence-based medicine)
-                    • Développe une capacité d'analyse critique et de recherche-action
-                    • Contribue à la production de connaissances en santé communautaire
-                    • Partage ses connaissances avec ses pairs et la communauté
-                """).strip(),
-                'niveau_attendu': textwrap.dedent("""
-                    Capacité à maintenir ses compétences à jour, aptitude à analyser de manière critique 
-                    la littérature médicale, compétence à mener des activités de recherche-action et 
-                    à contribuer à l'avancement des connaissances.
+                    Maîtrise opérationnelle à l'issue du programme.
                 """).strip(),
             },
             {
                 'libelle': 'Professionnel',
                 'domaine': 'savoir_etre',
                 'description': textwrap.dedent("""
-                    Le médecin de famille et communautaire est un professionnel qui :
-                    • Intervient avec professionnalisme et éthique dans tous les contextes de pratique
-                    • Respecte les valeurs professionnelles et les principes déontologiques
-                    • Développe une pratique réflexive et améliore continuellement sa pratique
-                    • S'engage envers la communauté et la santé publique
-                    • Fait preuve d'intégrité, d'empathie et de responsabilité
+                    Intervenir avec professionnalisme et de manière éthique auprès des patients et des
+                    autres membres du réseau de soins.
                 """).strip(),
                 'niveau_attendu': textwrap.dedent("""
-                    Capacité à exercer avec intégrité et éthique, aptitude à développer une pratique 
-                    réflexive, compétence à s'engager de manière responsable envers les patients, 
-                    la communauté et la profession.
+                    Maîtrise opérationnelle à l'issue du programme.
+                """).strip(),
+            },
+            {
+                'libelle': 'Érudit',
+                'domaine': 'savoir',
+                'description': textwrap.dedent("""
+                    Planifier le maintien et le développement de ses compétences professionnelles en
+                    fonction des besoins normatifs et de sa communauté.
+                """).strip(),
+                'niveau_attendu': textwrap.dedent("""
+                    Maîtrise opérationnelle à l'issue du programme.
                 """).strip(),
             },
         ]

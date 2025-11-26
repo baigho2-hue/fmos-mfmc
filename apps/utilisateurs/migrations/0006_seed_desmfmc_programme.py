@@ -66,137 +66,63 @@ def seed_desmfmc_programme(apps, schema_editor):
     formation.save()
 
     # ------------------------------------------------------------------
-    # Compétences structurantes (par rôle CanMEDS adapté)
+    # Compétences générales (7 compétences de base du DESMFMC)
     # ------------------------------------------------------------------
     competences_data = {
-        'expert_enfants': {
-            'libelle': "Expert médical - Soins aux enfants",
+        'expert_medical': {
+            'libelle': "Expert médical en MF/MC",
             'domaine': 'savoir_faire',
             'description': textwrap.dedent("""
-                • Évaluer et traiter les problèmes courants de santé pédiatrique.
-                • Reconnaître et gérer les urgences vitales de l'enfant et du nouveau-né.
-                • Dépister précocement la violence, la négligence et les facteurs de risque familiaux.
-                • Appliquer les programmes nationaux (PEV) et promouvoir la santé de l'enfant.
-            """).strip(),
-        },
-        'expert_perinatal': {
-            'libelle': "Expert médical - Soins périnataux",
-            'domaine': 'savoir_faire',
-            'description': textwrap.dedent("""
-                • Assurer le suivi médical de la grossesse, de l'accouchement et du post-partum.
-                • Dépister et intervenir sur les risques maternels, fœtaux et néonataux.
-                • Identifier les problématiques physiques et psychosociales liées à la grossesse.
-                • Réaliser les techniques obstétricales attendues et organiser le transfert sécuritaire.
-            """).strip(),
-        },
-        'expert_adultes': {
-            'libelle': "Expert médical - Soins aux adultes et adolescents",
-            'domaine': 'savoir_faire',
-            'description': textwrap.dedent("""
-                • Prendre en charge les présentations cliniques complexes et multiples.
-                • Réaliser les gestes techniques de première ligne et gérer les urgences vitales.
-                • Intégrer prévention et promotion de la santé dans chaque prise en charge.
-                • Accompagner le patient et son entourage lors d'interventions chirurgicales.
-            """).strip(),
-        },
-        'expert_personnes_agees': {
-            'libelle': "Expert médical - Soins aux personnes âgées",
-            'domaine': 'savoir_faire',
-            'description': textwrap.dedent("""
-                • Distinguer vieillissement normal et pathologie chez l'aîné.
-                • Co-construire le plan de soins avec l'entourage en tenant compte des fragilités.
-                • Adapter la pharmacothérapie aux particularités physiologiques du vieillissement.
-                • Prévenir et repérer violence, négligence et abus envers les personnes âgées.
-            """).strip(),
-        },
-        'expert_sante_mentale': {
-            'libelle': "Expert médical - Santé mentale aigüe et chronique",
-            'domaine': 'savoir_faire',
-            'description': textwrap.dedent("""
-                • Établir un diagnostic différentiel selon les référentiels internationaux.
-                • Assurer l'investigation, le traitement et l'orientation des troubles aigus ou chroniques.
-                • Reconnaître les présentations atypiques et gérer les urgences psychiatriques.
-                • Intégrer psycho-pharmacothérapie, psychothérapie brève et suivi communautaire.
-            """).strip(),
-        },
-        'expert_fin_de_vie': {
-            'libelle': "Expert médical - Soins de fin de vie",
-            'domaine': 'savoir_faire',
-            'description': textwrap.dedent("""
-                • Accompagner le patient de l'annonce de la maladie grave jusqu'au décès.
-                • Offrir des soins palliatifs adaptés et maîtriser le traitement de la douleur.
-                • Assurer la prise en charge des autres problèmes médicaux en phase palliative.
-                • Soutenir patients et proches dans le processus de deuil et gérer les urgences de confort.
-            """).strip(),
-        },
-        'expert_urgences': {
-            'libelle': "Expert médical - Soins urgents",
-            'domaine': 'savoir_faire',
-            'description': textwrap.dedent("""
-                • Évaluer, stabiliser et prioriser les patients en situation d'urgence.
-                • Diriger les manœuvres de réanimation cardio-respiratoire et coordonner l'équipe.
-                • Maîtriser la pharmacothérapie et les techniques d'urgence en première ligne.
-                • Organiser le transfert et la continuité des soins spécialisés lorsque requis.
+                Dispenser l'ensemble des soins curatifs, préventifs et promotionnels de première
+                ligne dans une aire de santé ou auprès d'une population dont il a la responsabilité.
             """).strip(),
         },
         'communicateur': {
             'libelle': "Communicateur",
             'domaine': 'savoir_etre',
             'description': textwrap.dedent("""
-                • Adapter son approche aux réalités biopsychosociales du patient et de sa famille.
-                • Maintenir une relation empathique et continue tout au long du suivi.
-                • Aborder les dimensions éthiques et légales (consentement, fin de vie, confidentialité).
-                • Gérer les communications sensibles, les crises et l'annonce de mauvaises nouvelles.
+                Développer une relation de confiance, continue et personnalisée avec les patients et
+                leur communauté, basée sur la compréhension globale de leur réalité et leurs perspectives.
             """).strip(),
         },
         'collaborateur': {
             'libelle': "Collaborateur",
             'domaine': 'savoir_etre',
             'description': textwrap.dedent("""
-                • Travailler en interdisciplinarité avec les ressources professionnelles et communautaires.
-                • Reconnaître ses limites et référer efficacement vers les partenaires adéquats.
-                • Mobiliser les réseaux familiaux et communautaires pour soutenir les patients.
-                • Facilitater la coordination des soins et la continuité dans tous les milieux de vie.
+                Travailler en étroite collaboration avec les différentes ressources professionnelles et
+                communautaires de son milieu de même qu'avec celles du réseau de soins.
             """).strip(),
         },
         'promoteur': {
             'libelle': "Promoteur de la santé",
-            'domaine': 'savoir',
+            'domaine': 'savoir_faire',
             'description': textwrap.dedent("""
-                • Appliquer les programmes nationaux de prévention et de promotion.
-                • Identifier les déterminants de santé de la communauté et agir en conséquence.
-                • Concevoir des stratégies d'éducation sanitaire adaptées aux populations vulnérables.
-                • Recommander les mesures de prévention primaires et secondaires pertinentes.
+                Assumer un leadership en matière de prévention, de promotion de la santé et
+                d'intervention communautaire auprès de la population qu'il dessert.
             """).strip(),
         },
         'gestionnaire': {
             'libelle': "Gestionnaire",
-            'domaine': 'savoir_etre',
+            'domaine': 'savoir_faire',
             'description': textwrap.dedent("""
-                • Organiser des services de santé accessibles, disponibles et sécuritaires.
-                • Planifier les ressources humaines, matérielles et financières d'un CSCOM.
-                • Superviser les équipes et assurer la qualité des prestations de soins.
-                • Exploiter le système d'information sanitaire et préparer les rapports stratégiques.
-            """).strip(),
-        },
-        'erudit': {
-            'libelle': "Érudit",
-            'domaine': 'savoir',
-            'description': textwrap.dedent("""
-                • Planifier son développement professionnel continu par l'autoévaluation.
-                • Rechercher et analyser de manière critique les données probantes disponibles.
-                • Adapter la littérature scientifique au contexte local et aux besoins communautaires.
-                • Contribuer à l'éducation des patients, de la communauté et des équipes de soins.
+                Gérer la planification et la mise en œuvre de services de qualité et de stratégies
+                avancées efficaces en fonction des besoins de la communauté.
             """).strip(),
         },
         'professionnel': {
             'libelle': "Professionnel",
             'domaine': 'savoir_etre',
             'description': textwrap.dedent("""
-                • Démontrer sens des responsabilités, intégrité et engagement envers la communauté.
-                • Respecter les principes éthiques, légaux et déontologiques de la pratique médicale.
-                • Adopter un comportement irréprochable dans toutes les interactions professionnelles.
-                • Entretenir une capacité réflexive sur ses interventions et ses compétences.
+                Intervenir avec professionnalisme et de manière éthique auprès des patients et des
+                autres membres du réseau de soins.
+            """).strip(),
+        },
+        'erudit': {
+            'libelle': "Érudit",
+            'domaine': 'savoir',
+            'description': textwrap.dedent("""
+                Planifier le maintien et le développement de ses compétences professionnelles en
+                fonction des besoins normatifs et de sa communauté.
             """).strip(),
         },
     }
@@ -839,9 +765,7 @@ def seed_desmfmc_programme(apps, schema_editor):
             """).strip(),
             'volume_horaire': 0,
             'competences': [
-                'expert_adultes', 'expert_enfants', 'expert_perinatal',
-                'expert_personnes_agees', 'expert_sante_mentale', 'expert_urgences',
-                'expert_fin_de_vie', 'professionnel',
+                'expert_medical', 'professionnel',
             ],
             'courses': [],
         },
@@ -852,7 +776,7 @@ def seed_desmfmc_programme(apps, schema_editor):
             'nom': "Expertise clinique de l'enfant et de la femme",
             'description': "Consolidation pédiatrique et périnatale pour la pratique de première ligne.",
             'volume_horaire': 35,
-            'competences': ['expert_enfants', 'expert_perinatal'],
+            'competences': ['expert_medical'],
             'courses': ['DES-A1-C1', 'DES-A1-C2'],
         },
         {
@@ -862,7 +786,7 @@ def seed_desmfmc_programme(apps, schema_editor):
             'nom': "Santé mentale en première ligne",
             'description': "Repérage, traitement et accompagnement des troubles psychiatriques courants.",
             'volume_horaire': 20,
-            'competences': ['expert_sante_mentale', 'communicateur', 'professionnel'],
+            'competences': ['expert_medical', 'communicateur', 'professionnel'],
             'courses': ['DES-A1-C3'],
         },
         {
@@ -872,7 +796,7 @@ def seed_desmfmc_programme(apps, schema_editor):
             'nom': "Urgences et habiletés techniques initiales",
             'description': "Maîtrise des situations critiques et des gestes techniques essentiels.",
             'volume_horaire': 51,
-            'competences': ['expert_urgences', 'expert_perinatal', 'expert_adultes'],
+            'competences': ['expert_medical'],
             'courses': ['DES-A1-C4', 'DES-A1-C5'],
         },
         {
@@ -882,7 +806,7 @@ def seed_desmfmc_programme(apps, schema_editor):
             'nom': "Soins aux adultes, gériatrie et fin de vie",
             'description': "Approche intégrée des patients adultes, âgés et en soins palliatifs.",
             'volume_horaire': 30,
-            'competences': ['expert_adultes', 'expert_personnes_agees', 'expert_fin_de_vie'],
+            'competences': ['expert_medical'],
             'courses': ['DES-A1-C6', 'DES-A1-C7'],
         },
         {
@@ -903,7 +827,7 @@ def seed_desmfmc_programme(apps, schema_editor):
             'nom': "Immersion CSCOM-U urbain",
             'description': "Organisation des soins, flux patients et continuité des services urbains.",
             'volume_horaire': 40,
-            'competences': ['expert_adultes', 'expert_enfants', 'promoteur', 'gestionnaire'],
+            'competences': ['expert_medical', 'promoteur', 'gestionnaire'],
             'courses': ['DES-A2-C1'],
         },
         {
@@ -933,7 +857,7 @@ def seed_desmfmc_programme(apps, schema_editor):
             'nom': "Immersion CSCOM-U rural",
             'description': "Soins essentiels et coordination des ressources en zone rurale.",
             'volume_horaire': 40,
-            'competences': ['expert_adultes', 'expert_enfants', 'promoteur', 'gestionnaire'],
+            'competences': ['expert_medical', 'promoteur', 'gestionnaire'],
             'courses': ['DES-A2-C2'],
         },
         {
@@ -943,7 +867,7 @@ def seed_desmfmc_programme(apps, schema_editor):
             'nom': "Urgences et obstétrique périphériques",
             'description': "Stabilisation et transferts sécuritaires dans des contextes à ressources limitées.",
             'volume_horaire': 20,
-            'competences': ['expert_urgences', 'expert_perinatal', 'professionnel'],
+            'competences': ['expert_medical', 'professionnel'],
             'courses': ['DES-A2-C5'],
         },
         {
@@ -964,7 +888,7 @@ def seed_desmfmc_programme(apps, schema_editor):
             'nom': "Gestion des maladies chroniques",
             'description': "Organisation du suivi longitudinal et coordination spécialisée.",
             'volume_horaire': 40,
-            'competences': ['expert_adultes', 'expert_personnes_agees', 'promoteur'],
+            'competences': ['expert_medical', 'promoteur'],
             'courses': ['DES-A3-C1'],
         },
         {
@@ -974,7 +898,7 @@ def seed_desmfmc_programme(apps, schema_editor):
             'nom': "Santé mentale complexe",
             'description': "Prise en charge communautaire des troubles sévères et addictions.",
             'volume_horaire': 30,
-            'competences': ['expert_sante_mentale', 'communicateur', 'collaborateur'],
+            'competences': ['expert_medical', 'communicateur', 'collaborateur'],
             'courses': ['DES-A3-C2'],
         },
         {
@@ -1025,7 +949,7 @@ def seed_desmfmc_programme(apps, schema_editor):
             'nom': "Compétences cliniques avancées",
             'description': "Cas complexes et expertise clinique en autonomie supervisée.",
             'volume_horaire': 35,
-            'competences': ['expert_adultes', 'expert_enfants', 'expert_perinatal', 'expert_urgences'],
+            'competences': ['expert_medical'],
             'courses': ['DES-A4-C1'],
         },
         {
@@ -1146,19 +1070,13 @@ def unseed_desmfmc_programme(apps, schema_editor):
     ]]
     classe_codes = ['DES-A1', 'DES-A2', 'DES-A3', 'DES-A4']
     competence_libelles = [
-        "Expert médical - Soins aux enfants",
-        "Expert médical - Soins périnataux",
-        "Expert médical - Soins aux adultes et adolescents",
-        "Expert médical - Soins aux personnes âgées",
-        "Expert médical - Santé mentale aigüe et chronique",
-        "Expert médical - Soins de fin de vie",
-        "Expert médical - Soins urgents",
+        "Expert médical en MF/MC",
         "Communicateur",
         "Collaborateur",
         "Promoteur de la santé",
         "Gestionnaire",
-        "Érudit",
         "Professionnel",
+        "Érudit",
     ]
 
     modules_qs = ModuleProgramme.objects.filter(jalon__formation=formation, code__in=module_codes)
