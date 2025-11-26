@@ -116,10 +116,94 @@ class TableauEvaluationClasseAdmin(admin.ModelAdmin):
 
 @admin.register(EvaluationCompetenceTableau)
 class EvaluationCompetenceTableauAdmin(admin.ModelAdmin):
-    list_display = ('tableau', 'competence', 'niveau_acquisition', 'date_evaluation')
-    list_filter = ('niveau_acquisition', 'date_evaluation', 'tableau__annee', 'tableau__classe')
-    search_fields = ('competence__libelle', 'tableau__carnet__etudiant__username')
+    """
+    Admin pour les évaluations de compétences dans les tableaux d'évaluation par classe.
+    
+    Ce modèle lie une compétence à un tableau d'évaluation (TableauEvaluationClasse)
+    et stocke le niveau d'acquisition de cette compétence pour un étudiant donné.
+    
+    Utilisé dans le système de carnet de stage pour suivre l'acquisition des compétences
+    par classe et par année du DESMFMC.
+    """
+    list_display = (
+        'get_tableau_info', 
+        'get_etudiant_info',
+        'competence', 
+        'get_niveau_display', 
+        'date_evaluation',
+        'get_classe_info'
+    )
+    list_filter = (
+        'niveau_acquisition', 
+        'date_evaluation', 
+        'tableau__annee', 
+        'tableau__classe',
+        'tableau__carnet__etudiant'
+    )
+    search_fields = (
+        'competence__libelle', 
+        'competence__description',
+        'tableau__carnet__etudiant__username',
+        'tableau__carnet__etudiant__first_name',
+        'tableau__carnet__etudiant__last_name',
+        'tableau__classe__nom',
+        'commentaire'
+    )
     readonly_fields = ('date_evaluation',)
+    date_hierarchy = 'date_evaluation'
+    list_per_page = 50
+    
+    fieldsets = (
+        ('📋 Contexte d\'évaluation', {
+            'fields': ('tableau', 'competence'),
+            'description': 'Le tableau d\'évaluation et la compétence évaluée. '
+                          'Le tableau est lié à un carnet de stage, une classe et une année du DES.'
+        }),
+        ('📊 Résultat d\'évaluation', {
+            'fields': ('niveau_acquisition', 'commentaire', 'date_evaluation'),
+            'description': 'Niveau d\'acquisition de la compétence (1=Non acquis, 2=En cours, 3=Acquis, 4=Maîtrisé)'
+        }),
+    )
+    
+    def get_tableau_info(self, obj):
+        """Affiche les informations du tableau d'évaluation"""
+        if obj.tableau:
+            return f"{obj.tableau.classe.nom} - Année {obj.tableau.annee}"
+        return "-"
+    get_tableau_info.short_description = "Tableau d'évaluation"
+    get_tableau_info.admin_order_field = 'tableau__classe__nom'
+    
+    def get_etudiant_info(self, obj):
+        """Affiche les informations de l'étudiant"""
+        if obj.tableau and obj.tableau.carnet and obj.tableau.carnet.etudiant:
+            etudiant = obj.tableau.carnet.etudiant
+            nom_complet = f"{etudiant.first_name} {etudiant.last_name}".strip()
+            return nom_complet or etudiant.username
+        return "-"
+    get_etudiant_info.short_description = "Étudiant"
+    get_etudiant_info.admin_order_field = 'tableau__carnet__etudiant__last_name'
+    
+    def get_niveau_display(self, obj):
+        """Affiche le niveau avec une icône"""
+        if obj.niveau_acquisition:
+            niveaux_icones = {
+                1: "❌ Non acquis",
+                2: "🟡 En cours d'acquisition",
+                3: "✅ Acquis",
+                4: "⭐ Maîtrisé"
+            }
+            return niveaux_icones.get(obj.niveau_acquisition, "Non évalué")
+        return "⏳ Non évalué"
+    get_niveau_display.short_description = "Niveau"
+    get_niveau_display.admin_order_field = 'niveau_acquisition'
+    
+    def get_classe_info(self, obj):
+        """Affiche la classe"""
+        if obj.tableau and obj.tableau.classe:
+            return obj.tableau.classe.nom
+        return "-"
+    get_classe_info.short_description = "Classe"
+    get_classe_info.admin_order_field = 'tableau__classe__nom'
 
 
 @admin.register(ProclamationResultats)

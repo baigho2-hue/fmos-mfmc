@@ -344,7 +344,20 @@ class TableauEvaluationClasse(models.Model):
 
 
 class EvaluationCompetenceTableau(models.Model):
-    """Évaluation d'une compétence dans un tableau d'évaluation"""
+    """
+    Évaluation d'une compétence dans un tableau d'évaluation par classe.
+    
+    Ce modèle fait le lien entre :
+    - Un TableauEvaluationClasse (tableau d'évaluation pour une classe et une année)
+    - Une Competence (compétence à évaluer)
+    
+    Il stocke le niveau d'acquisition de la compétence (1-4) avec un commentaire
+    et la date d'évaluation. Utilisé dans le système de carnet de stage DESMFMC
+    pour suivre l'acquisition des compétences par classe et par année.
+    
+    Exemple : Évaluation de la compétence "Diagnostic clinique" pour un étudiant
+    de la classe "DESMFMC 2ème année" dans le cadre d'un tableau d'évaluation.
+    """
     
     NIVEAU_CHOICES = [
         (1, '1 - Non acquis'),
@@ -381,9 +394,10 @@ class EvaluationCompetenceTableau(models.Model):
     )
     
     class Meta:
-        verbose_name = "Évaluation compétence dans tableau"
-        verbose_name_plural = "Évaluations compétences dans tableaux"
+        verbose_name = "📊 Évaluation de compétence (tableau par classe)"
+        verbose_name_plural = "📊 Évaluations de compétences (tableaux par classe)"
         unique_together = ['tableau', 'competence']
+        ordering = ['tableau__classe__nom', 'tableau__annee', 'competence__libelle']
     
     def __str__(self):
         niveau = self.get_niveau_acquisition_display() if self.niveau_acquisition else "Non évalué"

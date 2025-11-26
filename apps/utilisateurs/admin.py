@@ -14,6 +14,17 @@ from .models_formation import (
     ReponseQuestion, ReponseEtudiantQuiz, ResultatQuiz, AlerteLecon,
     PaiementFormation
 )
+
+# Les 7 compétences de base du MFMC
+COMPETENCES_BASE_MFMC = [
+    'Expert médical',
+    'Communicateur',
+    'Collaborateur',
+    'Promoteur de la santé',
+    'Gestionnaire',
+    'Érudit',
+    'Professionnel'
+]
 from .models_programme_desmfmc import (
     JalonProgramme, ModuleProgramme, CoursProgramme, SuiviProgressionProgramme,
     CSComUCentre
@@ -538,6 +549,57 @@ class CoutFormationAdmin(admin.ModelAdmin):
             return f"{cout:,.0f} FCFA"
         return "-"
     get_cout_master_calcule_display.short_description = "Coût Master (calculé)"
+
+
+@admin.register(Competence)
+class CompetenceAdmin(admin.ModelAdmin):
+    """
+    Admin pour les compétences.
+    Les 7 compétences de base du MFMC sont marquées automatiquement.
+    """
+    list_display = (
+        'get_libelle_avec_marqueur', 
+        'domaine', 
+        'get_description_courte',
+        'get_nombre_cours'
+    )
+    list_filter = ('domaine',)
+    search_fields = ('libelle', 'description', 'niveau_attendu')
+    readonly_fields = ('get_nombre_cours',)
+    
+    fieldsets = (
+        ('Informations générales', {
+            'fields': ('libelle', 'domaine')
+        }),
+        ('Description', {
+            'fields': ('description', 'niveau_attendu')
+        }),
+        ('Statistiques', {
+            'fields': ('get_nombre_cours',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_libelle_avec_marqueur(self, obj):
+        """Affiche le libellé avec un marqueur si c'est une compétence de base MFMC"""
+        if obj.libelle in COMPETENCES_BASE_MFMC:
+            return f"⭐ {obj.libelle} (Compétence de base MFMC)"
+        return obj.libelle
+    get_libelle_avec_marqueur.short_description = "Compétence"
+    get_libelle_avec_marqueur.admin_order_field = 'libelle'
+    
+    def get_description_courte(self, obj):
+        """Affiche une version courte de la description"""
+        if obj.description:
+            return obj.description[:100] + "..." if len(obj.description) > 100 else obj.description
+        return "-"
+    get_description_courte.short_description = "Description"
+    
+    def get_nombre_cours(self, obj):
+        """Affiche le nombre de cours utilisant cette compétence"""
+        return obj.cours.count()
+    get_nombre_cours.short_description = "Nombre de cours"
+    get_nombre_cours.admin_order_field = 'cours'
 
 
 # Les autres modèles sont enregistrés dans leurs fichiers admin respectifs
