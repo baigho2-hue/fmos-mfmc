@@ -58,51 +58,157 @@
     </div>
     {% endif %}
 
-    <!-- Liens rapides -->
-    <div class="quick-links">
-        <h2>🔗 Accès rapide</h2>
-        <div class="links-grid">
-            <a href="{% url 'agenda_administration' %}" class="quick-link-card">
-                <div class="link-icon">📅</div>
-                <h3>Agenda</h3>
-                <p>Voir toutes les activités planifiées</p>
-            </a>
-            <a href="{% url 'notes_classes' %}" class="quick-link-card">
-                <div class="link-icon">📝</div>
-                <h3>Notes des classes</h3>
-                <p>Consulter les notes et progressions</p>
-            </a>
-            <a href="{% url 'alertes_agenda' %}" class="quick-link-card">
-                <div class="link-icon">⚠️</div>
-                <h3>Alertes</h3>
-                <p>Voir les alertes de l'agenda</p>
-            </a>
-            <a href="{% url 'resultats_evaluations' %}" class="quick-link-card">
-                <div class="link-icon">📊</div>
-                <h3>Résultats évaluations</h3>
-                <p>Consulter les résultats</p>
-            </a>
-            <a href="{% url 'gestion_inscriptions' %}" class="quick-link-card">
-                <div class="link-icon">✏️</div>
-                <h3>Gestion inscriptions</h3>
-                <p>Gérer les inscriptions aux formations</p>
-            </a>
-            <a href="{% url 'gestion_enseignants' %}" class="quick-link-card">
-                <div class="link-icon">👨‍🏫</div>
-                <h3>Gestion enseignants</h3>
-                <p>Gérer les enseignants, cours et leçons</p>
-            </a>
-            <a href="{% url 'gestion_signature_coordination' %}" class="quick-link-card">
-                <div class="link-icon">✍️</div>
-                <h3>Signature coordination</h3>
-                <p>Configurer la signature pour les documents PDF</p>
-            </a>
-            <a href="{% url 'upload_cours_lecons' %}" class="quick-link-card">
-                <div class="link-icon">📤</div>
-                <h3>Téléverser cours/leçons</h3>
-                <p>Uploader des fichiers de cours et leçons directement</p>
-            </a>
-        </div>
+    <!-- Navigation thématique -->
+    <div class="admin-sections">
+        <section class="admin-section">
+            <div class="section-header">
+                <h2>📅 Planification & suivi</h2>
+                <p>Vue globale des activités, notes et inscriptions.</p>
+            </div>
+            <div class="section-grid">
+                <a href="{% url 'agenda_administration' %}" class="quick-link-card">
+                    <div class="link-icon">🗓️</div>
+                    <h3>Agenda complet</h3>
+                    <p>Planifications sur 60 jours + filtres par classe.</p>
+                </a>
+                <a href="{% url 'alertes_agenda' %}" class="quick-link-card">
+                    <div class="link-icon">⚠️</div>
+                    <h3>Alertes</h3>
+                    <p>Activités urgentes & retards détectés automatiquement.</p>
+                </a>
+                <a href="{% url 'notes_classes' %}" class="quick-link-card">
+                    <div class="link-icon">📝</div>
+                    <h3>Notes & progressions</h3>
+                    <p>Tableaux par classe avec moyennes et détails étudiants.</p>
+                </a>
+                <a href="{% url 'gestion_inscriptions' %}" class="quick-link-card">
+                    <div class="link-icon">✏️</div>
+                    <h3>Inscriptions</h3>
+                    <p>Suivi des effectifs par formation et classes actives.</p>
+                </a>
+                <a href="{% url 'resultats_evaluations' %}" class="quick-link-card">
+                    <div class="link-icon">📊</div>
+                    <h3>Résultats évaluations</h3>
+                    <p>Notes, moyennes et retours sur les évaluations.</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="admin-section">
+            <div class="section-header">
+                <h2>📚 Contenus & enseignement</h2>
+                <p>Gestion des cours, leçons, jalons et équipes pédagogiques.</p>
+            </div>
+            <div class="section-grid">
+                <a href="{% url 'gestion_enseignants' %}" class="quick-link-card">
+                    <div class="link-icon">👨‍🏫</div>
+                    <h3>Gestion des enseignants</h3>
+                    <p>Profils, affectations aux cours et modèles pédagogiques.</p>
+                </a>
+                <a href="{% url 'upload_cours_lecons' %}" class="quick-link-card">
+                    <div class="link-icon">📤</div>
+                    <h3>Import cours & leçons</h3>
+                    <p>Uploader rapidement des supports pédagogiques.</p>
+                </a>
+                <a href="{% url 'programme_desmfmc_complet' %}" class="quick-link-card">
+                    <div class="link-icon">🧭</div>
+                    <h3>Programme DESMFMC</h3>
+                    <p>Structure complète des jalons sur 4 ans.</p>
+                </a>
+                <a href="{% url 'upload_cours' %}" class="quick-link-card">
+                    <div class="link-icon">📘</div>
+                    <h3>Importer un cours</h3>
+                    <p>Interface dédiée pour l’ajout détaillé d’un cours.</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="admin-section">
+            <div class="section-header">
+                <h2>🏥 Stages & évaluations cliniques</h2>
+                <p>Pilotage des CSCom-U, tirages au sort et carnets.</p>
+            </div>
+            <div class="section-grid">
+                <a href="{% url 'gestion_stages_cscom' %}" class="quick-link-card">
+                    <div class="link-icon">🏥</div>
+                    <h3>Centres & affectations</h3>
+                    <p>Vue consolidée des CSCom-U et rotations.</p>
+                </a>
+                <a href="{% url 'tirage_au_sort_stages' %}" class="quick-link-card">
+                    <div class="link-icon">🎯</div>
+                    <h3>Tirage au sort</h3>
+                    <p>Attribuer automatiquement les stages par période.</p>
+                </a>
+                <a href="{% url 'evaluations_stages_coordination' %}" class="quick-link-card">
+                    <div class="link-icon">✅</div>
+                    <h3>Évaluations de stage</h3>
+                    <p>Suivi des carnets et notations par superviseur.</p>
+                </a>
+                <a href="{% url 'pdf_stages' %}" class="quick-link-card">
+                    <div class="link-icon">🖨️</div>
+                    <h3>Exports PDF stages</h3>
+                    <p>Listes officielles par année ou période.</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="admin-section">
+            <div class="section-header">
+                <h2>📄 Documents & communication</h2>
+                <p>Outils pour lettres, signatures, envois et archives.</p>
+            </div>
+            <div class="section-grid">
+                <a href="{% url 'gestion_signature_coordination' %}" class="quick-link-card">
+                    <div class="link-icon">✍️</div>
+                    <h3>Signature coordination</h3>
+                    <p>Tampons & signatures utilisés dans les PDF.</p>
+                </a>
+                <a href="{% url 'pdf_liste_etudiants' %}" class="quick-link-card">
+                    <div class="link-icon">📑</div>
+                    <h3>Listes d'étudiants</h3>
+                    <p>Export global ou filtré par classe.</p>
+                </a>
+                <a href="{% url 'pdf_lettres_informations' %}" class="quick-link-card">
+                    <div class="link-icon">💌</div>
+                    <h3>Lettres d'information</h3>
+                    <p>Générer ou télécharger les bulletins d'info.</p>
+                </a>
+                <a href="{% url 'envoyer_pdf_par_email' %}" class="quick-link-card">
+                    <div class="link-icon">✉️</div>
+                    <h3>Envoi de documents</h3>
+                    <p>Transmettre un PDF officiel directement par email.</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="admin-section">
+            <div class="section-header">
+                <h2>⚙️ Configuration & sécurité</h2>
+                <p>Accès rapides aux outils techniques et de contrôle.</p>
+            </div>
+            <div class="section-grid">
+                <a href="{% url 'activer_2fa' %}" class="quick-link-card">
+                    <div class="link-icon">🔐</div>
+                    <h3>Double authentification</h3>
+                    <p>Activer ou vérifier le 2FA pour la coordination.</p>
+                </a>
+                <a href="{% url 'setup_status' %}" class="quick-link-card">
+                    <div class="link-icon">🛠️</div>
+                    <h3>État de configuration</h3>
+                    <p>Diagnostiquer rapidement l'environnement Render.</p>
+                </a>
+                <a href="{% url 'setup_migrate' %}" class="quick-link-card">
+                    <div class="link-icon">🗃️</div>
+                    <h3>Migrations rapides</h3>
+                    <p>Lancer les migrations sans shell (mode setup).</p>
+                </a>
+                <a href="{% url 'setup_init_programme' %}" class="quick-link-card">
+                    <div class="link-icon">🚀</div>
+                    <h3>Initialisation programme</h3>
+                    <p>Scripts d'import et vérifications automatisées.</p>
+                </a>
+            </div>
+        </section>
     </div>
 </div>
 {% endblock %}
@@ -179,13 +285,32 @@
     min-width: 150px;
 }
 
-.quick-links {
+.admin-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
     margin-top: 3rem;
 }
 
-.links-grid {
+.admin-section {
+    background: rgba(255,255,255,0.9);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.section-header h2 {
+    margin-bottom: 0.2rem;
+}
+
+.section-header p {
+    margin: 0;
+    color: #6c757d;
+}
+
+.section-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.5rem;
     margin-top: 1.5rem;
 }
