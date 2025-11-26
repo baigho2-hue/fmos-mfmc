@@ -180,7 +180,15 @@ class MethodePedagogique(models.Model):
 
 
 class Competence(models.Model):
-    """Modèle représentant une compétence à acquérir"""
+    """
+    Modèle représentant une compétence à acquérir.
+    
+    Les compétences sont organisées par :
+    - Jalons du programme (via ManyToMany)
+    - Classes (via ManyToMany)
+    - Modules (via ModuleProgramme.competences_module)
+    - Cours (via Cours.competences)
+    """
     DOMAINE_CHOICES = [
         ('savoir', 'Savoir (connaissances)'),
         ('savoir_faire', 'Savoir-faire (habiletés)'),
@@ -200,6 +208,23 @@ class Competence(models.Model):
         verbose_name='Niveau attendu'
     )
     
+    # Relations avec jalons et classes (ajoutées pour organisation)
+    # Note: Les compétences sont aussi liées via modules et cours
+    jalons = models.ManyToManyField(
+        'utilisateurs.JalonProgramme',
+        related_name='competences_jalons',
+        blank=True,
+        verbose_name='Jalons associés',
+        help_text='Jalons du programme où cette compétence est évaluée'
+    )
+    classes = models.ManyToManyField(
+        'utilisateurs.Classe',
+        related_name='competences_classes',
+        blank=True,
+        verbose_name='Classes associées',
+        help_text='Classes où cette compétence est enseignée et évaluée'
+    )
+    
     class Meta:
         verbose_name = 'Compétence'
         verbose_name_plural = 'Compétences'
@@ -207,6 +232,16 @@ class Competence(models.Model):
     
     def __str__(self):
         return f"{self.get_domaine_display()}: {self.libelle[:50]}"
+    
+    def get_jalons_display(self):
+        """Retourne la liste des jalons associés"""
+        return ", ".join([str(j) for j in self.jalons.all()[:3]])
+    get_jalons_display.short_description = "Jalons"
+    
+    def get_classes_display(self):
+        """Retourne la liste des classes associées"""
+        return ", ".join([c.nom for c in self.classes.all()[:3]])
+    get_classes_display.short_description = "Classes"
 
 
 class Cours(models.Model):

@@ -25,6 +25,7 @@
                     <li><a href="{% url 'gestion_inscriptions' %}">✏️ Inscriptions</a></li>
                     <li><a href="{% url 'liste_etudiants_par_formation' %}">👥 Liste étudiants</a></li>
                     <li><a href="{% url 'resultats_evaluations' %}">📊 Résultats évaluations</a></li>
+                    <li><a href="{% url 'competences_par_jalon_classe' %}">⭐ Compétences par jalon/classe</a></li>
                 </ul>
             </div>
 
@@ -175,6 +176,11 @@
                     <div class="link-icon">📊</div>
                     <h3>Résultats évaluations</h3>
                     <p>Notes, moyennes et retours sur les évaluations.</p>
+                </a>
+                <a href="{% url 'competences_par_jalon_classe' %}" class="quick-link-card">
+                    <div class="link-icon">⭐</div>
+                    <h3>Compétences par jalon/classe</h3>
+                    <p>Vue organisée des compétences par jalon du programme et par classe.</p>
                 </a>
             </div>
         </section>

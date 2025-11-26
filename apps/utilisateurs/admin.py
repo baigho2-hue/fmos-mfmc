@@ -556,16 +556,19 @@ class CompetenceAdmin(admin.ModelAdmin):
     """
     Admin pour les compétences.
     Les 7 compétences de base du MFMC sont marquées automatiquement.
+    Les compétences sont organisées par jalons et classes.
     """
     list_display = (
         'get_libelle_avec_marqueur', 
         'domaine', 
-        'get_description_courte',
+        'get_jalons_count',
+        'get_classes_count',
         'get_nombre_cours'
     )
-    list_filter = ('domaine',)
+    list_filter = ('domaine', 'jalons__annee', 'classes__formation')
     search_fields = ('libelle', 'description', 'niveau_attendu')
-    readonly_fields = ('get_nombre_cours',)
+    filter_horizontal = ('jalons', 'classes')
+    readonly_fields = ('get_nombre_cours', 'get_jalons_count', 'get_classes_count', 'get_jalons_display', 'get_classes_display')
     
     fieldsets = (
         ('Informations générales', {
@@ -574,8 +577,13 @@ class CompetenceAdmin(admin.ModelAdmin):
         ('Description', {
             'fields': ('description', 'niveau_attendu')
         }),
+        ('Organisation par jalon et classe', {
+            'fields': ('jalons', 'classes'),
+            'description': 'Les compétences sont jalonnées (liées aux jalons du programme) et définies par classe. '
+                          'Cela permet d\'organiser les compétences selon le programme DESMFMC et les classes d\'étudiants.'
+        }),
         ('Statistiques', {
-            'fields': ('get_nombre_cours',),
+            'fields': ('get_jalons_count', 'get_classes_count', 'get_nombre_cours', 'get_jalons_display', 'get_classes_display'),
             'classes': ('collapse',)
         }),
     )
@@ -600,6 +608,34 @@ class CompetenceAdmin(admin.ModelAdmin):
         return obj.cours.count()
     get_nombre_cours.short_description = "Nombre de cours"
     get_nombre_cours.admin_order_field = 'cours'
+    
+    def get_jalons_count(self, obj):
+        """Affiche le nombre de jalons associés"""
+        return obj.jalons.count()
+    get_jalons_count.short_description = "Jalons"
+    get_jalons_count.admin_order_field = 'jalons'
+    
+    def get_classes_count(self, obj):
+        """Affiche le nombre de classes associées"""
+        return obj.classes.count()
+    get_classes_count.short_description = "Classes"
+    get_classes_count.admin_order_field = 'classes'
+    
+    def get_jalons_display(self, obj):
+        """Affiche la liste des jalons associés"""
+        jalons = obj.jalons.all()[:5]
+        if jalons:
+            return ", ".join([f"{j.formation.code} A{j.annee} - {j.nom[:30]}" for j in jalons])
+        return "Aucun jalon"
+    get_jalons_display.short_description = "Liste des jalons"
+    
+    def get_classes_display(self, obj):
+        """Affiche la liste des classes associées"""
+        classes = obj.classes.all()[:5]
+        if classes:
+            return ", ".join([c.nom for c in classes])
+        return "Aucune classe"
+    get_classes_display.short_description = "Liste des classes"
 
 
 # Les autres modèles sont enregistrés dans leurs fichiers admin respectifs

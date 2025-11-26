@@ -9,8 +9,8 @@ from django.utils import timezone
 from django.db.models import Q, Count, Avg, Max, Min
 from datetime import timedelta, datetime
 from apps.utilisateurs.models import Utilisateur
-from apps.utilisateurs.models_formation import Formation, Classe, Cours, Planification, ProgressionEtudiant, Lecon
-from apps.utilisateurs.models_programme_desmfmc import CSComUCentre, StageRotationDES
+from apps.utilisateurs.models_formation import Formation, Classe, Cours, Planification, ProgressionEtudiant, Lecon, Competence
+from apps.utilisateurs.models_programme_desmfmc import CSComUCentre, StageRotationDES, JalonProgramme
 from apps.utilisateurs.models_documents import LettreInformation, ModelePedagogique
 from apps.utilisateurs.utils import attribuer_stages_cscom_aleatoire
 from apps.evaluations.models import Evaluation, ResultatEvaluation, EvaluationEnseignant, TypeEvaluation
@@ -1723,4 +1723,97 @@ def evaluations_stages_coordination(request):
     }
     
     return render(request, 'administration/evaluations_stages_coordination.html', context)
+
+
+@coordination_required
+def competences_par_jalon_classe(request):
+    """Vue pour afficher les compétences organisées par jalon et classe"""
+    
+    # Filtres
+    formation_id = request.GET.get('formation')
+    annee = request.GET.get('annee')
+    classe_id = request.GET.get('classe')
+    
+    # Récupérer la formation DESMFMC par défaut
+    formation_desmfmc = Formation.objects.filter(code='DESMFMC', actif=True).first()
+    if formation_id:
+        formation_selected = Formation.objects.filter(pk=formation_id, actif=True).first()
+    else:
+        formation_selected = formation_desmfmc
+    
+    # Organiser par jalons
+    jalons_data = []
+    if formation_selected:
+        jalons_query = JalonProgramme.objects.filter(
+            formation=formation_selected
+        ).order_by('annee', 'ordre')
+        
+        if annee:
+            jalons_query = jalons_query.filter(annee=int(annee))
+        
+        for jalon in jalons_query:
+            # Récupérer les compétences de ce jalon
+            competences_jalon = Competence.objects.filter(jalons=jalon).distinct()
+            
+            # Récupérer les modules du jalon avec leurs compétences
+            modules = jalon.modules.filter(actif=True).prefetch_related('competences_module').order_by('ordre')
+            competences_modules = Competence.objects.filter(modules__in=modules).distinct()
+            
+            # Combiner les compétences (directes + via modules)
+            toutes_competences = (competences_jalon | competences_modules).distinct()
+            
+            jalons_data.append({
+                'jalon': jalon,
+                'competences': toutes_competences,
+                'nb_competences': toutes_competences.count(),
+                'modules': modules,
+            })
+    
+    # Organiser par classes
+    classes_data = []
+    if formation_selected:
+        classes_query = Classe.objects.filter(
+            formation=formation_selected,
+            actif=True
+        ).order_by('annee', 'nom')
+        
+        if classe_id:
+            classes_query = classes_query.filter(pk=classe_id)
+        
+        for classe in classes_query:
+            # Récupérer les compétences de cette classe
+            competences_classe = Competence.objects.filter(classes=classe).distinct()
+            
+            # Récupérer les compétences via les cours de la classe
+            cours_classe = Cours.objects.filter(classe=classe, actif=True)
+            competences_cours = Competence.objects.filter(cours__in=cours_classe).distinct()
+            
+            # Combiner les compétences
+            toutes_competences = (competences_classe | competences_cours).distinct()
+            
+            classes_data.append({
+                'classe': classe,
+                'competences': toutes_competences,
+                'nb_competences': toutes_competences.count(),
+                'nb_cours': cours_classe.count(),
+            })
+    
+    # Les 7 compétences de base MFMC
+    competences_base = Competence.objects.filter(
+        libelle__in=['Expert médical', 'Communicateur', 'Collaborateur', 
+                     'Promoteur de la santé', 'Gestionnaire', 'Érudit', 'Professionnel']
+    )
+    
+    context = {
+        'formation_selected': formation_selected,
+        'jalons_data': jalons_data,
+        'classes_data': classes_data,
+        'competences_base': competences_base,
+        'toutes_formations': Formation.objects.filter(actif=True).order_by('nom'),
+        'formation_filtre': int(formation_id) if formation_id else None,
+        'annee_filtre': int(annee) if annee else None,
+        'classe_filtre': int(classe_id) if classe_id else None,
+    }
+    
+    return render(request, 'administration/competences_par_jalon_classe.html', context)
 

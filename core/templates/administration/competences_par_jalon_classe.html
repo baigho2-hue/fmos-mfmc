@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Administration - Compétences par jalon et classe{% endblock %}
+
+{% block content %}
+<div class="administration-container">
+    <h1>📊 Compétences par jalon et classe</h1>
+    <p class="subtitle">Organisation des compétences selon les jalons du programme et les classes</p>
+
+    <!-- Filtres -->
+    <div class="filters-section">
+        <form method="get" class="filters-form">
+            <div class="filter-group">
+                <label for="formation">Formation :</label>
+                <select name="formation" id="formation">
+                    <option value="">Toutes les formations</option>
+                    {% for formation in toutes_formations %}
+                    <option value="{{ formation.id }}" {% if formation_filtre == formation.id %}selected{% endif %}>
+                        {{ formation.nom }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="annee">Année :</label>
+                <select name="annee" id="annee">
+                    <option value="">Toutes les années</option>
+                    <option value="1" {% if annee_filtre == 1 %}selected{% endif %}>Année 1</option>
+                    <option value="2" {% if annee_filtre == 2 %}selected{% endif %}>Année 2</option>
+                    <option value="3" {% if annee_filtre == 3 %}selected{% endif %}>Année 3</option>
+                    <option value="4" {% if annee_filtre == 4 %}selected{% endif %}>Année 4</option>
+                </select>
+            </div>
+            
+            <div class="filter-actions">
+                <button type="submit" class="btn-filter">🔍 Filtrer</button>
+                <a href="{% url 'competences_par_jalon_classe' %}" class="btn-reset">🔄 Réinitialiser</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Compétences de base MFMC -->
+    {% if competences_base %}
+    <div class="competences-base-section">
+        <h2>⭐ Les 7 compétences de base du MFMC</h2>
+        <div class="competences-grid">
+            {% for competence in competences_base %}
+            <div class="competence-card base">
+                <div class="competence-header">
+                    <h3>{{ competence.libelle }}</h3>
+                    <span class="domaine-badge">{{ competence.get_domaine_display }}</span>
+                </div>
+                <p class="competence-description">{{ competence.description|truncatewords:20 }}</p>
+                <div class="competence-stats">
+                    <span>{{ competence.jalons.count }} jalon{{ competence.jalons.count|pluralize }}</span>
+                    <span>•</span>
+                    <span>{{ competence.classes.count }} classe{{ competence.classes.count|pluralize }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Organisation par jalons -->
+    {% if jalons_data %}
+    <div class="jalons-section">
+        <h2>🧭 Compétences par jalon du programme</h2>
+        {% for jalon_data in jalons_data %}
+        <div class="jalon-card">
+            <div class="jalon-header">
+                <h3>{{ jalon_data.jalon.nom }}</h3>
+                <div class="jalon-info">
+                    <span class="badge">Année {{ jalon_data.jalon.annee }}</span>
+                    {% if jalon_data.jalon.semestre %}
+                    <span class="badge">Semestre {{ jalon_data.jalon.semestre }}</span>
+                    {% endif %}
+                    <span class="badge">{{ jalon_data.nb_competences }} compétence{{ jalon_data.nb_competences|pluralize }}</span>
+                </div>
+            </div>
+            
+            {% if jalon_data.competences %}
+            <div class="competences-list">
+                {% for competence in jalon_data.competences %}
+                <div class="competence-item">
+                    <div class="competence-item-header">
+                        <strong>{{ competence.libelle }}</strong>
+                        <span class="domaine-tag">{{ competence.get_domaine_display }}</span>
+                    </div>
+                    <p class="competence-item-desc">{{ competence.description|truncatewords:15 }}</p>
+                    <div class="competence-item-meta">
+                        {% if competence.classes.exists %}
+                        <span>Classes: {{ competence.classes.all|join:", " }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="no-data">Aucune compétence associée à ce jalon.</p>
+            {% endif %}
+            
+            {% if jalon_data.modules %}
+            <div class="modules-section">
+                <h4>Modules du jalon :</h4>
+                <ul class="modules-list">
+                    {% for module in jalon_data.modules %}
+                    <li>
+                        <strong>{{ module.nom }}</strong>
+                        {% if module.competences_module.exists %}
+                        <span class="module-competences">
+                            ({{ module.competences_module.count }} compétence{{ module.competences_module.count|pluralize }})
+                        </span>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Organisation par classes -->
+    {% if classes_data %}
+    <div class="classes-section">
+        <h2>🏫 Compétences par classe</h2>
+        {% for classe_data in classes_data %}
+        <div class="classe-card">
+            <div class="classe-header">
+                <h3>{{ classe_data.classe.nom }}</h3>
+                <div class="classe-info">
+                    <span class="badge">{{ classe_data.nb_competences }} compétence{{ classe_data.nb_competences|pluralize }}</span>
+                    <span class="badge">{{ classe_data.nb_cours }} cours</span>
+                </div>
+            </div>
+            
+            {% if classe_data.competences %}
+            <div class="competences-list">
+                {% for competence in classe_data.competences %}
+                <div class="competence-item">
+                    <div class="competence-item-header">
+                        <strong>{{ competence.libelle }}</strong>
+                        <span class="domaine-tag">{{ competence.get_domaine_display }}</span>
+                    </div>
+                    <p class="competence-item-desc">{{ competence.description|truncatewords:15 }}</p>
+                    <div class="competence-item-meta">
+                        {% if competence.jalons.exists %}
+                        <span>Jalons: 
+                            {% for jalon in competence.jalons.all|slice:":3" %}
+                                {{ jalon.nom|truncatewords:3 }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="no-data">Aucune compétence associée à cette classe.</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not jalons_data and not classes_data %}
+    <div class="no-data-message">
+        <p>⚠️ Aucune donnée trouvée avec les filtres sélectionnés.</p>
+        <p>Vérifiez que la formation DESMFMC est bien configurée avec des jalons et classes.</p>
+    </div>
+    {% endif %}
+
+    <div class="actions">
+        <a href="{% url 'dashboard_administration' %}" class="btn-back">← Retour au tableau de bord</a>
+        <a href="{% url 'admin:utilisateurs_competence_changelist' %}" class="btn-admin" target="_blank">
+            ✏️ Gérer les compétences dans l'admin
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.administration-container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.filters-section {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.filters-form {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.filter-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-filter, .btn-reset, .btn-back, .btn-admin {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1rem;
+    display: inline-block;
+}
+
+.btn-filter {
+    background: #005a9c;
+    color: white;
+}
+
+.btn-filter:hover {
+    background: #004080;
+}
+
+.btn-reset {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-reset:hover {
+    background: #5a6268;
+}
+
+.btn-back {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-admin {
+    background: #28a745;
+    color: white;
+}
+
+.btn-admin:hover {
+    background: #218838;
+}
+
+.competences-base-section {
+    margin-bottom: 3rem;
+}
+
+.competences-base-section h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+}
+
+.competences-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.competence-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-left: 4px solid #005a9c;
+}
+
+.competence-card.base {
+    border-left-color: #ffc107;
+    background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%);
+}
+
+.competence-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.competence-header h3 {
+    margin: 0;
+    color: #005a9c;
+    font-size: 1.1rem;
+}
+
+.domaine-badge {
+    background: #005a9c;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+}
+
+.competence-description {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.competence-stats {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.jalons-section, .classes-section {
+    margin-bottom: 3rem;
+}
+
+.jalons-section h2, .classes-section h2 {
+    color: #005a9c;
+    margin-bottom: 1.5rem;
+}
+
+.jalon-card, .classe-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.jalon-header, .classe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.jalon-header h3, .classe-header h3 {
+    margin: 0;
+    color: #005a9c;
+}
+
+.jalon-info, .classe-info {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    background: #005a9c;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+}
+
+.competences-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.competence-item {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 1rem;
+    border-left: 3px solid #005a9c;
+}
+
+.competence-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.competence-item-header strong {
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.domaine-tag {
+    background: #6c757d;
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+}
+
+.competence-item-desc {
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+.competence-item-meta {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.modules-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+}
+
+.modules-section h4 {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+}
+
+.modules-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.modules-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.module-competences {
+    color: #005a9c;
+    font-size: 0.85rem;
+    margin-left: 0.5rem;
+}
+
+.no-data, .no-data-message {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .filters-form {
+        flex-direction: column;
+    }
+    
+    .competences-grid,
+    .competences-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .jalon-header,
+    .classe-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+</style>
+{% endblock %}
+

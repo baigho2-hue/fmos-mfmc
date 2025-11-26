@@ -101,6 +101,7 @@ urlpatterns = [
     path('administration/inscriptions/', views_administration.gestion_inscriptions, name='gestion_inscriptions'),
     path('administration/inscriptions/formation/<int:formation_id>/', views_administration.detail_inscriptions_formation, name='detail_inscriptions_formation'),
     path('administration/etudiants/', views_administration.liste_etudiants_par_formation, name='liste_etudiants_par_formation'),
+    path('administration/competences/', views_administration.competences_par_jalon_classe, name='competences_par_jalon_classe'),
     path('administration/stages-cscom/', views_administration.gestion_stages_cscom, name='gestion_stages_cscom'),
     path('administration/stages-cscom/tirage/', views_administration.tirage_au_sort_stages, name='tirage_au_sort_stages'),
     path('administration/bulletins/classe/<int:classe_id>/', views_administration.bulletins_classe, name='bulletins_classe'),
