@@ -4,12 +4,92 @@
 {% block title %}Administration - Tableau de bord{% endblock %}
 
 {% block content %}
-<div class="administration-container">
-    <h1>📊 Tableau de bord Administration</h1>
-    <p class="subtitle">Coordination DESMFMC</p>
+<div class="admin-layout">
+    <!-- Menu latéral fixe -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h2>📊 Administration</h2>
+            <p class="sidebar-subtitle">Coordination DESMFMC</p>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title" onclick="toggleSection(this)">
+                    <span>📅 Planification & suivi</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nav-section-items">
+                    <li><a href="{% url 'agenda_administration' %}">🗓️ Agenda complet</a></li>
+                    <li><a href="{% url 'alertes_agenda' %}">⚠️ Alertes</a></li>
+                    <li><a href="{% url 'notes_classes' %}">📝 Notes & progressions</a></li>
+                    <li><a href="{% url 'gestion_inscriptions' %}">✏️ Inscriptions</a></li>
+                    <li><a href="{% url 'liste_etudiants_par_formation' %}">👥 Liste étudiants</a></li>
+                    <li><a href="{% url 'resultats_evaluations' %}">📊 Résultats évaluations</a></li>
+                </ul>
+            </div>
 
-    <!-- Statistiques générales -->
-    <div class="stats-grid">
+            <div class="nav-section">
+                <div class="nav-section-title" onclick="toggleSection(this)">
+                    <span>📚 Contenus & enseignement</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nav-section-items">
+                    <li><a href="{% url 'gestion_enseignants' %}">👨‍🏫 Gestion enseignants</a></li>
+                    <li><a href="{% url 'upload_cours_lecons' %}">📤 Import cours & leçons</a></li>
+                    <li><a href="{% url 'programme_desmfmc_complet' %}">🧭 Programme DESMFMC</a></li>
+                    <li><a href="{% url 'upload_cours' %}">📘 Importer un cours</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title" onclick="toggleSection(this)">
+                    <span>🏥 Stages & évaluations</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nav-section-items">
+                    <li><a href="{% url 'gestion_stages_cscom' %}">🏥 Centres & affectations</a></li>
+                    <li><a href="{% url 'tirage_au_sort_stages' %}">🎯 Tirage au sort</a></li>
+                    <li><a href="{% url 'evaluations_stages_coordination' %}">✅ Évaluations de stage</a></li>
+                    <li><a href="{% url 'pdf_stages' %}">🖨️ Exports PDF stages</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title" onclick="toggleSection(this)">
+                    <span>📄 Documents & communication</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nav-section-items">
+                    <li><a href="{% url 'gestion_signature_coordination' %}">✍️ Signature coordination</a></li>
+                    <li><a href="{% url 'pdf_liste_etudiants' %}">📑 Listes d'étudiants</a></li>
+                    <li><a href="{% url 'pdf_lettres_informations' %}">💌 Lettres d'information</a></li>
+                    <li><a href="{% url 'envoyer_pdf_par_email' %}">✉️ Envoi de documents</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title" onclick="toggleSection(this)">
+                    <span>⚙️ Configuration & sécurité</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="nav-section-items">
+                    <li><a href="{% url 'activer_2fa' %}">🔐 Double authentification</a></li>
+                    <li><a href="{% url 'setup_status' %}">🛠️ État de configuration</a></li>
+                    <li><a href="{% url 'setup_migrate' %}">🗃️ Migrations rapides</a></li>
+                    <li><a href="{% url 'setup_init_programme' %}">🚀 Initialisation programme</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Contenu principal avec scroll -->
+    <main class="admin-main-content">
+        <div class="administration-container">
+            <h1>📊 Tableau de bord Administration</h1>
+            <p class="subtitle">Coordination DESMFMC</p>
+
+            <!-- Statistiques générales -->
+            <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon">👥</div>
             <div class="stat-content">
@@ -214,15 +294,154 @@
                 </a>
             </div>
         </section>
-    </div>
+            </div>
+        </div>
+    </main>
 </div>
 {% endblock %}
 
 {% block extra_css %}
 <style>
+/* Layout principal avec sidebar */
+.admin-layout {
+    display: flex;
+    min-height: calc(100vh - 200px);
+    margin-top: 1rem;
+}
+
+/* Sidebar fixe avec scroll */
+.admin-sidebar {
+    width: 280px;
+    min-width: 280px;
+    background: linear-gradient(180deg, #005a9c 0%, #004080 100%);
+    color: white;
+    position: sticky;
+    top: 100px;
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 3px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.5);
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.1);
+}
+
+.sidebar-header h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+    color: white;
+}
+
+.sidebar-subtitle {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.8);
+}
+
+.sidebar-nav {
+    padding: 0.5rem 0;
+}
+
+.nav-section {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.nav-section-title {
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+    user-select: none;
+}
+
+.nav-section-title:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.toggle-icon {
+    font-size: 0.8rem;
+    transition: transform 0.3s;
+    color: rgba(255,255,255,0.7);
+}
+
+.nav-section.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.nav-section-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 500px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.nav-section.collapsed .nav-section-items {
+    max-height: 0;
+    padding: 0;
+}
+
+.nav-section-items li {
+    margin: 0;
+}
+
+.nav-section-items a {
+    display: block;
+    padding: 0.75rem 1.5rem 0.75rem 2.5rem;
+    color: rgba(255,255,255,0.9);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+}
+
+.nav-section-items a:hover {
+    background: rgba(255,255,255,0.15);
+    border-left-color: #ffc107;
+    padding-left: 2.2rem;
+}
+
+.nav-section-items a:active {
+    background: rgba(255,255,255,0.2);
+}
+
+/* Contenu principal avec scroll */
+.admin-main-content {
+    flex: 1;
+    overflow-y: auto;
+    background: #f5f5f5;
+    min-height: calc(100vh - 120px);
+}
+
 .administration-container {
-    max-width: 1200px;
-    margin: 2rem auto;
+    max-width: 1400px;
+    margin: 0 auto;
     padding: 2rem;
 }
 
@@ -351,6 +570,59 @@
     font-size: 0.9rem;
     margin: 0;
 }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .admin-layout {
+        flex-direction: column;
+    }
+    
+    .admin-sidebar {
+        width: 100%;
+        min-width: 100%;
+        position: relative;
+        top: 0;
+        height: auto;
+        max-height: 400px;
+    }
+    
+    .admin-main-content {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .administration-container {
+        padding: 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-sidebar {
+        max-height: 300px;
+    }
+}
 </style>
+
+<script>
+function toggleSection(element) {
+    const section = element.parentElement;
+    section.classList.toggle('collapsed');
+}
+
+// Ouvrir toutes les sections par défaut
+document.addEventListener('DOMContentLoaded', function() {
+    const sections = document.querySelectorAll('.nav-section');
+    sections.forEach(section => {
+        section.classList.remove('collapsed');
+    });
+});
+</script>
 {% endblock %}
 
