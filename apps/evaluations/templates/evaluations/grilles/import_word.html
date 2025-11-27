@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Importer une grille depuis Word{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-file-word"></i> Importer une grille d'évaluation depuis Word
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle"></i> Instructions</h5>
+                        <ul class="mb-0">
+                            <li>Téléchargez d'abord le <a href="{% url 'grilles:download_template' %}" class="alert-link">modèle Word</a> si vous ne l'avez pas encore</li>
+                            <li>Remplissez le modèle avec vos critères d'évaluation</li>
+                            <li>Utilisez la numérotation (1., 2., 3., etc.) pour les critères principaux</li>
+                            <li>Utilisez des lettres (a), b), c), etc.) ou des tirets (-) pour les éléments/sous-critères</li>
+                            <li>Importez le fichier rempli ci-dessous</li>
+                        </ul>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.fichier.id_for_label }}" class="form-label">
+                                {{ form.fichier.label }}
+                            </label>
+                            {{ form.fichier }}
+                            {% if form.fichier.help_text %}
+                                <small class="form-text text-muted">{{ form.fichier.help_text }}</small>
+                            {% endif %}
+                            {% if form.fichier.errors %}
+                                <div class="text-danger">{{ form.fichier.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.type_grille.id_for_label }}" class="form-label">
+                                {{ form.type_grille.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.type_grille }}
+                            {% if form.type_grille.help_text %}
+                                <small class="form-text text-muted">{{ form.type_grille.help_text }}</small>
+                            {% endif %}
+                            {% if form.type_grille.errors %}
+                                <div class="text-danger">{{ form.type_grille.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.cours.id_for_label }}" class="form-label">
+                                    {{ form.cours.label }}
+                                </label>
+                                {{ form.cours }}
+                                {% if form.cours.help_text %}
+                                    <small class="form-text text-muted">{{ form.cours.help_text }}</small>
+                                {% endif %}
+                                {% if form.cours.errors %}
+                                    <div class="text-danger">{{ form.cours.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.classe.id_for_label }}" class="form-label">
+                                    {{ form.classe.label }}
+                                </label>
+                                {{ form.classe }}
+                                {% if form.classe.help_text %}
+                                    <small class="form-text text-muted">{{ form.classe.help_text }}</small>
+                                {% endif %}
+                                {% if form.classe.errors %}
+                                    <div class="text-danger">{{ form.classe.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'grilles:liste' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-upload"></i> Importer la grille
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

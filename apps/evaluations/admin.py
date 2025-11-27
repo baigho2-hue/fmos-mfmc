@@ -1,4 +1,6 @@
 # apps/evaluations/admin.py
+# Import des admins pour les grilles
+from .admin_grilles import *  # noqa
 from django.contrib import admin
 from .models import (
     TypeEvaluation, Evaluation, ResultatEvaluation,

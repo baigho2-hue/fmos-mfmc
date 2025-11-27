@@ -8,12 +8,13 @@ from .models import Utilisateur, CodeVerification, Code2FA
 from .admin_filters import ClasseWithCoursFilter
 from .models_formation import (
     Formation, Classe, Cours, Lecon, ProgressionEtudiant, Planification,
-    ObjectifApprentissage, MethodePedagogique, Competence,
+    ObjectifApprentissage, MethodePedagogique, Competence, CompetenceJalon,
     SessionCoursEnLigne, SessionEvaluationEnLigne,
     ProgressionLecon, CommentaireLecon, QuizLecon, QuestionQuiz,
     ReponseQuestion, ReponseEtudiantQuiz, ResultatQuiz, AlerteLecon,
     PaiementFormation
 )
+from .admin_programme_classe import ClasseProgrammeAdmin
 
 # Les 7 compétences de base du MFMC
 COMPETENCES_BASE_MFMC = [
@@ -343,37 +344,34 @@ class CSComUCentreAdmin(admin.ModelAdmin):
     nombre_stages.short_description = 'Stages'
 
 
-@admin.register(Classe)
-class ClasseAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'code', 'formation', 'annee', 'date_debut', 'date_fin', 'actif', 'nombre_etudiants', 'nombre_cours')
-    list_filter = ('formation', 'annee', 'actif', 'date_debut')
-    search_fields = ('nom', 'code', 'formation__nom')
-    date_hierarchy = 'date_debut'
-    
-    fieldsets = (
-        ('Informations générales', {
-            'fields': ('formation', 'nom', 'code', 'annee', 'actif')
-        }),
-        ('Dates', {
-            'fields': ('date_debut', 'date_fin')
-        }),
-        ('Description', {
-            'fields': ('description',)
-        }),
-        ('Effectif', {
-            'fields': ('effectif_max', 'responsable')
-        }),
-    )
-    
-    def nombre_etudiants(self, obj):
-        """Affiche le nombre d'étudiants dans cette classe"""
-        return Utilisateur.objects.filter(classe=obj.nom, type_utilisateur='etudiant', is_active=True).count()
-    nombre_etudiants.short_description = 'Étudiants'
-    
-    def nombre_cours(self, obj):
-        """Affiche le nombre de cours dans cette classe"""
-        return obj.cours.filter(actif=True).count()
-    nombre_cours.short_description = 'Cours'
+# Import de l'admin personnalisé pour le programme par classe
+from .admin_programme_classe import ClasseProgrammeAdmin
+
+# Désenregistrer l'admin par défaut si déjà enregistré
+try:
+    admin.site.unregister(Classe)
+except admin.sites.NotRegistered:
+    pass
+
+# Enregistrer l'admin personnalisé avec la vue complète du programme
+admin.site.register(Classe, ClasseProgrammeAdmin)
+
+
+@admin.register(CompetenceJalon)
+class CompetenceJalonAdmin(admin.ModelAdmin):
+    list_display = ('titre', 'competence', 'classe', 'ordre', 'actif', 'cours_associes')
+    list_filter = ('competence', 'classe__formation', 'classe__annee', 'actif')
+    search_fields = ('titre', 'competence__libelle', 'classe__nom', 'description')
+    ordering = ('classe__annee', 'competence__libelle', 'ordre', 'titre')
+
+    def cours_associes(self, obj):
+        titres = list(obj.cours.all().values_list('titre', flat=True)[:3])
+        if not titres:
+            return "—"
+        if obj.cours.count() > 3:
+            return ", ".join(titres) + "…"
+        return ", ".join(titres)
+    cours_associes.short_description = 'Cours liés'
 
 
 @admin.register(Cours)
@@ -382,7 +380,7 @@ class CoursAdmin(admin.ModelAdmin):
     list_filter = ('classe', 'actif', 'date_debut', 'classe__formation')
     search_fields = ('titre', 'code', 'description', 'classe__nom')
     date_hierarchy = 'date_debut'
-    filter_horizontal = ('co_enseignants', 'objectifs_apprentissage', 'competences', 'methodes_pedagogiques')
+    filter_horizontal = ('co_enseignants', 'objectifs_apprentissage', 'competences', 'jalons_competence', 'methodes_pedagogiques')
     
     fieldsets = (
         ('Informations générales', {
@@ -398,7 +396,7 @@ class CoursAdmin(admin.ModelAdmin):
             'fields': ('enseignant', 'co_enseignants')
         }),
         ('Pédagogie', {
-            'fields': ('description_methodes', 'objectifs_apprentissage', 'competences', 'methodes_pedagogiques'),
+            'fields': ('description_methodes', 'objectifs_apprentissage', 'competences', 'jalons_competence', 'methodes_pedagogiques'),
             'classes': ('collapse',)
         }),
     )

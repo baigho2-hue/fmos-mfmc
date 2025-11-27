@@ -244,6 +244,48 @@ class Competence(models.Model):
     get_classes_display.short_description = "Classes"
 
 
+class CompetenceJalon(models.Model):
+    """
+    Jalon d'évaluation rattaché à une compétence donnée pour une classe précise.
+    Permet de relier explicitement les cours (et donc les leçons) évaluant ce jalon.
+    """
+    ECHELLE_CHOICES = [
+        ('1-5', '1 : Insuffisante · 2 : Inconstante/Inférieure aux attentes · 3 : Conforme aux attentes · 4 : Dépasse nettement les attentes · 5 : NA (Non Applicable)'),
+    ]
+
+    competence = models.ForeignKey(
+        Competence,
+        on_delete=models.CASCADE,
+        related_name='jalons_competence',
+        verbose_name='Compétence associée'
+    )
+    classe = models.ForeignKey(
+        Classe,
+        on_delete=models.CASCADE,
+        related_name='jalons_competence',
+        verbose_name='Classe concernée'
+    )
+    titre = models.CharField(max_length=300, verbose_name='Titre du jalon')
+    description = models.TextField(verbose_name='Description / critères observables')
+    echelle_evaluation = models.CharField(
+        max_length=20,
+        choices=ECHELLE_CHOICES,
+        default='1-5',
+        verbose_name="Échelle d'évaluation"
+    )
+    ordre = models.IntegerField(default=0, verbose_name="Ordre d'affichage")
+    actif = models.BooleanField(default=True, verbose_name='Actif')
+
+    class Meta:
+        verbose_name = 'Jalon de compétence'
+        verbose_name_plural = 'Jalons de compétences'
+        ordering = ['classe__annee', 'competence__libelle', 'ordre', 'titre']
+        unique_together = ['competence', 'classe', 'titre']
+
+    def __str__(self):
+        return f"{self.competence.libelle} · {self.classe.code} · {self.titre}"
+
+
 class Cours(models.Model):
     """Modèle représentant un cours d'une classe"""
     classe = models.ForeignKey(
@@ -310,6 +352,12 @@ class Cours(models.Model):
         blank=True,
         related_name='cours',
         verbose_name='Compétences visées'
+    )
+    jalons_competence = models.ManyToManyField(
+        CompetenceJalon,
+        blank=True,
+        related_name='cours',
+        verbose_name='Jalons évalués'
     )
     methodes_pedagogiques = models.ManyToManyField(
         MethodePedagogique,
