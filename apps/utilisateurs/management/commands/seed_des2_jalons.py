@@ -537,6 +537,29 @@ DES2_JALONS_DATA = [
                     {"numero": 27, "titre": "Technique de dépistage du cancer du col de l'utérus", "type": "atelier"},
                 ],
             },
+            {
+                "code": "DES-A2-DERM",
+                "ordre": 6,
+                "titre": "Dermatologie",
+                "volume_horaire": 15,
+                "description": "Cours sur la dermatologie en première ligne (15h).",
+                "contenu": textwrap.dedent(
+                    """
+                    Prise en charge dermatologique de première ligne :
+                    infections cutanées, dermatoses inflammatoires, lésions pigmentées,
+                    pathologies cutanées courantes, soins des plaies.
+                    """
+                ).strip(),
+                "lecons": [
+                    {"numero": 28, "titre": "Infections cutanées bactériennes", "type": "lecon"},
+                    {"numero": 29, "titre": "Infections cutanées fongiques", "type": "lecon"},
+                    {"numero": 30, "titre": "Infections cutanées virales", "type": "lecon"},
+                    {"numero": 31, "titre": "Dermatoses inflammatoires (eczéma, psoriasis)", "type": "lecon"},
+                    {"numero": 32, "titre": "Lésions pigmentées et tumeurs cutanées", "type": "lecon"},
+                    {"numero": 33, "titre": "Pathologies cutanées courantes (gale, teigne, acné)", "type": "lecon"},
+                    {"numero": 34, "titre": "Soins des plaies et ulcères", "type": "lecon"},
+                ],
+            },
         ],
     },
     {
