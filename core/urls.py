@@ -12,6 +12,7 @@ from core import views_superviseur_stage
 from core import views_2fa
 from core import views_paiements
 from core import views_setup  # noqa: F401 - Vues temporaires pour la configuration Render
+from core import views_enseignant
 from django.urls import include
 
 urlpatterns = [
@@ -129,10 +130,15 @@ urlpatterns = [
     # Gestion signature coordination
     path('administration/signature-coordination/', views_administration.gestion_signature_coordination, name='gestion_signature_coordination'),
     
-    # Upload cours et leçons
+    # Upload cours et leçons (Administration)
     path('administration/upload-cours-lecons/', views_administration.upload_cours_lecons, name='upload_cours_lecons'),
     path('administration/upload-cours/', views_administration.upload_cours, name='upload_cours'),
     path('administration/upload-lecon/', views_administration.upload_lecon, name='upload_lecon'),
+    
+    # Upload cours et leçons (Enseignants - Interface publique)
+    path('enseignant/upload-cours-lecons/', views_enseignant.upload_cours_lecons_enseignant, name='upload_cours_lecons_enseignant'),
+    path('enseignant/upload-cours/', views_enseignant.upload_cours_enseignant, name='upload_cours_enseignant'),
+    path('enseignant/upload-lecon/', views_enseignant.upload_lecon_enseignant, name='upload_lecon_enseignant'),
     
     # API pour l'admin Django - Récupérer les cours d'une classe
     path('admin/utilisateurs/cours/get-cours-by-classe/', views_administration.get_cours_by_classe_json, name='get_cours_by_classe_json'),

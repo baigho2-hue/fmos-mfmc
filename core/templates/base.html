@@ -308,6 +308,9 @@
                       <a href="{% url 'dashboard_enseignant' %}">Espace Enseignant</a>
                       <ul class="submenu">
                         <li><a href="{% url 'dashboard_enseignant' %}">Tableau de bord</a></li>
+                        {% if user.est_enseignant and not user.is_superuser %}
+                        <li><a href="{% url 'upload_cours_lecons_enseignant' %}">📤 Téléverser cours/leçons</a></li>
+                        {% endif %}
                         {% if user.est_superviseur_cec %}
                         <li><a href="{% url 'liste_evaluations_superviseur' %}">📋 Évaluations de stages</a></li>
                         {% endif %}
