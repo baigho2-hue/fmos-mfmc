@@ -259,10 +259,11 @@
           </ul>
         </li>
         {% endif %}
-              {% if user.is_authenticated %}
+              {% if user.is_authenticated and not user.is_superuser %}
                 <li>
                   <a href="{% url 'mes_formations' %}">📚 Mes Formations</a>
                 </li>
+              {% endif %}
                 {% if user.est_membre_coordination %}
                 <li class="has-submenu">
                   <a href="{% url 'dashboard_administration' %}">Administration</a>
