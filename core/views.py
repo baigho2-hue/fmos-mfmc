@@ -77,16 +77,20 @@ def formations(request):
 def programmes(request):
     return render(request, 'programmes.html')
 
+@login_required(login_url='login')
 def cours(request):
     """Page d'accès aux cours pour enseignants et étudiants"""
     return render(request, 'cours.html')
 
+@login_required(login_url='login')
 def enseignants(request):
     return render(request, 'enseignants.html')
 
+@login_required(login_url='login')
 def etudiants(request):
     return render(request, 'etudiants.html')
 
+@login_required(login_url='login')
 def contact(request):
     return render(request, 'contact.html')
 
@@ -173,18 +177,19 @@ def login_view(request):
                     messages.success(request, f"Bienvenue {user.get_full_name() or user.username} !")
                     
                     # Redirection selon le paramètre next ou le type d'utilisateur
+                    from core.utils_redirect import get_redirect_after_login
                     next_url = request.GET.get('next') or request.session.get('next_url')
                     if next_url:
-                        if next_url in ['dashboard_etudiant', 'dashboard_enseignant']:
+                        # Nettoyer l'URL next si elle existe dans la session
+                        if 'next_url' in request.session:
+                            del request.session['next_url']
+                        # Vérifier que l'URL est valide
+                        if next_url in ['dashboard_etudiant', 'dashboard_enseignant', 'dashboard_administration']:
                             return redirect(next_url)
                     
-                    # Redirection par défaut selon le type d'utilisateur
-                    if user.est_etudiant():
-                        return redirect('dashboard_etudiant')
-                    elif user.est_enseignant():
-                        return redirect('dashboard_enseignant')
-                    else:
-                        return redirect('accueil')
+                    # Redirection intelligente selon le niveau d'accès
+                    redirect_url = get_redirect_after_login(user)
+                    return redirect(redirect_url)
                 else:
                     messages.error(request, "Code de vérification incorrect ou expiré. Veuillez réessayer.")
         else:
@@ -216,12 +221,18 @@ def login_view(request):
                 messages.success(request, f"Bienvenue {user.get_full_name() or user.username} !")
                 
                 # Redirection selon le paramètre next ou le type d'utilisateur
+                from core.utils_redirect import get_redirect_after_login
                 if next_url:
-                    if next_url in ['dashboard_etudiant', 'dashboard_enseignant']:
+                    # Nettoyer l'URL next si elle existe dans la session
+                    if 'next_url' in request.session:
+                        del request.session['next_url']
+                    # Vérifier que l'URL est valide
+                    if next_url in ['dashboard_etudiant', 'dashboard_enseignant', 'dashboard_administration']:
                         return redirect(next_url)
                 
-                # Redirection par défaut vers l'admin pour les superutilisateurs
-                return redirect('admin:index')
+                # Redirection intelligente selon le niveau d'accès
+                redirect_url = get_redirect_after_login(user)
+                return redirect(redirect_url)
             
             # Générer et envoyer le code de vérification pour les autres utilisateurs
             try:
