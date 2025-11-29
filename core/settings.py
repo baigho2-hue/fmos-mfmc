@@ -166,7 +166,11 @@ USE_TZ = True
 
 # Fichiers statiques et médias
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']  # ton dossier static à la racine
+# Créer le dossier static s'il n'existe pas (pour éviter les erreurs de collectstatic)
+static_dir = BASE_DIR / 'static'
+if not static_dir.exists():
+    static_dir.mkdir(parents=True, exist_ok=True)
+STATICFILES_DIRS = [static_dir]  # ton dossier static à la racine
 STATIC_ROOT = BASE_DIR / 'staticfiles'    # dossier pour collectstatic
 
 # Configuration WhiteNoise pour servir les fichiers statiques en production
