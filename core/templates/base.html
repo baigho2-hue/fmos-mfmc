@@ -328,6 +328,7 @@
                   </a>
                 </li>
                 {% endif %}
+              {% if user.is_authenticated %}
               <li><a href="{% url 'logout' %}">Déconnexion</a></li>
               {% endif %}
       </ul>
