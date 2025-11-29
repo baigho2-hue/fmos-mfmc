@@ -12,7 +12,7 @@ from .models_formation import (
     SessionCoursEnLigne, SessionEvaluationEnLigne,
     ProgressionLecon, CommentaireLecon, QuizLecon, QuestionQuiz,
     ReponseQuestion, ReponseEtudiantQuiz, ResultatQuiz, AlerteLecon,
-    PaiementFormation
+    PaiementFormation, CompteBancaire
 )
 from .admin_programme_classe import ClasseProgrammeAdmin
 
@@ -432,6 +432,26 @@ class LeconAdmin(admin.ModelAdmin):
         return qs.select_related('cours', 'cours__classe')
 
 
+@admin.register(CompteBancaire)
+class CompteBancaireAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'nom_banque', 'numero_compte', 'iban', 'actif', 'date_creation')
+    list_filter = ('actif', 'nom_banque', 'date_creation')
+    search_fields = ('nom', 'nom_banque', 'numero_compte', 'iban', 'swift')
+    list_editable = ('actif',)
+    ordering = ('nom',)
+    
+    fieldsets = (
+        ('Informations du compte', {
+            'fields': ('nom', 'nom_banque', 'numero_compte', 'iban', 'swift', 'actif')
+        }),
+        ('Dates', {
+            'fields': ('date_creation', 'date_modification'),
+            'classes': ('collapse',)
+        }),
+    )
+    readonly_fields = ('date_creation', 'date_modification')
+
+
 @admin.register(PaiementFormation)
 class PaiementFormationAdmin(admin.ModelAdmin):
     list_display = ('etudiant', 'formation', 'montant', 'mode_paiement', 'statut', 'date_paiement', 'date_validation')
@@ -445,7 +465,7 @@ class PaiementFormationAdmin(admin.ModelAdmin):
             'fields': ('formation', 'etudiant', 'montant', 'mode_paiement', 'statut')
         }),
         ('Paiement', {
-            'fields': ('reference_paiement', 'preuve_paiement', 'date_paiement')
+            'fields': ('compte_bancaire', 'reference_paiement', 'preuve_paiement', 'date_paiement')
         }),
         ('Validation', {
             'fields': ('valideur', 'date_validation', 'commentaires')

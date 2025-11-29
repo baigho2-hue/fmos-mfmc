@@ -203,7 +203,7 @@ class PaiementFormationForm(forms.ModelForm):
     
     class Meta:
         model = PaiementFormation
-        fields = ['formation', 'montant', 'mode_paiement', 'reference_paiement', 'preuve_paiement', 'commentaires']
+        fields = ['formation', 'montant', 'mode_paiement', 'compte_bancaire', 'reference_paiement', 'preuve_paiement', 'commentaires']
         widgets = {
             'formation': forms.Select(attrs={'class': 'form-control'}),
             'montant': forms.NumberInput(attrs={
@@ -213,6 +213,7 @@ class PaiementFormationForm(forms.ModelForm):
                 'placeholder': '0.00'
             }),
             'mode_paiement': forms.Select(attrs={'class': 'form-control'}),
+            'compte_bancaire': forms.Select(attrs={'class': 'form-control'}),
             'reference_paiement': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Numéro de transaction, référence, etc.'
@@ -231,6 +232,7 @@ class PaiementFormationForm(forms.ModelForm):
             'formation': 'Formation',
             'montant': 'Montant (FCFA)',
             'mode_paiement': 'Mode de paiement',
+            'compte_bancaire': 'Compte bancaire',
             'reference_paiement': 'Référence de paiement',
             'preuve_paiement': 'Preuve de paiement',
             'commentaires': 'Commentaires',
@@ -256,3 +258,8 @@ class PaiementFormationForm(forms.ModelForm):
             # Pour les admins/enseignants, afficher toutes les formations
             from .models_formation import Formation
             self.fields['formation'].queryset = Formation.objects.filter(actif=True).order_by('nom')
+        
+        # Filtrer les comptes bancaires actifs
+        from .models_formation import CompteBancaire
+        self.fields['compte_bancaire'].queryset = CompteBancaire.objects.filter(actif=True).order_by('nom')
+        self.fields['compte_bancaire'].required = False

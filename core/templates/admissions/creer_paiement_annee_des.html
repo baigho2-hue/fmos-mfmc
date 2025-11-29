@@ -82,6 +82,19 @@
                 </select>
             </div>
 
+            <div class="form-group" id="compte-bancaire-group" style="display: none;">
+                <label for="compte_bancaire">Compte bancaire</label>
+                <select id="compte_bancaire" name="compte_bancaire" class="form-control">
+                    <option value="">Sélectionner un compte bancaire</option>
+                    {% for compte in comptes_bancaires %}
+                    <option value="{{ compte.id }}" {% if paiement_existant and paiement_existant.compte_bancaire and paiement_existant.compte_bancaire.id == compte.id %}selected{% endif %}>
+                        {{ compte.nom }} - {{ compte.nom_banque }} ({{ compte.numero_compte }})
+                    </option>
+                    {% endfor %}
+                </select>
+                <small class="form-text">Sélectionnez le compte bancaire sur lequel le paiement a été effectué</small>
+            </div>
+
             <div class="form-group">
                 <label for="reference_paiement">Référence de paiement</label>
                 <input 
@@ -304,5 +317,26 @@
     background-color: #5a6268;
 }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modePaiement = document.getElementById('mode_paiement');
+    const compteBancaireGroup = document.getElementById('compte-bancaire-group');
+    
+    function toggleCompteBancaire() {
+        if (modePaiement.value === 'carte_bancaire') {
+            compteBancaireGroup.style.display = 'block';
+        } else {
+            compteBancaireGroup.style.display = 'none';
+            document.getElementById('compte_bancaire').value = '';
+        }
+    }
+    
+    modePaiement.addEventListener('change', toggleCompteBancaire);
+    toggleCompteBancaire(); // Appel initial pour définir l'état au chargement
+});
+</script>
 {% endblock %}
 

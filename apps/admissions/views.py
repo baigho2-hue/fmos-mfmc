@@ -528,6 +528,7 @@ def creer_paiement_annee_des(request, annee):
         reference_paiement = request.POST.get('reference_paiement', '')
         preuve_paiement = request.FILES.get('preuve_paiement')
         montant = request.POST.get('montant')
+        compte_bancaire_id = request.POST.get('compte_bancaire')
         
         if not mode_paiement or not montant:
             messages.error(request, "Veuillez remplir tous les champs obligatoires.")
@@ -540,6 +541,13 @@ def creer_paiement_annee_des(request, annee):
                     paiement_existant.montant = montant
                     if preuve_paiement:
                         paiement_existant.preuve_paiement = preuve_paiement
+                    if compte_bancaire_id:
+                        from apps.utilisateurs.models_formation import CompteBancaire
+                        try:
+                            compte_bancaire = CompteBancaire.objects.get(pk=compte_bancaire_id, actif=True)
+                            paiement_existant.compte_bancaire = compte_bancaire
+                        except CompteBancaire.DoesNotExist:
+                            pass
                     paiement_existant.statut = 'paiement_effectue'
                     paiement_existant.date_paiement = timezone.now()
                     paiement_existant.resultat_annee = resultat_precedent
@@ -547,6 +555,14 @@ def creer_paiement_annee_des(request, annee):
                     messages.success(request, "Informations de paiement mises à jour. En attente de validation.")
                 else:
                     # Créer un nouveau paiement
+                    compte_bancaire = None
+                    if compte_bancaire_id:
+                        from apps.utilisateurs.models_formation import CompteBancaire
+                        try:
+                            compte_bancaire = CompteBancaire.objects.get(pk=compte_bancaire_id, actif=True)
+                        except CompteBancaire.DoesNotExist:
+                            pass
+                    
                     paiement = PaiementAnneeDES.objects.create(
                         etudiant=request.user,
                         formation=formation_desmfmc,
@@ -555,6 +571,7 @@ def creer_paiement_annee_des(request, annee):
                         mode_paiement=mode_paiement,
                         reference_paiement=reference_paiement,
                         preuve_paiement=preuve_paiement,
+                        compte_bancaire=compte_bancaire,
                         statut='paiement_effectue',
                         date_paiement=timezone.now(),
                         resultat_annee=resultat_precedent,
@@ -572,6 +589,10 @@ def creer_paiement_annee_des(request, annee):
             annee=4
         ).first()
     
+    # Récupérer les comptes bancaires actifs
+    from apps.utilisateurs.models_formation import CompteBancaire
+    comptes_bancaires = CompteBancaire.objects.filter(actif=True).order_by('nom')
+    
     context = {
         'annee': annee,
         'annee_precedente': annee_precedente,
@@ -579,6 +600,7 @@ def creer_paiement_annee_des(request, annee):
         'resultat_annee_4': resultat_annee_4,
         'paiement_existant': paiement_existant,
         'formation': formation_desmfmc,
+        'comptes_bancaires': comptes_bancaires,
     }
     return render(request, 'admissions/creer_paiement_annee_des.html', context)
 

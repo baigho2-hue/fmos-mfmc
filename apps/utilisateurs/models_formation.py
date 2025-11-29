@@ -1103,6 +1103,54 @@ class AlerteLecon(models.Model):
         return f"Alerte {self.get_type_alerte_display()} - {self.lecon.titre} - {self.enseignant.get_full_name()}"
 
 
+class CompteBancaire(models.Model):
+    """Modèle représentant un compte bancaire pour recevoir les paiements"""
+    
+    nom = models.CharField(
+        max_length=200,
+        verbose_name='Nom du compte',
+        help_text="Ex: Compte principal FMOS, Compte DESMFMC, etc."
+    )
+    nom_banque = models.CharField(
+        max_length=200,
+        verbose_name='Nom de la banque'
+    )
+    numero_compte = models.CharField(
+        max_length=50,
+        verbose_name='Numéro de compte',
+        help_text="Numéro de compte bancaire"
+    )
+    iban = models.CharField(
+        max_length=34,
+        blank=True,
+        null=True,
+        verbose_name='IBAN',
+        help_text="Code IBAN du compte (optionnel)"
+    )
+    swift = models.CharField(
+        max_length=11,
+        blank=True,
+        null=True,
+        verbose_name='SWIFT/BIC',
+        help_text="Code SWIFT/BIC de la banque (optionnel)"
+    )
+    actif = models.BooleanField(
+        default=True,
+        verbose_name='Actif',
+        help_text="Désactiver pour masquer ce compte dans les choix"
+    )
+    date_creation = models.DateTimeField(auto_now_add=True)
+    date_modification = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Compte bancaire'
+        verbose_name_plural = 'Comptes bancaires'
+        ordering = ['nom']
+    
+    def __str__(self):
+        return f"{self.nom} - {self.nom_banque} ({self.numero_compte})"
+
+
 class PaiementFormation(models.Model):
     """Modèle représentant un paiement pour une formation"""
     MODE_PAIEMENT_CHOICES = [
@@ -1141,6 +1189,15 @@ class PaiementFormation(models.Model):
         choices=MODE_PAIEMENT_CHOICES,
         default='bancaire',
         verbose_name='Mode de paiement'
+    )
+    compte_bancaire = models.ForeignKey(
+        CompteBancaire,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='paiements_formations',
+        verbose_name='Compte bancaire',
+        help_text="Compte bancaire sur lequel le paiement a été effectué (si mode bancaire)"
     )
     statut = models.CharField(
         max_length=20,

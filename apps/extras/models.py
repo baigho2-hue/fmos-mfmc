@@ -62,6 +62,15 @@ class PaiementExtra(models.Model):
     inscription_extra = models.ForeignKey('InscriptionExtra', on_delete=models.CASCADE)
     montant = models.DecimalField(max_digits=10, decimal_places=2)
     mode_paiement = models.CharField(max_length=20, choices=MODE_PAIEMENT_CHOICES, default='bancaire')
+    compte_bancaire = models.ForeignKey(
+        'utilisateurs.CompteBancaire',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='paiements_extra',
+        verbose_name='Compte bancaire',
+        help_text="Compte bancaire sur lequel le paiement a été effectué (si mode bancaire)"
+    )
     date_paiement = models.DateTimeField(auto_now_add=True)
     valide = models.BooleanField(default=False)
     reference_paiement = models.CharField(max_length=100, blank=True, null=True, help_text="Référence du paiement (numéro de transaction, etc.)")

@@ -809,6 +809,15 @@ class PaiementAnneeDES(models.Model):
         blank=True,
         verbose_name="Mode de paiement"
     )
+    compte_bancaire = models.ForeignKey(
+        'utilisateurs.CompteBancaire',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='paiements_annee_des',
+        verbose_name='Compte bancaire',
+        help_text="Compte bancaire sur lequel le paiement a été effectué (si mode bancaire)"
+    )
     statut = models.CharField(
         max_length=30,
         choices=STATUTS_PAIEMENT,

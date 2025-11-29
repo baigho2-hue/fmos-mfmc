@@ -199,7 +199,7 @@ class PaiementAnneeDESAdmin(admin.ModelAdmin):
         }),
         ('Paiement', {
             'fields': (
-                'montant', 'mode_paiement', 'reference_paiement',
+                'montant', 'mode_paiement', 'compte_bancaire', 'reference_paiement',
                 'preuve_paiement', 'date_paiement'
             )
         }),
