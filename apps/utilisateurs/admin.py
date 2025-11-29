@@ -376,7 +376,7 @@ class CompetenceJalonAdmin(admin.ModelAdmin):
 
 @admin.register(Cours)
 class CoursAdmin(admin.ModelAdmin):
-    list_display = ('titre', 'code', 'classe', 'enseignant', 'date_debut', 'date_fin', 'volume_horaire', 'ordre', 'actif', 'nombre_lecons')
+    list_display = ('titre', 'code', 'classe', 'enseignant', 'date_debut', 'date_fin', 'volume_horaire', 'ordre', 'actif', 'nombre_lecons', 'nombre_jalons')
     list_filter = ('classe', 'actif', 'date_debut', 'classe__formation')
     search_fields = ('titre', 'code', 'description', 'classe__nom')
     date_hierarchy = 'date_debut'
@@ -397,14 +397,45 @@ class CoursAdmin(admin.ModelAdmin):
         }),
         ('Pédagogie', {
             'fields': ('description_methodes', 'objectifs_apprentissage', 'competences', 'jalons_competence', 'methodes_pedagogiques'),
-            'classes': ('collapse',)
+            'description': (
+                '⚠️ IMPORTANT pour associer les jalons : '
+                '1) Sélectionnez d\'abord la CLASSE du cours dans "Informations générales", '
+                '2) SAUVEGARDEZ le cours, '
+                '3) Puis MODIFIEZ le cours pour voir les jalons filtrés par classe dans cette section. '
+                'Les jalons affichés correspondent uniquement à la classe sélectionnée.'
+            )
         }),
     )
+    
+    def get_form(self, request, obj=None, **kwargs):
+        """Personnalise le formulaire pour filtrer les jalons par classe"""
+        form = super().get_form(request, obj, **kwargs)
+        
+        # Filtrer les jalons en fonction de la classe du cours
+        if obj and obj.classe:
+            # Pour un cours existant, filtrer par sa classe
+            form.base_fields['jalons_competence'].queryset = CompetenceJalon.objects.filter(
+                classe=obj.classe,
+                actif=True
+            ).select_related('competence', 'classe').order_by('competence__libelle', 'ordre', 'titre')
+        else:
+            # Pour un nouveau cours, afficher tous les jalons actifs
+            # L'utilisateur devra sélectionner la classe d'abord, puis sauvegarder pour voir les jalons filtrés
+            form.base_fields['jalons_competence'].queryset = CompetenceJalon.objects.filter(
+                actif=True
+            ).select_related('competence', 'classe').order_by('competence__libelle', 'ordre', 'titre')
+        
+        return form
     
     def nombre_lecons(self, obj):
         """Affiche le nombre de leçons dans ce cours"""
         return obj.lecons.filter(actif=True).count()
     nombre_lecons.short_description = 'Leçons'
+    
+    def nombre_jalons(self, obj):
+        """Affiche le nombre de jalons associés à ce cours"""
+        return obj.jalons_competence.count()
+    nombre_jalons.short_description = 'Jalons'
 
 
 @admin.register(Lecon)
