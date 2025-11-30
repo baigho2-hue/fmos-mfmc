@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Évaluations à vérifier - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Évaluations de stage à vérifier</h1>
+    
+    {% if evaluations %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Étudiant</th>
+                    <th>Classe</th>
+                    <th>Structure</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Enseignant</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for evaluation in evaluations %}
+                <tr>
+                    <td>{{ evaluation.etudiant.get_full_name|default:evaluation.etudiant.username }}</td>
+                    <td>{{ evaluation.classe.nom }}</td>
+                    <td>{{ evaluation.get_structure_display }}</td>
+                    <td>{{ evaluation.get_type_evaluation_display }}</td>
+                    <td>{{ evaluation.date_evaluation|date:"d/m/Y" }}</td>
+                    <td>{{ evaluation.get_superviseur_display }}</td>
+                    <td>
+                        <span class="badge 
+                            {% if evaluation.statut == 'soumis' %}badge-warning
+                            {% elif evaluation.statut == 'rejete' %}badge-danger
+                            {% else %}badge-secondary{% endif %}">
+                            {{ evaluation.get_statut_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'evaluations_stage:verifier_evaluation_stage' evaluation.id %}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-check"></i> Vérifier
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <p>Aucune évaluation à vérifier pour le moment.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

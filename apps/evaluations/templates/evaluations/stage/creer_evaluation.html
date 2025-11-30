@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Créer une évaluation de stage - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Créer une évaluation de stage</h1>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Informations générales</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.classe.id_for_label }}">Classe *</label>
+                            {{ form.classe }}
+                            {% if form.classe.errors %}
+                                <div class="text-danger">{{ form.classe.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.etudiant.id_for_label }}">Étudiant *</label>
+                            {{ form.etudiant }}
+                            {% if form.etudiant.errors %}
+                                <div class="text-danger">{{ form.etudiant.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.structure_stage.id_for_label }}">Structure de stage</label>
+                            {{ form.structure_stage }}
+                            {% if form.structure_stage.errors %}
+                                <div class="text-danger">{{ form.structure_stage.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.type_evaluation.id_for_label }}">Type d'évaluation *</label>
+                            {{ form.type_evaluation }}
+                            {% if form.type_evaluation.errors %}
+                                <div class="text-danger">{{ form.type_evaluation.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.date_evaluation.id_for_label }}">Date d'évaluation *</label>
+                            {{ form.date_evaluation }}
+                            {% if form.date_evaluation.errors %}
+                                <div class="text-danger">{{ form.date_evaluation.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.nom_superviseur.id_for_label }}">Nom du superviseur</label>
+                            {{ form.nom_superviseur }}
+                            <small class="form-text text-muted">{{ form.nom_superviseur.help_text }}</small>
+                            {% if form.nom_superviseur.errors %}
+                                <div class="text-danger">{{ form.nom_superviseur.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Créer l'évaluation</button>
+            <a href="{% url 'evaluations_stage:liste_evaluations_stage' %}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+
+<script>
+// JavaScript pour charger les étudiants selon la classe sélectionnée
+document.getElementById('id_classe').addEventListener('change', function() {
+    const classeId = this.value;
+    const etudiantSelect = document.getElementById('id_etudiant');
+    
+    if (classeId) {
+        fetch(`{% url 'evaluations_stage:get_etudiants_classe' %}?classe_id=${classeId}`)
+            .then(response => response.json())
+            .then(data => {
+                etudiantSelect.innerHTML = '<option value="">---------</option>';
+                data.etudiants.forEach(etudiant => {
+                    const option = document.createElement('option');
+                    option.value = etudiant.id;
+                    option.textContent = etudiant.nom;
+                    etudiantSelect.appendChild(option);
+                });
+            });
+    }
+});
+</script>
+{% endblock %}
+

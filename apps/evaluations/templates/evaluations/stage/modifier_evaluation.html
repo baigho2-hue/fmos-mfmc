@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Modifier l'évaluation de stage - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Modifier l'évaluation de stage</h1>
+        <div>
+            <a href="{% url 'evaluations_stage:telecharger_evaluation_stage_pdf' evaluation.id %}" class="btn btn-info">
+                <i class="fas fa-download"></i> Télécharger PDF
+            </a>
+            <a href="{% url 'evaluations_stage:liste_evaluations_stage' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Informations générales -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Informations générales</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.etudiant.id_for_label }}">Étudiant</label>
+                            {{ form.etudiant }}
+                            {% if form.etudiant.errors %}
+                                <div class="text-danger">{{ form.etudiant.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.classe.id_for_label }}">Classe</label>
+                            {{ form.classe }}
+                            {% if form.classe.errors %}
+                                <div class="text-danger">{{ form.classe.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.structure_stage.id_for_label }}">Structure de stage</label>
+                            {{ form.structure_stage }}
+                            {% if form.structure_stage.errors %}
+                                <div class="text-danger">{{ form.structure_stage.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.type_evaluation.id_for_label }}">Type d'évaluation</label>
+                            {{ form.type_evaluation }}
+                            {% if form.type_evaluation.errors %}
+                                <div class="text-danger">{{ form.type_evaluation.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.date_evaluation.id_for_label }}">Date d'évaluation</label>
+                            {{ form.date_evaluation }}
+                            {% if form.date_evaluation.errors %}
+                                <div class="text-danger">{{ form.date_evaluation.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.nom_superviseur.id_for_label }}">Nom du superviseur</label>
+                            {{ form.nom_superviseur }}
+                            {% if form.nom_superviseur.errors %}
+                                <div class="text-danger">{{ form.nom_superviseur.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Évaluations par compétence et jalons -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Évaluations des jalons par compétence</h3>
+            </div>
+            <div class="card-body">
+                {{ formset.management_form }}
+                
+                {% for competence, eval_jalons in competences_data.items %}
+                <div class="competence-section mb-4">
+                    <h4 class="text-primary">
+                        <strong>{{ competence.get_domaine_display }}:</strong> {{ competence.libelle }}
+                    </h4>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th style="width: 40%;">Jalon</th>
+                                    <th style="width: 20%;">Niveau</th>
+                                    <th style="width: 40%;">Commentaire</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for eval_jalon in eval_jalons %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ eval_jalon.jalon.titre }}</strong>
+                                        <br>
+                                        <small class="text-muted">{{ eval_jalon.jalon.description|truncatewords:15 }}</small>
+                                    </td>
+                                    <td>
+                                        {% for form in formset %}
+                                            {% if form.instance.id == eval_jalon.id %}
+                                                {{ form.id }}
+                                                {{ form.jalon }}
+                                                {{ form.ordre }}
+                                                {{ form.niveau }}
+                                                {% if form.niveau.errors %}
+                                                    <div class="text-danger">{{ form.niveau.errors }}</div>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {% for form in formset %}
+                                            {% if form.instance.id == eval_jalon.id %}
+                                                {{ form.commentaire }}
+                                                {% if form.commentaire.errors %}
+                                                    <div class="text-danger">{{ form.commentaire.errors }}</div>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Commentaire général et signatures -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Commentaire général et signatures</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="{{ form.commentaire_general.id_for_label }}">Commentaire général</label>
+                    {{ form.commentaire_general }}
+                    {% if form.commentaire_general.errors %}
+                        <div class="text-danger">{{ form.commentaire_general.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.signature_responsable.id_for_label }}">Signature du responsable</label>
+                            {{ form.signature_responsable }}
+                            {% if evaluation.signature_responsable %}
+                                <div class="mt-2">
+                                    <img src="{{ evaluation.signature_responsable.url }}" alt="Signature" style="max-height: 100px;">
+                                </div>
+                            {% endif %}
+                            {% if form.signature_responsable.errors %}
+                                <div class="text-danger">{{ form.signature_responsable.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.cachet_structure.id_for_label }}">Cachet de la structure</label>
+                            {{ form.cachet_structure }}
+                            {% if evaluation.cachet_structure %}
+                                <div class="mt-2">
+                                    <img src="{{ evaluation.cachet_structure.url }}" alt="Cachet" style="max-height: 100px;">
+                                </div>
+                            {% endif %}
+                            {% if form.cachet_structure.errors %}
+                                <div class="text-danger">{{ form.cachet_structure.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-group">
+            <button type="submit" name="action" value="enregistrer" class="btn btn-primary">
+                <i class="fas fa-save"></i> Enregistrer
+            </button>
+            {% if evaluation.statut == 'brouillon' %}
+            <button type="submit" name="action" value="soumettre" class="btn btn-success">
+                <i class="fas fa-paper-plane"></i> Soumettre pour vérification
+            </button>
+            {% endif %}
+            <a href="{% url 'evaluations_stage:liste_evaluations_stage' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Annuler
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

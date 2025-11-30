@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mes évaluations de stage - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Mes évaluations de stage</h1>
+        <a href="{% url 'evaluations_stage:creer_evaluation_stage' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Créer une évaluation
+        </a>
+    </div>
+
+    {% if evaluations %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Étudiant</th>
+                    <th>Classe</th>
+                    <th>Structure</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for evaluation in evaluations %}
+                <tr>
+                    <td>{{ evaluation.etudiant.get_full_name|default:evaluation.etudiant.username }}</td>
+                    <td>{{ evaluation.classe.nom }}</td>
+                    <td>{{ evaluation.get_structure_display }}</td>
+                    <td>{{ evaluation.get_type_evaluation_display }}</td>
+                    <td>{{ evaluation.date_evaluation|date:"d/m/Y" }}</td>
+                    <td>
+                        <span class="badge 
+                            {% if evaluation.statut == 'disponible' %}badge-success
+                            {% elif evaluation.statut == 'verifie' %}badge-info
+                            {% elif evaluation.statut == 'soumis' %}badge-warning
+                            {% elif evaluation.statut == 'rejete' %}badge-danger
+                            {% else %}badge-secondary{% endif %}">
+                            {{ evaluation.get_statut_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'evaluations_stage:modifier_evaluation_stage' evaluation.id %}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <a href="{% url 'evaluations_stage:telecharger_evaluation_stage_pdf' evaluation.id %}" class="btn btn-sm btn-info">
+                            <i class="fas fa-download"></i> PDF
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <p>Aucune évaluation de stage créée pour le moment.</p>
+        <a href="{% url 'evaluations_stage:creer_evaluation_stage' %}" class="btn btn-primary">Créer votre première évaluation</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

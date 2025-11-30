@@ -140,6 +140,9 @@ urlpatterns = [
     path('enseignant/upload-cours/', views_enseignant.upload_cours_enseignant, name='upload_cours_enseignant'),
     path('enseignant/upload-lecon/', views_enseignant.upload_lecon_enseignant, name='upload_lecon_enseignant'),
     
+    # Évaluations de stage basées sur les jalons
+    path('evaluations/stage/', include('apps.evaluations.urls_stage')),
+    
     # API pour l'admin Django - Récupérer les cours d'une classe
     path('admin/utilisateurs/cours/get-cours-by-classe/', views_administration.get_cours_by_classe_json, name='get_cours_by_classe_json'),
     

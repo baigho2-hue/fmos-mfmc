@@ -174,3 +174,60 @@ class ParticipationSessionAdmin(admin.ModelAdmin):
     list_filter = ('soumise', 'en_cours', 'date_connexion')
     search_fields = ('etudiant__username', 'session_evaluation__titre')
     date_hierarchy = 'date_connexion'
+
+
+# Admin pour les évaluations de stage
+from .models_stage import EvaluationStage, EvaluationJalonStage
+
+
+class EvaluationJalonStageInline(admin.TabularInline):
+    model = EvaluationJalonStage
+    extra = 0
+    fields = ('jalon', 'niveau', 'commentaire', 'ordre')
+    readonly_fields = ('jalon',)
+    can_delete = False
+
+
+@admin.register(EvaluationStage)
+class EvaluationStageAdmin(admin.ModelAdmin):
+    list_display = ('etudiant', 'classe', 'get_structure_display', 'type_evaluation', 'date_evaluation', 'statut', 'enseignant')
+    list_filter = ('statut', 'type_evaluation', 'classe', 'date_evaluation')
+    search_fields = ('etudiant__username', 'etudiant__email', 'nom_superviseur', 'commentaire_general')
+    date_hierarchy = 'date_evaluation'
+    readonly_fields = ('date_creation', 'date_modification', 'verifie_par', 'date_verification')
+    inlines = [EvaluationJalonStageInline]
+    
+    fieldsets = (
+        ('Informations générales', {
+            'fields': ('etudiant', 'classe', 'stage_rotation', 'structure_stage')
+        }),
+        ('Enseignant/Superviseur', {
+            'fields': ('enseignant', 'nom_superviseur')
+        }),
+        ('Évaluation', {
+            'fields': ('type_evaluation', 'date_evaluation', 'statut')
+        }),
+        ('Commentaires et signatures', {
+            'fields': ('commentaire_general', 'signature_responsable', 'cachet_structure')
+        }),
+        ('Vérification', {
+            'fields': ('verifie_par', 'date_verification', 'commentaire_verification'),
+            'classes': ('collapse',)
+        }),
+        ('Métadonnées', {
+            'fields': ('date_creation', 'date_modification'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_structure_display(self, obj):
+        return obj.get_structure_display()
+    get_structure_display.short_description = 'Structure de stage'
+
+
+@admin.register(EvaluationJalonStage)
+class EvaluationJalonStageAdmin(admin.ModelAdmin):
+    list_display = ('evaluation_stage', 'jalon', 'niveau', 'ordre')
+    list_filter = ('niveau', 'jalon__competence', 'jalon__classe')
+    search_fields = ('evaluation_stage__etudiant__username', 'jalon__titre', 'commentaire')
+    ordering = ('evaluation_stage', 'ordre', 'jalon__competence__libelle')

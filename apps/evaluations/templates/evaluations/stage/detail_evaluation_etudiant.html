@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Détail de l'évaluation de stage - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Évaluation de stage</h1>
+        <a href="{% url 'evaluations_stage:telecharger_evaluation_stage_pdf' evaluation.id %}" class="btn btn-info">
+            <i class="fas fa-download"></i> Télécharger PDF
+        </a>
+    </div>
+
+    <!-- Informations générales -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Informations générales</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Étudiant:</strong> {{ evaluation.etudiant.get_full_name|default:evaluation.etudiant.username }}</p>
+                    <p><strong>Classe:</strong> {{ evaluation.classe.nom }}</p>
+                    <p><strong>Structure de stage:</strong> {{ evaluation.get_structure_display }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Superviseur:</strong> {{ evaluation.get_superviseur_display }}</p>
+                    <p><strong>Type d'évaluation:</strong> {{ evaluation.get_type_evaluation_display }}</p>
+                    <p><strong>Date:</strong> {{ evaluation.date_evaluation|date:"d/m/Y" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Évaluations par compétence -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Évaluations des jalons par compétence</h3>
+        </div>
+        <div class="card-body">
+            {% for competence, eval_jalons in competences_data.items %}
+            <div class="competence-section mb-4">
+                <h4 class="text-primary">
+                    <strong>{{ competence.get_domaine_display }}:</strong> {{ competence.libelle }}
+                </h4>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th style="width: 40%;">Jalon</th>
+                                <th style="width: 20%;">Niveau</th>
+                                <th style="width: 40%;">Commentaire</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for eval_jalon in eval_jalons %}
+                            <tr>
+                                <td>
+                                    <strong>{{ eval_jalon.jalon.titre }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ eval_jalon.jalon.description|truncatewords:15 }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge 
+                                        {% if eval_jalon.niveau == '1' %}badge-danger
+                                        {% elif eval_jalon.niveau == '2' %}badge-warning
+                                        {% elif eval_jalon.niveau == '3' %}badge-info
+                                        {% elif eval_jalon.niveau == '4' %}badge-success
+                                        {% else %}badge-secondary{% endif %}">
+                                        {{ eval_jalon.get_niveau_display|default:"Non évalué" }}
+                                    </span>
+                                </td>
+                                <td>{{ eval_jalon.commentaire|default:"-" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Commentaire général -->
+    {% if evaluation.commentaire_general %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Commentaire général</h3>
+        </div>
+        <div class="card-body">
+            <p>{{ evaluation.commentaire_general }}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Signatures -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Signatures</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    {% if evaluation.signature_responsable %}
+                    <p><strong>Signature du responsable:</strong></p>
+                    <img src="{{ evaluation.signature_responsable.url }}" alt="Signature" style="max-height: 150px;">
+                    {% else %}
+                    <p class="text-muted">Signature non disponible</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    {% if evaluation.cachet_structure %}
+                    <p><strong>Cachet de la structure:</strong></p>
+                    <img src="{{ evaluation.cachet_structure.url }}" alt="Cachet" style="max-height: 150px;">
+                    {% else %}
+                    <p class="text-muted">Cachet non disponible</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'evaluations_stage:mes_evaluations_stage_etudiant' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+</div>
+{% endblock %}
+

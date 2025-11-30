@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Supprimer l'évaluation de stage - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h3>Supprimer l'évaluation de stage</h3>
+        </div>
+        <div class="card-body">
+            <p>Êtes-vous sûr de vouloir supprimer cette évaluation de stage ?</p>
+            
+            <div class="alert alert-warning">
+                <strong>Étudiant:</strong> {{ evaluation.etudiant.get_full_name|default:evaluation.etudiant.username }}<br>
+                <strong>Classe:</strong> {{ evaluation.classe.nom }}<br>
+                <strong>Date:</strong> {{ evaluation.date_evaluation|date:"d/m/Y" }}<br>
+                <strong>Statut:</strong> {{ evaluation.get_statut_display }}
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Oui, supprimer
+                </button>
+                <a href="{% url 'evaluations_stage:liste_evaluations_stage' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
