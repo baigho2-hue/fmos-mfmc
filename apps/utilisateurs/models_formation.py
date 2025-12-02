@@ -121,7 +121,9 @@ class Classe(models.Model):
         unique_together = [['formation', 'annee', 'code']]
     
     def __str__(self):
-        return f"{self.nom} ({self.formation.nom})"
+        if self.formation:
+            return f"{self.nom} ({self.formation.nom})"
+        return self.nom or "Classe sans formation"
 
 
 class ObjectifApprentissage(models.Model):

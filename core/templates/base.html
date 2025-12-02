@@ -66,59 +66,61 @@
       box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4) !important;
       border-color: #343a40 !important;
     }
+    /* Header USTTB - Design moderne et attractif */
     .usttb-header {
-      background: linear-gradient(135deg, #87ceeb 0%, #6bb6ff 100%) !important;
-      color: #333333 !important;
-      padding: 1.5rem 0 !important;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2) !important;
-      border-bottom: 4px solid #4a9eff !important;
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%) !important;
+      color: #ffffff !important;
+      padding: 1.8rem 2rem !important;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+      border-bottom: 3px solid #60a5fa !important;
       position: relative !important;
+      overflow: hidden !important;
+    }
+    .usttb-header::before {
+      content: '' !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%) !important;
+      pointer-events: none !important;
     }
     .usttb-header-content {
-      max-width: 100% !important;
-      margin: 0 !important;
+      max-width: 1400px !important;
+      margin: 0 auto !important;
       display: flex !important;
       align-items: center !important;
-      justify-content: space-between !important;
+      justify-content: center !important;
       width: 100% !important;
-      gap: 1rem !important;
-      padding: 0 !important;
+      gap: 2rem !important;
+      padding: 0 1rem !important;
+      position: relative !important;
+      z-index: 1 !important;
     }
     .usttb-logo-left {
       flex-shrink: 0 !important;
       display: flex !important;
       align-items: center !important;
-      justify-content: flex-start !important;
-      margin-left: 0 !important;
-      padding-left: 0 !important;
-      position: absolute !important;
-      left: 0 !important;
-    }
-    .usttb-logo-right {
-      flex-shrink: 0 !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: flex-end !important;
-      margin-right: 0 !important;
-      padding-right: 0 !important;
-      position: absolute !important;
-      right: 0 !important;
+      justify-content: center !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
     .usttb-logo-circle {
-      height: 100px !important;
-      width: 100px !important;
+      height: 90px !important;
+      width: 90px !important;
       object-fit: cover !important;
       background-color: rgba(255, 255, 255, 0.95) !important;
-      padding: 4px !important;
+      padding: 6px !important;
       border-radius: 50% !important;
-      transition: all 0.3s ease !important;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
       display: block !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 0 0 3px rgba(255, 255, 255, 0.2) !important;
+      border: 2px solid rgba(255, 255, 255, 0.3) !important;
     }
     .usttb-logo-circle:hover {
-      opacity: 0.95 !important;
-      transform: scale(1.05) !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+      transform: scale(1.1) rotate(5deg) !important;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), 0 0 0 4px rgba(255, 255, 255, 0.3) !important;
     }
     .usttb-text-container {
       text-align: center !important;
@@ -128,58 +130,146 @@
       flex-direction: column !important;
       align-items: center !important;
       justify-content: center !important;
-      margin: 0 auto !important;
-    }
-    @media screen and (max-width: 768px) {
-      .usttb-header-content {
-        flex-direction: column !important;
-        justify-content: center !important;
-      }
-      .usttb-logo-left,
-      .usttb-logo-right {
-        order: -1 !important;
-      }
-      .usttb-logo-right {
-        order: 1 !important;
-      }
-      .usttb-text-container {
-        order: 0 !important;
-        width: 100% !important;
-      }
+      gap: 0.5rem !important;
     }
     .usttb-title {
-      color: #1e3a8a !important;
-      font-size: 1.5rem !important;
-      font-weight: 700 !important;
-      margin: 0 auto 0.5rem auto !important;
-      padding: 0.75rem 1.5rem !important;
+      color: #ffffff !important;
+      font-size: 1.4rem !important;
+      font-weight: 800 !important;
+      margin: 0 !important;
+      padding: 0.8rem 2rem !important;
       text-align: center !important;
       display: block !important;
-      border: 4px solid #4a9eff !important;
-      border-radius: 8px !important;
-      max-width: fit-content !important;
-      width: auto !important;
-      background-color: #ffffff !important;
-      background: #ffffff !important;
+      border-radius: 12px !important;
+      max-width: 100% !important;
+      background: rgba(255, 255, 255, 0.15) !important;
+      backdrop-filter: blur(10px) !important;
+      border: 2px solid rgba(255, 255, 255, 0.3) !important;
       text-transform: uppercase !important;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+      letter-spacing: 0.5px !important;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+      transition: all 0.3s ease !important;
+    }
+    .usttb-title:hover {
+      background: rgba(255, 255, 255, 0.2) !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
     }
     .usttb-subtitle {
-      color: #1e3a8a !important;
-      font-size: 1rem !important;
-      margin: 0.5rem auto 0 auto !important;
-      padding: 0.5rem 1rem !important;
-      font-weight: 700 !important;
+      color: #e0e7ff !important;
+      font-size: 0.95rem !important;
+      margin: 0 !important;
+      padding: 0.6rem 1.5rem !important;
+      font-weight: 600 !important;
       text-align: center !important;
       display: block !important;
-      border: 4px solid #4a9eff !important;
-      border-radius: 8px !important;
-      max-width: fit-content !important;
-      width: auto !important;
-      background-color: #ffffff !important;
-      background: #ffffff !important;
+      border-radius: 10px !important;
+      max-width: 100% !important;
+      background: rgba(255, 255, 255, 0.1) !important;
+      backdrop-filter: blur(8px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
       text-transform: uppercase !important;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+      letter-spacing: 0.3px !important;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15) !important;
+    }
+    @media screen and (max-width: 768px) {
+      .usttb-header {
+        padding: 1.2rem 1rem !important;
+      }
+      .usttb-header-content {
+        flex-direction: column !important;
+        gap: 1rem !important;
+      }
+      .usttb-logo-left {
+        order: -1 !important;
+      }
+      .usttb-logo-circle {
+        height: 70px !important;
+        width: 70px !important;
+      }
+      .usttb-title {
+        font-size: 1rem !important;
+        padding: 0.6rem 1rem !important;
+      }
+      .usttb-subtitle {
+        font-size: 0.8rem !important;
+        padding: 0.5rem 1rem !important;
+      }
+    }
+    
+    /* Header principal - Design moderne */
+    .main-header {
+      background: linear-gradient(135deg, #005a9c 0%, #0066b3 50%, #0073cc 100%) !important;
+      color: #ffffff !important;
+      padding: 1rem 2rem !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+      position: relative !important;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    .main-header::after {
+      content: '' !important;
+      position: absolute !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      height: 3px !important;
+      background: linear-gradient(90deg, #60a5fa 0%, #3b82f6 50%, #60a5fa 100%) !important;
+      background-size: 200% 100% !important;
+      animation: shimmer 3s ease-in-out infinite !important;
+    }
+    @keyframes shimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    .header-brand {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0.2rem !important;
+    }
+    .brand-title {
+      font-size: 1.8rem !important;
+      font-weight: 900 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      color: #ffffff !important;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+      letter-spacing: 1px !important;
+    }
+    .brand-accent {
+      color: #60a5fa !important;
+      text-shadow: 0 0 10px rgba(96, 165, 250, 0.5) !important;
+    }
+    .brand-subtitle {
+      font-size: 0.75rem !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      color: rgba(255, 255, 255, 0.85) !important;
+      font-weight: 500 !important;
+      letter-spacing: 0.5px !important;
+      text-transform: uppercase !important;
+    }
+    .header-logo-container {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0.5rem !important;
+      background: rgba(255, 255, 255, 0.1) !important;
+      border-radius: 8px !important;
+      transition: all 0.3s ease !important;
+    }
+    .header-logo-container:hover {
+      background: rgba(255, 255, 255, 0.2) !important;
+      transform: scale(1.05) !important;
+    }
+    .header-logo {
+      max-height: 50px !important;
+      max-width: 120px !important;
+      object-fit: contain !important;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
     }
   </style>
   {% block extra_css %}{% endblock %}
@@ -195,147 +285,18 @@
         <h1 class="usttb-title">Université des Sciences, des Techniques et des Technologies de Bamako - Mali</h1>
         <p class="usttb-subtitle">Faculté de Médecine et d'Odonto-Stomatologie (FMOS) - Médecine de Famille et Médecine Communautaire (MFMC)</p>
       </div>
-      <div class="usttb-logo-right">
-        <img src="{% static 'images/logo USTTB.png' %}" alt="Logo USTTB" class="usttb-logo-circle" onerror="this.style.display='none'">
-      </div>
     </div>
   </div>
 
-  <header>
+  <header class="main-header">
     <div class="header-left">
-      <h1>FMOS MFMC</h1>
+      <div class="header-brand">
+        <h1 class="brand-title">FMOS <span class="brand-accent">MFMC</span></h1>
+        <p class="brand-subtitle">Formation Médicale Continue</p>
+      </div>
     </div>
     <div class="header-center">
-      <nav class="main-menu" role="navigation" aria-label="Menu principal">
-      <ul class="menu">
-        {% if not user.is_authenticated %}
-        <li><a href="{% url 'accueil' %}">Accueil</a></li>
-        <li><a href="{% url 'activites' %}">Activités</a></li>
-        <li class="has-submenu">
-          <a href="{% url 'formations' %}">Formations</a>
-          <ul class="submenu">
-            <li>
-              <a href="{% url 'formations' %}#certifiantes">Certifiantes</a>
-              <ul class="subsubmenu">
-                <li><a href="{% url 'programme_desmfmc' %}">DESMFMC</a></li>
-                <li><a href="{% url 'programme_sante_communautaire' %}">Santé Communautaire</a></li>
-                <li><a href="{% url 'programme_recherche' %}">Recherche</a></li>
-                <li><a href="{% url 'programme_logiciels_analyse' %}">Logiciels d'analyse</a></li>
-                <li><a href="{% url 'echographie_base' %}">Échographie de base</a></li>
-                <li><a href="{% url 'programme_pedagogie_sante' %}">Pédagogie en santé</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="{% url 'formations' %}#non-certifiantes">Non Certifiantes</a>
-              <ul class="subsubmenu">
-                <li><a href="{% url 'cours_med6' %}">Cours Médecine 6</a></li>
-                <li><a href="{% url 'habilites_cliniques' %}">Habilités Cliniques</a></li>
-                <li><a href="{% url 'logiciels_analyse_noncertif' %}">Logiciels d'analyse</a></li>
-                <li><a href="{% url 'base_pedagogie' %}">Base en pédagogie</a></li>
-                <li><a href="{% url 'autres_programmes' %}">Autres</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        {% endif %}
-        {% if not user.is_superuser %}
-        <li class="has-submenu">
-          <a href="{% url 'programmes' %}">Programmes</a>
-          <ul class="submenu">
-            <li><a href="{% url 'programme_desmfmc' %}">Programme DES</a></li>
-            <li><a href="{% url 'programme_sante_communautaire' %}">Programme Santé Communautaire</a></li>
-            <li><a href="{% url 'programme_recherche' %}">Programme Recherche</a></li>
-            <li><a href="{% url 'programme_logiciels_analyse' %}">Programme Logiciels d'Analyse</a></li>
-            <li><a href="{% url 'programme_pedagogie_sante' %}">Programme Pédagogie</a></li>
-          </ul>
-        </li>
-        {% endif %}
-        {% if not user.is_authenticated %}
-        <li class="has-submenu">
-          <a href="{% url 'cours' %}">Ma page</a>
-          <ul class="submenu">
-            <li><a href="{% url 'login' %}?next=dashboard_enseignant">Enseignants</a></li>
-            <li><a href="{% url 'login' %}?next=dashboard_etudiant">Étudiants</a></li>
-          </ul>
-        </li>
-        {% endif %}
-              {% if user.is_authenticated and not user.is_superuser %}
-                <li>
-                  <a href="{% url 'mes_formations' %}">📚 Mes Formations</a>
-                </li>
-              {% endif %}
-                {% if user.est_membre_coordination %}
-                <li class="has-submenu">
-                  <a href="{% url 'dashboard_administration' %}">Administration</a>
-                  <ul class="submenu">
-                    <li class="menu-header"><a href="{% url 'dashboard_administration' %}">📊 Tableau de bord</a></li>
-                    <li class="menu-separator"></li>
-                    <li class="menu-category">📅 Planning & Agenda</li>
-                    <li><a href="{% url 'agenda_administration' %}">Agenda</a></li>
-                    <li><a href="{% url 'alertes_agenda' %}">Alertes</a></li>
-                    <li class="menu-separator"></li>
-                    <li class="menu-category">👥 Gestion des personnes</li>
-                    <li><a href="{% url 'gestion_enseignants' %}">Gestion enseignants</a></li>
-                    <li><a href="{% url 'gestion_inscriptions' %}">Gestion inscriptions</a></li>
-                    <li class="menu-separator"></li>
-                    <li class="menu-category">📚 Pédagogie & Évaluations</li>
-                    <li><a href="{% url 'notes_classes' %}">Notes des classes</a></li>
-                    <li><a href="{% url 'resultats_evaluations' %}">Résultats évaluations</a></li>
-                    <li><a href="{% url 'upload_cours_lecons' %}">Téléverser cours/leçons</a></li>
-                    <li class="menu-separator"></li>
-                    <li class="menu-category">🏥 Stages & Évaluations</li>
-                    <li><a href="{% url 'gestion_stages_cscom' %}">Stages CSCom-U</a></li>
-                    <li><a href="{% url 'evaluations_stages_coordination' %}">Évaluations de stages</a></li>
-                    <li class="menu-separator"></li>
-                    <li class="menu-category">⚙️ Configuration</li>
-                    <li><a href="{% url 'gestion_signature_coordination' %}">Signature coordination</a></li>
-                  </ul>
-                </li>
-                {% endif %}
-                {% if user.is_superuser %}
-                <li>
-                  <a href="{% url 'admin:index' %}" target="_blank">Admin</a>
-                </li>
-                {% endif %}
-                {% if user.is_superuser or user.email_verifie and user.est_etudiant %}
-                <li>
-                  <a href="{% url 'dashboard_etudiant' %}">Espace Étudiant</a>
-                </li>
-                {% endif %}
-                {% if user.is_authenticated %}
-                    {% if user.is_superuser or user.email_verifie and user.est_enseignant %}
-                    <li class="has-submenu">
-                      <a href="{% url 'dashboard_enseignant' %}">Espace Enseignant</a>
-                      <ul class="submenu">
-                        <li><a href="{% url 'dashboard_enseignant' %}">Tableau de bord</a></li>
-                        {% if user.est_enseignant and not user.is_superuser %}
-                        <li><a href="{% url 'upload_cours_lecons_enseignant' %}">📤 Téléverser cours/leçons</a></li>
-                        {% endif %}
-                        {% if user.est_enseignant %}
-                        <li><a href="{% url 'evaluations_stage:liste_evaluations_stage' %}">📝 Évaluations de stage</a></li>
-                        {% endif %}
-                        {% if user.est_superviseur_cec %}
-                        <li><a href="{% url 'liste_evaluations_superviseur' %}">📋 Évaluations de stages</a></li>
-                        {% endif %}
-                        {% if user.est_enseignant %}
-                        <li><a href="{% url 'activer_2fa' %}">🔐 Double authentification</a></li>
-                        {% endif %}
-                      </ul>
-                    </li>
-                    {% endif %}
-                {% endif %}
-                {% if user.is_superuser or user.email_verifie and user.est_etudiant or user.email_verifie and user.est_enseignant %}
-                <li>
-                  <a href="{% if user.est_etudiant %}{% url 'dashboard_etudiant' %}{% elif user.est_enseignant %}{% url 'dashboard_enseignant' %}{% else %}{% url 'dashboard_enseignant' %}{% endif %}">
-                    Mon espace
-                  </a>
-                </li>
-                {% endif %}
-              {% if user.is_authenticated %}
-              <li><a href="{% url 'logout' %}">Déconnexion</a></li>
-              {% endif %}
-      </ul>
-      </nav>
+      {% include 'includes/navigation_menu.html' %}
     </div>
     <div class="header-right">
       {% with request.resolver_match.url_name as current_url %}
@@ -352,7 +313,9 @@
         {% endif %}
       {% endif %}
       {% endwith %}
-      <img src="{% static 'images/logo_adobe_express.png' %}" alt="Logo FMOS" class="header-logo" onerror="this.style.display='none'">
+      <div class="header-logo-container">
+        <img src="{% static 'images/logo_adobe_express.png' %}" alt="Logo FMOS" class="header-logo" onerror="this.style.display='none'">
+      </div>
     </div>
     <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
       <span class="hamburger-line"></span>

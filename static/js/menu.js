@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const menuItemsWithSubmenu = mainMenu.querySelectorAll('.has-submenu > a');
         menuItemsWithSubmenu.forEach(item => {
             item.addEventListener('click', function(e) {
-                // Vérifier si on est sur mobile (largeur <= 768px)
-                if (window.innerWidth <= 768) {
+                // Vérifier si on est sur tablette ou mobile (largeur <= 1024px)
+                if (window.innerWidth <= 1024) {
                     e.preventDefault();
                     const parentLi = this.parentElement;
                     const submenu = parentLi.querySelector('.submenu');
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (subsubmenu) {
                 const link = item.querySelector('a');
                 link.addEventListener('click', function(e) {
-                    if (window.innerWidth <= 768) {
+                    if (window.innerWidth <= 1024) {
                         e.preventDefault();
                         item.classList.toggle('active');
                     }
@@ -56,8 +56,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const finalLinks = mainMenu.querySelectorAll('a');
         finalLinks.forEach(link => {
             link.addEventListener('click', function(e) {
-                // Vérifier si on est sur mobile et si c'est un lien final (pas un parent de sous-menu)
-                if (window.innerWidth <= 768) {
+                // Vérifier si on est sur tablette ou mobile et si c'est un lien final (pas un parent de sous-menu)
+                if (window.innerWidth <= 1024) {
                     const parentLi = this.closest('li');
                     const hasSubmenu = parentLi && parentLi.querySelector('.submenu, .subsubmenu');
                     
@@ -74,9 +74,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
-        // Fermer le menu si on clique en dehors (sur mobile)
+        // Fermer le menu si on clique en dehors (sur tablette ou mobile)
         document.addEventListener('click', function(e) {
-            if (window.innerWidth <= 768) {
+            if (window.innerWidth <= 1024) {
                 if (!mainMenu.contains(e.target) && !menuToggle.contains(e.target)) {
                     menuToggle.setAttribute('aria-expanded', 'false');
                     mainMenu.classList.remove('active');
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Fermer le menu si on redimensionne la fenêtre vers desktop
         window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
+            if (window.innerWidth > 1024) {
                 menuToggle.setAttribute('aria-expanded', 'false');
                 mainMenu.classList.remove('active');
                 mainMenu.querySelectorAll('.has-submenu, .submenu li').forEach(li => {

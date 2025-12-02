@@ -1,0 +1,79 @@
+{% load static %}
+<nav class="main-menu" role="navigation" aria-label="Menu principal">
+    <ul class="menu">
+        {% for item in navigation_menu %}
+            <li class="{% if item.submenu %}has-submenu{% endif %} {% if item.active %}active{% endif %}">
+                <a href="{{ item.url }}" {% if item.external %}target="_blank"{% endif %}>
+                    {% if item.icon %}{{ item.icon }} {% endif %}{{ item.title }}
+                </a>
+                {% if item.submenu %}
+                    <ul class="submenu">
+                        {% for subitem in item.submenu %}
+                            {% if subitem.items %}
+                                <li class="submenu-group">
+                                    <span class="submenu-category">{{ subitem.title }}</span>
+                                    <ul class="subsubmenu">
+                                        {% for subsubitem in subitem.items %}
+                                            <li>
+                                                <a href="{{ subsubitem.url }}" {% if subsubitem.external %}target="_blank"{% endif %}>
+                                                    {{ subsubitem.title }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% elif subitem.url %}
+                                <li>
+                                    <a href="{{ subitem.url }}" {% if subitem.external %}target="_blank"{% endif %}>
+                                        {% if subitem.icon %}{{ subitem.icon }} {% endif %}{{ subitem.title }}
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="menu-separator"></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endfor %}
+        
+        {# Menu utilisateur #}
+        {% if user.is_authenticated %}
+            <li class="user-menu">
+                <a href="#" class="user-menu-trigger">
+                    👤 {{ user.get_full_name|default:user.username }}
+                </a>
+                <ul class="submenu user-submenu">
+                    <li>
+                        <a href="{% if user.est_etudiant %}{% url 'dashboard_etudiant' %}{% elif user.est_enseignant %}{% url 'dashboard_enseignant' %}{% else %}{% url 'dashboard_administration' %}{% endif %}">
+                            🏠 Mon espace
+                        </a>
+                    </li>
+                    {% if user.est_etudiant %}
+                        <li><a href="{% url 'mon_carnet_stage' %}">📝 Carnet de stage</a></li>
+                        <li><a href="{% url 'mes_paiements' %}">💳 Mes paiements</a></li>
+                    {% endif %}
+                    {% if user.est_enseignant %}
+                        <li><a href="{% url 'grilles:liste' %}">📋 Grilles d'évaluation</a></li>
+                        <li><a href="{% url 'activer_2fa' %}">🔐 Sécurité</a></li>
+                    {% endif %}
+                    {% if user.is_superuser %}
+                        <li><a href="{% url 'admin:index' %}" target="_blank">⚙️ Admin Django</a></li>
+                    {% endif %}
+                    <li class="menu-separator"></li>
+                    <li><a href="{% url 'logout' %}">🚪 Déconnexion</a></li>
+                </ul>
+            </li>
+        {% else %}
+            <li>
+                <a href="{% url 'login' %}" class="btn-login">Connexion</a>
+            </li>
+            {% if request.resolver_match.url_name == 'formations' or request.resolver_match.url_name == 'programmes' %}
+                <li>
+                    <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription-nav">Demande de candidature</a>
+                </li>
+            {% endif %}
+        {% endif %}
+    </ul>
+</nav>
+
