@@ -6,6 +6,9 @@ echo "🚀 Démarrage du script de release..."
 echo "📦 Application des migrations..."
 python manage.py migrate --noinput
 
+echo "📋 Initialisation des types de grilles d'évaluation..."
+python manage.py init_types_grilles
+
 echo "📁 Collecte des fichiers statiques..."
 python manage.py collectstatic --noinput
 

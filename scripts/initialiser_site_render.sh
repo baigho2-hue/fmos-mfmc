@@ -37,8 +37,17 @@ if [ $? -ne 0 ]; then
 fi
 echo ""
 
-# Étape 4 : Initialiser le programme DESMFMC
-echo -e "${YELLOW}[4/4] Initialisation du programme DESMFMC...${NC}"
+# Étape 4 : Initialiser les types de grilles d'évaluation
+echo -e "${YELLOW}[4/5] Initialisation des types de grilles d'évaluation...${NC}"
+python manage.py init_types_grilles
+if [ $? -ne 0 ]; then
+    echo -e "${YELLOW}⚠️  Erreur lors de l'initialisation des types de grilles (peut-être déjà initialisés)${NC}"
+fi
+echo -e "${GREEN}✅ Types de grilles initialisés${NC}"
+echo ""
+
+# Étape 5 : Initialiser le programme DESMFMC
+echo -e "${YELLOW}[5/5] Initialisation du programme DESMFMC...${NC}"
 python manage.py init_programme_desmfmc_detaille
 if [ $? -ne 0 ]; then
     echo -e "${RED}❌ Erreur lors de l'initialisation du programme${NC}"
@@ -47,7 +56,7 @@ fi
 echo -e "${GREEN}✅ Programme DESMFMC initialisé${NC}"
 echo ""
 
-# Étape 5 (Optionnelle) : Initialiser les coûts
+# Étape 6 (Optionnelle) : Initialiser les coûts
 echo -e "${YELLOW}[Optionnel] Initialisation des coûts de formations...${NC}"
 read -p "Voulez-vous initialiser les coûts de formations ? (o/n) " -n 1 -r
 echo
