@@ -18,7 +18,10 @@ from .models_grilles import (
     CritereEvaluation,
     ElementEvaluation
 )
-from .forms_grilles import EvaluationAvecGrilleForm, ReponseCritereForm
+from .forms_grilles import (
+    EvaluationAvecGrilleForm, ReponseCritereForm,
+    GrilleEvaluationForm, CritereFormSet
+)
 from .forms_import import ImportGrilleWordForm
 from .importers.import_word_grille import WordGrilleImporter
 
@@ -236,3 +239,111 @@ def export_evaluation_csv(request, evaluation_id):
         writer.writerow([])
     
     return response
+
+
+class GrilleEvaluationCreateView(LoginRequiredMixin, CreateView):
+    """Vue pour créer une grille d'évaluation avec critères"""
+    model = GrilleEvaluation
+    form_class = GrilleEvaluationForm
+    template_name = 'evaluations/grilles/creer.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['critere_formset'] = CritereFormSet(self.request.POST)
+        else:
+            context['critere_formset'] = CritereFormSet()
+        
+        # Ajouter les données nécessaires pour le formulaire
+        from .models_grilles import TypeGrilleEvaluation
+        from apps.utilisateurs.models_formation import Classe, Cours, Competence, CompetenceJalon
+        
+        context['types_grilles'] = TypeGrilleEvaluation.objects.filter(actif=True)
+        context['classes'] = Classe.objects.all()
+        context['cours'] = Cours.objects.filter(actif=True)
+        context['competences'] = Competence.objects.all()
+        
+        return context
+    
+    def form_valid(self, form):
+        context = self.get_context_data()
+        critere_formset = context['critere_formset']
+        
+        # Sauvegarder la grille avec le créateur
+        form.instance.createur = self.request.user
+        self.object = form.save()
+        
+        # Sauvegarder les critères
+        if critere_formset.is_valid():
+            critere_formset.instance = self.object
+            critere_formset.save()
+            messages.success(
+                self.request,
+                f'Grille "{self.object.titre}" créée avec succès ! '
+                f'({self.object.criteres.count()} critères ajoutés)'
+            )
+        else:
+            messages.warning(
+                self.request,
+                'Grille créée mais certains critères ont des erreurs. '
+                'Vous pouvez les modifier depuis la page de détail.'
+            )
+        
+        return redirect('grilles:detail', pk=self.object.pk)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Veuillez corriger les erreurs dans le formulaire.')
+        return super().form_invalid(form)
+
+
+class GrilleEvaluationUpdateView(LoginRequiredMixin, UpdateView):
+    """Vue pour modifier une grille d'évaluation"""
+    model = GrilleEvaluation
+    form_class = GrilleEvaluationForm
+    template_name = 'evaluations/grilles/modifier.html'
+    
+    def get_queryset(self):
+        return GrilleEvaluation.objects.select_related('type_grille', 'cours', 'classe', 'createur')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['critere_formset'] = CritereFormSet(
+                self.request.POST,
+                instance=self.object
+            )
+        else:
+            context['critere_formset'] = CritereFormSet(instance=self.object)
+        
+        # Ajouter les données nécessaires
+        from .models_grilles import TypeGrilleEvaluation
+        from apps.utilisateurs.models_formation import Classe, Cours, Competence
+        
+        context['types_grilles'] = TypeGrilleEvaluation.objects.filter(actif=True)
+        context['classes'] = Classe.objects.all()
+        context['cours'] = Cours.objects.filter(actif=True)
+        context['competences'] = Competence.objects.all()
+        
+        return context
+    
+    def form_valid(self, form):
+        context = self.get_context_data()
+        critere_formset = context['critere_formset']
+        
+        # Sauvegarder la grille
+        self.object = form.save()
+        
+        # Sauvegarder les critères
+        if critere_formset.is_valid():
+            critere_formset.save()
+            messages.success(
+                self.request,
+                f'Grille "{self.object.titre}" modifiée avec succès !'
+            )
+        else:
+            messages.warning(
+                self.request,
+                'Grille modifiée mais certains critères ont des erreurs.'
+            )
+        
+        return redirect('grilles:detail', pk=self.object.pk)

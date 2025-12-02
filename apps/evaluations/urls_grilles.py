@@ -9,6 +9,8 @@ import os
 from .views_grilles import (
     GrilleEvaluationListView,
     GrilleEvaluationDetailView,
+    GrilleEvaluationCreateView,
+    GrilleEvaluationUpdateView,
     EvaluationAvecGrilleCreateView,
     ImportGrilleWordView,
     export_grille_csv,
@@ -35,6 +37,8 @@ def download_template_view(request):
 
 urlpatterns = [
     path('', GrilleEvaluationListView.as_view(), name='liste'),
+    path('creer/', GrilleEvaluationCreateView.as_view(), name='creer'),
+    path('<int:pk>/modifier/', GrilleEvaluationUpdateView.as_view(), name='modifier'),
     path('import/', ImportGrilleWordView.as_view(), name='import_word'),
     path('template/', download_template_view, name='download_template'),
     path('<int:pk>/', GrilleEvaluationDetailView.as_view(), name='detail'),

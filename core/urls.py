@@ -143,6 +143,9 @@ urlpatterns = [
     # Évaluations de stage basées sur les jalons
     path('evaluations/stage/', include('apps.evaluations.urls_stage')),
     
+    # Grilles d'évaluation
+    path('evaluations/grilles/', include('apps.evaluations.urls_grilles')),
+    
     # API pour l'admin Django - Récupérer les cours d'une classe
     path('admin/utilisateurs/cours/get-cours-by-classe/', views_administration.get_cours_by_classe_json, name='get_cours_by_classe_json'),
     

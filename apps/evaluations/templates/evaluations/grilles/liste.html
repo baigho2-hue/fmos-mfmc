@@ -1,0 +1,416 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Grilles d'évaluation - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="grilles-container">
+    <div class="page-header">
+        <h1>📋 Grilles d'évaluation</h1>
+        <div class="header-actions">
+            <a href="{% url 'grilles:creer' %}" class="btn-primary">+ Créer une grille</a>
+            <a href="{% url 'grilles:import_word' %}" class="btn-secondary">📄 Importer depuis Word</a>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters-section">
+        <form method="GET" class="filters-form">
+            <div class="filter-group">
+                <label for="type_grille">Type de grille</label>
+                <select name="type_grille" id="type_grille">
+                    <option value="">Tous les types</option>
+                    {% for type in types_grilles %}
+                        <option value="{{ type.id }}" {% if request.GET.type_grille == type.id|stringformat:"s" %}selected{% endif %}>
+                            {{ type.nom }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="classe">Classe</label>
+                <select name="classe" id="classe">
+                    <option value="">Toutes les classes</option>
+                    {% for classe in classes %}
+                        <option value="{{ classe.id }}" {% if request.GET.classe == classe.id|stringformat:"s" %}selected{% endif %}>
+                            {{ classe.nom }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="search">Rechercher</label>
+                <input type="text" name="search" id="search" placeholder="Titre, description..." value="{{ request.GET.search }}">
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn-filter">🔍 Filtrer</button>
+                <a href="{% url 'grilles:liste' %}" class="btn-reset">Réinitialiser</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Liste des grilles -->
+    {% if grilles %}
+    <div class="grilles-list">
+        {% for grille in grilles %}
+        <div class="grille-card">
+            <div class="grille-header">
+                <div class="grille-title-section">
+                    <h3>{{ grille.titre }}</h3>
+                    <span class="grille-type">{{ grille.type_grille.nom }}</span>
+                </div>
+                <div class="grille-actions">
+                    <a href="{% url 'grilles:detail' grille.pk %}" class="btn-view">👁️ Voir</a>
+                    <a href="{% url 'grilles:modifier' grille.pk %}" class="btn-edit">✏️ Modifier</a>
+                    <a href="{% url 'grilles:export_grille' grille.pk %}" class="btn-export">📥 Export CSV</a>
+                </div>
+            </div>
+            
+            <div class="grille-content">
+                <p class="grille-description">{{ grille.description|truncatewords:30 }}</p>
+                
+                <div class="grille-meta">
+                    {% if grille.cours %}
+                        <span class="meta-item">📚 {{ grille.cours.titre }}</span>
+                    {% endif %}
+                    {% if grille.classe %}
+                        <span class="meta-item">🎓 {{ grille.classe.nom }}</span>
+                    {% endif %}
+                    <span class="meta-item">📊 Note max: {{ grille.note_maximale }}</span>
+                    <span class="meta-item">✅ {{ grille.criteres.count }} critère{{ grille.criteres.count|pluralize }}</span>
+                    <span class="meta-item">📅 {{ grille.date_creation|date:"d/m/Y" }}</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if request.GET.type_grille %}&type_grille={{ request.GET.type_grille }}{% endif %}{% if request.GET.classe %}&classe={{ request.GET.classe }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="page-link">« Première</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.type_grille %}&type_grille={{ request.GET.type_grille }}{% endif %}{% if request.GET.classe %}&classe={{ request.GET.classe }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="page-link">‹ Précédente</a>
+        {% endif %}
+        
+        <span class="page-current">
+            Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}
+        </span>
+        
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.type_grille %}&type_grille={{ request.GET.type_grille }}{% endif %}{% if request.GET.classe %}&classe={{ request.GET.classe }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="page-link">Suivante ›</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.type_grille %}&type_grille={{ request.GET.type_grille }}{% endif %}{% if request.GET.classe %}&classe={{ request.GET.classe }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="page-link">Dernière »</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="no-grilles">
+        <p>📭 Aucune grille d'évaluation trouvée.</p>
+        <a href="{% url 'grilles:creer' %}" class="btn-primary">Créer votre première grille</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.grilles-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.page-header h1 {
+    color: #005a9c;
+    margin: 0;
+    font-size: 2rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-primary {
+    background-color: #005a9c;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #004080;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #28a745;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: #218838;
+    color: white;
+}
+
+.filters-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.filters-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-filter {
+    background-color: #005a9c;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-reset {
+    background-color: #6c757d;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.grilles-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.grille-card {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s;
+}
+
+.grille-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.grille-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.grille-title-section h3 {
+    color: #005a9c;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+}
+
+.grille-type {
+    background-color: #e3f2fd;
+    color: #005a9c;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.grille-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-view, .btn-edit, .btn-export {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-view {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-view:hover {
+    background-color: #138496;
+    color: white;
+}
+
+.btn-edit {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.btn-edit:hover {
+    background-color: #e0a800;
+    color: #333;
+}
+
+.btn-export {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-export:hover {
+    background-color: #5a6268;
+    color: white;
+}
+
+.grille-content {
+    margin-top: 1rem;
+}
+
+.grille-description {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.grille-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.page-link {
+    padding: 0.5rem 1rem;
+    background-color: #005a9c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.page-link:hover {
+    background-color: #004080;
+    color: white;
+}
+
+.page-current {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.no-grilles {
+    text-align: center;
+    padding: 3rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.no-grilles p {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .header-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .grille-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .grille-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .filters-form {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
