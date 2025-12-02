@@ -42,13 +42,20 @@ class Command(BaseCommand):
                 'description': 'Grille d\'évaluation finale - Évaluation finale du programme ou de la formation',
                 'type_grille': 'finale',
             },
-            # Autres types
+            # Grilles de supervision
             {
-                'code': 'SUPERVISION',
-                'nom': 'Grille de Supervision',
-                'description': 'Grille pour l\'évaluation lors des supervisions cliniques',
-                'type_grille': 'supervision',
+                'code': 'SUPERVISION_DIRECTE_INDIRECTE',
+                'nom': 'Supervision Directe ou Indirecte',
+                'description': 'Grille pour l\'évaluation lors des supervisions cliniques directes ou indirectes',
+                'type_grille': 'supervision_directe_indirecte',
             },
+            {
+                'code': 'METASUPERVISION',
+                'nom': 'Métasupervision',
+                'description': 'Grille pour l\'évaluation lors des métasupervisions (supervision de la supervision)',
+                'type_grille': 'metasupervision',
+            },
+            # Autres types
             {
                 'code': 'SIMULATION',
                 'nom': 'Activité de Simulation',

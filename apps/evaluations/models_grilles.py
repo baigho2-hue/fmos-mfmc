@@ -20,8 +20,10 @@ class TypeGrilleEvaluation(models.Model):
         # Grilles d'évaluation finale/sommative
         ('sommative', 'Évaluation Sommative'),
         ('finale', 'Évaluation Finale'),
+        # Grilles de supervision
+        ('supervision_directe_indirecte', 'Supervision Directe ou Indirecte'),
+        ('metasupervision', 'Métasupervision'),
         # Autres types
-        ('supervision', 'Supervision'),
         ('simulation', 'Activité de Simulation'),
         ('presentation', 'Présentation'),
     ]
