@@ -43,6 +43,8 @@ class GrilleEvaluationForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Filtrer et ordonner les types de grilles actifs
+        self.fields['type_grille'].queryset = TypeGrilleEvaluation.objects.filter(actif=True).order_by('type_grille', 'nom')
         # Filtrer les compétences et jalons si un cours/classe est sélectionné
         if 'cours' in self.data:
             try:

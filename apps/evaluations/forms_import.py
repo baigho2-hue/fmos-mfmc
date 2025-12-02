@@ -15,7 +15,7 @@ class ImportGrilleWordForm(forms.Form):
         widget=forms.FileInput(attrs={'accept': '.docx'})
     )
     type_grille = forms.ModelChoiceField(
-        queryset=TypeGrilleEvaluation.objects.filter(actif=True),
+        queryset=TypeGrilleEvaluation.objects.none(),  # Sera défini dans __init__
         label="Type de grille",
         help_text="Sélectionnez le type de grille d'évaluation"
     )
@@ -31,6 +31,11 @@ class ImportGrilleWordForm(forms.Form):
         label="Classe associée",
         help_text="Optionnel : associer la grille à une classe spécifique"
     )
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Évaluer le queryset dynamiquement pour les types de grilles
+        self.fields['type_grille'].queryset = TypeGrilleEvaluation.objects.filter(actif=True).order_by('type_grille', 'nom')
     
     def clean_fichier(self):
         fichier = self.cleaned_data.get('fichier')
