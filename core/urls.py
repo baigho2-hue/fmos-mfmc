@@ -50,18 +50,8 @@ formation_vues = [
 ]
 
 for vue in formation_vues:
-    urlpatterns.append(path(f'formations/{vue}/', getattr(views, vue), name=vue))
-
-# Ajouter les vues de formation pour éviter les erreurs Reverse
-formation_vues = [
-    'desmfmc', 'sante_communautaire', 'recherche', 'echographie_base',
-    'pedagogie_sante', 'autres_programmes',
-    'logiciels_analyse_certif', 'logiciels_analyse_noncertif',
-    'base_pedagogie', 'cours_med6', 'habilites_cliniques'
-]
-
-for vue in formation_vues:
-    urlpatterns.append(path(f'formations/{vue}/', getattr(views, vue), name=vue))
+    if hasattr(views, vue):
+        urlpatterns.append(path(f'formations/{vue}/', getattr(views, vue), name=vue))
 
 # Servir les fichiers statiques et media en debug
 if settings.DEBUG:
