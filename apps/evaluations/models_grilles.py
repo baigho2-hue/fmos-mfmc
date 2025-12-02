@@ -13,6 +13,8 @@ from apps.utilisateurs.models_formation import Cours, Classe, Competence, Compet
 class TypeGrilleEvaluation(models.Model):
     """Types de grilles d'évaluation"""
     TYPE_CHOICES = [
+        ('apprentissage', 'Apprentissage'),
+        ('habiletes_cliniques', 'Habilités Cliniques'),
         ('formative', 'Évaluation Formative'),
         ('sommative', 'Évaluation Sommative'),
         ('finale', 'Évaluation Finale'),
@@ -20,7 +22,6 @@ class TypeGrilleEvaluation(models.Model):
         ('simulation', 'Activité de Simulation'),
         ('scenario', 'Activité de Scénario'),
         ('presentation', 'Présentation'),
-        ('habiletes_cliniques', 'Habiletés Cliniques'),
     ]
     
     code = models.CharField(max_length=50, unique=True, verbose_name="Code")

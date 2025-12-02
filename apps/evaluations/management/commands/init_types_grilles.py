@@ -11,6 +11,18 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         types_grilles = [
             {
+                'code': 'APPRENTISSAGE',
+                'nom': 'Apprentissage',
+                'description': 'Grille pour évaluer les processus et résultats d\'apprentissage',
+                'type_grille': 'apprentissage',
+            },
+            {
+                'code': 'HABILETES_CLINIQUES',
+                'nom': 'Habilités Cliniques',
+                'description': 'Grille pour évaluer les habiletés et compétences cliniques pratiques',
+                'type_grille': 'habiletes_cliniques',
+            },
+            {
                 'code': 'FORMATIVE',
                 'nom': 'Évaluation Formative',
                 'description': 'Évaluation continue permettant de suivre les progrès et d\'identifier les besoins d\'apprentissage',
@@ -51,12 +63,6 @@ class Command(BaseCommand):
                 'nom': 'Présentation',
                 'description': 'Grille pour évaluer les présentations orales et les exposés',
                 'type_grille': 'presentation',
-            },
-            {
-                'code': 'HABILETES_CLINIQUES',
-                'nom': 'Habiletés Cliniques',
-                'description': 'Grille pour évaluer les habiletés et compétences cliniques pratiques',
-                'type_grille': 'habiletes_cliniques',
             },
         ]
 
