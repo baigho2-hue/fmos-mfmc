@@ -13,14 +13,16 @@ from apps.utilisateurs.models_formation import Cours, Classe, Competence, Compet
 class TypeGrilleEvaluation(models.Model):
     """Types de grilles d'évaluation"""
     TYPE_CHOICES = [
-        ('apprentissage', 'Apprentissage'),
-        ('habiletes_cliniques', 'Habilités Cliniques'),
-        ('formative', 'Évaluation Formative'),
+        # Grilles d'apprentissage
+        ('habiletes_cliniques', 'Habilités Cliniques (Apprentissage)'),
+        ('formative', 'Évaluation Formative (Apprentissage)'),
+        ('scenario', 'Scénario (Apprentissage)'),
+        # Grilles d'évaluation finale/sommative
         ('sommative', 'Évaluation Sommative'),
         ('finale', 'Évaluation Finale'),
+        # Autres types
         ('supervision', 'Supervision'),
         ('simulation', 'Activité de Simulation'),
-        ('scenario', 'Activité de Scénario'),
         ('presentation', 'Présentation'),
     ]
     

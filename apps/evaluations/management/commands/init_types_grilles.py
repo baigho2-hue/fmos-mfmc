@@ -10,36 +10,39 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         types_grilles = [
-            {
-                'code': 'APPRENTISSAGE',
-                'nom': 'Apprentissage',
-                'description': 'Grille pour évaluer les processus et résultats d\'apprentissage',
-                'type_grille': 'apprentissage',
-            },
+            # Grilles d'apprentissage
             {
                 'code': 'HABILETES_CLINIQUES',
                 'nom': 'Habilités Cliniques',
-                'description': 'Grille pour évaluer les habiletés et compétences cliniques pratiques',
+                'description': 'Grille d\'apprentissage pour évaluer les habiletés et compétences cliniques pratiques',
                 'type_grille': 'habiletes_cliniques',
             },
             {
                 'code': 'FORMATIVE',
                 'nom': 'Évaluation Formative',
-                'description': 'Évaluation continue permettant de suivre les progrès et d\'identifier les besoins d\'apprentissage',
+                'description': 'Grille d\'apprentissage - Évaluation continue permettant de suivre les progrès et d\'identifier les besoins d\'apprentissage',
                 'type_grille': 'formative',
             },
             {
+                'code': 'SCENARIO',
+                'nom': 'Scénario',
+                'description': 'Grille d\'apprentissage pour évaluer les activités basées sur des scénarios cliniques',
+                'type_grille': 'scenario',
+            },
+            # Grilles d'évaluation finale/sommative
+            {
                 'code': 'SOMMATIVE',
                 'nom': 'Évaluation Sommative',
-                'description': 'Évaluation à la fin d\'une période d\'apprentissage pour mesurer les acquis',
+                'description': 'Grille d\'évaluation sommative - Évaluation à la fin d\'une période d\'apprentissage pour mesurer les acquis',
                 'type_grille': 'sommative',
             },
             {
                 'code': 'FINALE',
                 'nom': 'Évaluation Finale',
-                'description': 'Évaluation finale du programme ou de la formation',
+                'description': 'Grille d\'évaluation finale - Évaluation finale du programme ou de la formation',
                 'type_grille': 'finale',
             },
+            # Autres types
             {
                 'code': 'SUPERVISION',
                 'nom': 'Grille de Supervision',
@@ -51,12 +54,6 @@ class Command(BaseCommand):
                 'nom': 'Activité de Simulation',
                 'description': 'Grille pour évaluer les activités de simulation clinique',
                 'type_grille': 'simulation',
-            },
-            {
-                'code': 'SCENARIO',
-                'nom': 'Activité de Scénario',
-                'description': 'Grille pour évaluer les activités basées sur des scénarios cliniques',
-                'type_grille': 'scenario',
             },
             {
                 'code': 'PRESENTATION',
