@@ -56,24 +56,48 @@ class GrilleEvaluationAdmin(admin.ModelAdmin):
     list_filter = ('type_grille', 'actif', 'date_creation', 'classe')
     search_fields = ('titre', 'description', 'cours__titre', 'classe__nom')
     filter_horizontal = ('competences_evaluees', 'jalons_evalues')
-    readonly_fields = ('date_creation', 'date_modification', 'createur')
+    readonly_fields = ('date_creation', 'date_modification')
+    
+    def get_readonly_fields(self, request, obj=None):
+        """Ajouter createur aux champs en lecture seule seulement lors de l'édition"""
+        readonly = list(self.readonly_fields)
+        if obj:  # Si l'objet existe déjà (édition)
+            readonly.append('createur')
+        return readonly
     inlines = [CritereEvaluationInline]
     
-    fieldsets = (
-        ('Informations générales', {
-            'fields': ('type_grille', 'titre', 'description', 'actif')
-        }),
-        ('Contexte', {
-            'fields': ('cours', 'classe', 'competences_evaluees', 'jalons_evaluees')
-        }),
-        ('Paramètres d\'évaluation', {
-            'fields': ('note_maximale', 'echelle_evaluation')
-        }),
-        ('Métadonnées', {
-            'fields': ('createur', 'date_creation', 'date_modification'),
-            'classes': ('collapse',)
-        }),
-    )
+    def get_fieldsets(self, request, obj=None):
+        """Définir les fieldsets avec createur seulement en édition"""
+        fieldsets = (
+            ('Informations générales', {
+                'fields': ('type_grille', 'titre', 'description', 'actif')
+            }),
+            ('Contexte', {
+                'fields': ('cours', 'classe', 'competences_evaluees', 'jalons_evaluees')
+            }),
+            ('Paramètres d\'évaluation', {
+                'fields': ('note_maximale', 'echelle_evaluation')
+            }),
+        )
+        
+        # Ajouter les métadonnées seulement si l'objet existe
+        if obj:
+            fieldsets += (
+                ('Métadonnées', {
+                    'fields': ('createur', 'date_creation', 'date_modification'),
+                    'classes': ('collapse',)
+                }),
+            )
+        else:
+            # Lors de la création, afficher seulement date_creation et date_modification (qui seront auto-remplis)
+            fieldsets += (
+                ('Métadonnées', {
+                    'fields': ('date_creation', 'date_modification'),
+                    'classes': ('collapse',)
+                }),
+            )
+        
+        return fieldsets
     
     actions = ['download_template']
     
@@ -85,6 +109,11 @@ class GrilleEvaluationAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.select_related('type_grille', 'cours', 'classe', 'createur')
+    
+    def get_form(self, request, obj=None, **kwargs):
+        """Surcharge pour éviter les erreurs lors de la création"""
+        form = super().get_form(request, obj, **kwargs)
+        return form
     
     def download_template(self, request, queryset):
         """Action pour télécharger un modèle Word"""

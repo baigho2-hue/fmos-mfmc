@@ -122,7 +122,9 @@ class GrilleEvaluation(models.Model):
         ordering = ['-date_creation', 'titre']
     
     def __str__(self):
-        return f"{self.type_grille.nom} - {self.titre}"
+        if self.type_grille:
+            return f"{self.type_grille.nom} - {self.titre}"
+        return self.titre or "Nouvelle grille"
 
 
 class CritereEvaluation(models.Model):
@@ -188,7 +190,9 @@ class CritereEvaluation(models.Model):
         unique_together = [['grille', 'ordre']]
     
     def __str__(self):
-        return f"{self.grille.titre[:50]}... - {self.libelle[:50]}..."
+        if self.grille:
+            return f"{self.grille.titre[:50]}... - {self.libelle[:50]}..."
+        return self.libelle[:50] if self.libelle else "Nouveau critère"
 
 
 class ElementEvaluation(models.Model):
@@ -227,7 +231,9 @@ class ElementEvaluation(models.Model):
         ordering = ['critere', 'ordre', 'libelle']
     
     def __str__(self):
-        return f"{self.critere.libelle[:30]}... - {self.libelle[:50]}..."
+        if self.critere:
+            return f"{self.critere.libelle[:30]}... - {self.libelle[:50]}..."
+        return self.libelle[:50] if self.libelle else "Nouvel élément"
 
 
 class EvaluationAvecGrille(models.Model):
