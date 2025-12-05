@@ -9,7 +9,9 @@
                 {% if item.submenu %}
                     <ul class="submenu" style="display: none;">
                         {% for subitem in item.submenu %}
-                            {% if subitem.items %}
+                            {% if subitem == None %}
+                                <li class="menu-separator"></li>
+                            {% elif subitem.items %}
                                 <li class="submenu-group">
                                     <span class="submenu-category">{{ subitem.title }}</span>
                                     <ul class="subsubmenu" style="display: none;">

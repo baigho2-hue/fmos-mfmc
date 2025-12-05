@@ -20,14 +20,11 @@ def get_grilles_submenu(safe_reverse_func):
         }
         
         submenu = [
-            {
-                'title': 'Actions',
-                'items': [
-                    {'title': 'Liste des grilles', 'url': safe_reverse_func('grilles:liste')},
-                    {'title': 'Créer une grille', 'url': safe_reverse_func('grilles:creer')},
-                    {'title': 'Importer depuis Word', 'url': safe_reverse_func('grilles:import_word')},
-                ]
-            }
+            # Actions directement accessibles (sans sous-sous-menu)
+            {'title': 'Liste des grilles', 'url': safe_reverse_func('grilles:liste')},
+            {'title': 'Créer une grille', 'url': safe_reverse_func('grilles:creer')},
+            {'title': 'Importer depuis Word', 'url': safe_reverse_func('grilles:import_word')},
+            None,  # Séparateur visuel (sera géré par le template)
         ]
         
         # Ajouter les types de grilles par catégorie
@@ -49,14 +46,10 @@ def get_grilles_submenu(safe_reverse_func):
     except Exception:
         # En cas d'erreur, retourner un menu minimal
         return [
-            {
-                'title': 'Actions',
-                'items': [
-                    {'title': 'Liste des grilles', 'url': safe_reverse_func('grilles:liste')},
-                    {'title': 'Créer une grille', 'url': safe_reverse_func('grilles:creer')},
-                    {'title': 'Importer depuis Word', 'url': safe_reverse_func('grilles:import_word')},
-                ]
-            }
+            # Actions directement accessibles (sans sous-sous-menu)
+            {'title': 'Liste des grilles', 'url': safe_reverse_func('grilles:liste')},
+            {'title': 'Créer une grille', 'url': safe_reverse_func('grilles:creer')},
+            {'title': 'Importer depuis Word', 'url': safe_reverse_func('grilles:import_word')},
         ]
 
 

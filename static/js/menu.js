@@ -141,5 +141,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+        
+        // Gestion spécifique des sous-sous-menus pour les groupes
+        const submenuGroups = document.querySelectorAll('.submenu-group');
+        submenuGroups.forEach(group => {
+            group.addEventListener('mouseenter', function() {
+                const subsubmenu = this.querySelector('.subsubmenu');
+                if (subsubmenu) {
+                    subsubmenu.style.display = 'block';
+                    subsubmenu.style.opacity = '1';
+                    subsubmenu.style.visibility = 'visible';
+                }
+            });
+            group.addEventListener('mouseleave', function() {
+                const subsubmenu = this.querySelector('.subsubmenu');
+                if (subsubmenu) {
+                    setTimeout(() => {
+                        if (!this.matches(':hover') && !subsubmenu.matches(':hover')) {
+                            subsubmenu.style.display = 'none';
+                        }
+                    }, 150);
+                }
+            });
+        });
+        
+        // S'assurer que le sous-sous-menu reste visible au survol
+        const subsubmenus = document.querySelectorAll('.subsubmenu');
+        subsubmenus.forEach(subsubmenu => {
+            subsubmenu.addEventListener('mouseenter', function() {
+                this.style.display = 'block';
+                this.style.opacity = '1';
+                this.style.visibility = 'visible';
+            });
+            subsubmenu.addEventListener('mouseleave', function() {
+                setTimeout(() => {
+                    if (!this.matches(':hover')) {
+                        this.style.display = 'none';
+                    }
+                }, 150);
+            });
+        });
     }
 });

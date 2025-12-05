@@ -320,13 +320,14 @@ left: 0;
 background-color: #ffffff; /* Fond blanc */
 border-radius: 0 0 5px 5px; /* Coins arrondis en bas */
 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-min-width: 240px; /* Largeur minimale augmentée */
+min-width: 260px; /* Largeur minimale augmentée pour accommoder les sous-sous-menus */
 z-index: 10001; /* Z-index élevé pour être au-dessus de tout */
 padding: 0.5rem 0; /* Padding vertical pour l'espacement */
 list-style: none; /* Supprimer les puces */
 margin: 0; /* Supprimer les marges */
 max-height: 80vh; /* Limiter la hauteur pour éviter les menus trop longs */
 overflow-y: auto; /* Permettre le scroll si nécessaire */
+overflow-x: visible; /* Permettre aux sous-sous-menus de dépasser */
 }
 /* Affichage du sous-menu au survol du parent */
 ul.menu > li:hover > .submenu,
@@ -354,11 +355,18 @@ width: 100%;
 display: block;
 width: 100%;
 position: relative; /* Important pour le positionnement des sous-sous-menus */
+padding: 0; /* Pas de padding pour éviter les problèmes de survol */
 }
 
 /* Améliorer l'interaction avec les groupes de sous-menu */
 .submenu-group:hover {
 background-color: #f8f9fa;
+}
+
+/* S'assurer que la catégorie est cliquable pour afficher le sous-sous-menu */
+.submenu-group .submenu-category {
+cursor: pointer;
+user-select: none;
 }
 
 .submenu li a {
@@ -452,19 +460,31 @@ position: absolute;
 top: 0;
 left: 100%; /* Se positionne à droite du parent */
 background-color: #ffffff;
+border: 1px solid #e0e0e0;
 border-radius: 5px;
-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-min-width: 250px;
-z-index: 10002; /* Z-index encore plus élevé pour les sous-sous-menus */
+box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+min-width: 260px;
+max-width: 300px;
+z-index: 10003; /* Z-index encore plus élevé pour les sous-sous-menus */
 padding: 0.5rem 0;
 list-style: none;
 margin: 0;
-margin-left: 2px; /* Petit espace pour éviter le chevauchement */
+margin-left: 5px; /* Espace pour éviter le chevauchement */
+white-space: nowrap; /* Empêcher le retour à la ligne */
 }
 
 /* Affichage du sous-sous-menu au survol du parent */
 .submenu li:hover > .subsubmenu,
 .submenu li.submenu-group:hover > .subsubmenu,
+.submenu-group:hover > .subsubmenu,
+.submenu-group:hover .subsubmenu {
+display: block !important;
+opacity: 1;
+visibility: visible;
+}
+
+/* S'assurer que le sous-sous-menu s'affiche quand on survole la catégorie */
+.submenu-category:hover + .subsubmenu,
 .submenu-group:hover .subsubmenu {
 display: block !important;
 opacity: 1;
