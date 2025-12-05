@@ -39,7 +39,9 @@ class InscriptionEtudiantForm(UserCreationForm):
         model = Utilisateur
         fields = ['username', 'email', 'email_confirmation', 'first_name', 'last_name', 'classe', 'password1', 'password2']
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'username'}),
+            'password1': forms.PasswordInput(attrs={'class': 'form-control', 'autocomplete': 'new-password'}),
+            'password2': forms.PasswordInput(attrs={'class': 'form-control', 'autocomplete': 'new-password'}),
         }
     
     def clean_email(self):
@@ -69,6 +71,11 @@ class InscriptionEtudiantForm(UserCreationForm):
         user.email_verifie = False  # À vérifier par email
         if commit:
             user.save()
+            # Nettoyer les mots de passe de la mémoire après sauvegarde
+            if 'password1' in self.cleaned_data:
+                del self.cleaned_data['password1']
+            if 'password2' in self.cleaned_data:
+                del self.cleaned_data['password2']
         return user
 
 class InscriptionEnseignantForm(UserCreationForm):
@@ -106,7 +113,9 @@ class InscriptionEnseignantForm(UserCreationForm):
         model = Utilisateur
         fields = ['username', 'email', 'email_confirmation', 'first_name', 'last_name', 'matieres', 'password1', 'password2']
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'username'}),
+            'password1': forms.PasswordInput(attrs={'class': 'form-control', 'autocomplete': 'new-password'}),
+            'password2': forms.PasswordInput(attrs={'class': 'form-control', 'autocomplete': 'new-password'}),
         }
     
     def clean_email(self):
@@ -137,47 +146,78 @@ class InscriptionEnseignantForm(UserCreationForm):
         user.niveau_acces = 'standard'  # Par défaut, peut être modifié par admin
         if commit:
             user.save()
+            # Nettoyer les mots de passe de la mémoire après sauvegarde
+            if 'password1' in self.cleaned_data:
+                del self.cleaned_data['password1']
+            if 'password2' in self.cleaned_data:
+                del self.cleaned_data['password2']
         return user
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
         label="Nom d'utilisateur ou Email",
-        widget=forms.TextInput(attrs={'class': 'form-control', 'autofocus': True, 'placeholder': 'Entrez votre nom d\'utilisateur ou email'})
+        widget=forms.TextInput(attrs={
+            'class': 'form-control', 
+            'autofocus': True, 
+            'placeholder': 'Entrez votre nom d\'utilisateur ou email',
+            'autocomplete': 'username'
+        })
     )
     password = forms.CharField(
         label="Mot de passe",
-        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'autocomplete': 'current-password'
+        })
     )
     
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
         
-        if username and password:
-            # Essayer de trouver l'utilisateur par username ou email
-            try:
-                user = Utilisateur.objects.get(username=username)
-            except Utilisateur.DoesNotExist:
+        try:
+            if username and password:
+                # Essayer de trouver l'utilisateur par username ou email
                 try:
-                    user = Utilisateur.objects.get(email=username)
+                    user = Utilisateur.objects.get(username=username)
                 except Utilisateur.DoesNotExist:
+                    try:
+                        user = Utilisateur.objects.get(email=username)
+                    except Utilisateur.DoesNotExist:
+                        # Effacer le mot de passe de la mémoire avant de lever l'erreur
+                        if 'password' in self.cleaned_data:
+                            del self.cleaned_data['password']
+                        raise ValidationError({
+                            'username': "Nom d'utilisateur ou email incorrect."
+                        })
+                
+                # Vérifier le mot de passe
+                if not user.check_password(password):
+                    # Effacer le mot de passe de la mémoire avant de lever l'erreur
+                    if 'password' in self.cleaned_data:
+                        del self.cleaned_data['password']
                     raise ValidationError({
-                        'username': "Nom d'utilisateur ou email incorrect."
+                        'password': "Mot de passe incorrect."
                     })
-            
-            # Vérifier le mot de passe
-            if not user.check_password(password):
-                raise ValidationError({
-                    'password': "Mot de passe incorrect."
-                })
-            
-            # Vérifier que le compte est actif
-            if not user.is_active:
-                raise ValidationError("Ce compte est désactivé.")
-            
-            self.user_cache = user
-        else:
-            raise ValidationError("Veuillez remplir tous les champs.")
+                
+                # Vérifier que le compte est actif
+                if not user.is_active:
+                    # Effacer le mot de passe de la mémoire avant de lever l'erreur
+                    if 'password' in self.cleaned_data:
+                        del self.cleaned_data['password']
+                    raise ValidationError("Ce compte est désactivé.")
+                
+                self.user_cache = user
+                
+                # Effacer le mot de passe de la mémoire après validation réussie
+                if 'password' in self.cleaned_data:
+                    del self.cleaned_data['password']
+            else:
+                raise ValidationError("Veuillez remplir tous les champs.")
+        finally:
+            # Garantir le nettoyage du mot de passe même en cas d'exception non gérée
+            if 'password' in self.cleaned_data:
+                del self.cleaned_data['password']
         
         return self.cleaned_data
 

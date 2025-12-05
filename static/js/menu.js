@@ -116,4 +116,30 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // S'assurer que les sous-menus s'affichent correctement au survol (desktop)
+    if (window.innerWidth > 1024) {
+        const menuItemsWithSubmenu = document.querySelectorAll('.has-submenu');
+        menuItemsWithSubmenu.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                const submenu = this.querySelector('.submenu');
+                if (submenu) {
+                    submenu.style.display = 'block';
+                    submenu.style.opacity = '1';
+                    submenu.style.visibility = 'visible';
+                }
+            });
+            item.addEventListener('mouseleave', function() {
+                const submenu = this.querySelector('.submenu');
+                if (submenu && window.innerWidth > 1024) {
+                    // Ne pas cacher immédiatement, laisser le CSS gérer
+                    setTimeout(() => {
+                        if (!this.matches(':hover') && !submenu.matches(':hover')) {
+                            submenu.style.display = 'none';
+                        }
+                    }, 200);
+                }
+            });
+        });
+    }
 });

@@ -7,7 +7,8 @@
 <div class="admissions-container">
     <div class="page-header">
         <h1>📋 Dossier de candidature</h1>
-        <p class="dossier-reference">Référence: {{ dossier.reference }}</p>
+        <p class="dossier-reference">Référence: <strong>{{ dossier.reference }}</strong></p>
+        <p class="dossier-subtitle">Consultez les détails de votre demande et suivez son avancement</p>
     </div>
 
     <div class="dossier-overview">
@@ -39,11 +40,14 @@
 
         {% if est_complet %}
         <div class="alert alert-success">
-            ✅ Votre dossier est complet et prêt pour l'examen.
+            <strong>✅ Dossier complet</strong>
+            <p>Votre dossier est complet et prêt pour l'examen. Tous les documents requis ont été uploadés et validés.</p>
         </div>
         {% else %}
         <div class="alert alert-warning">
-            ⚠️ Votre dossier est incomplet. Veuillez uploader tous les documents requis.
+            <strong>⚠️ Dossier incomplet</strong>
+            <p>Votre dossier n'est pas encore complet. Veuillez uploader tous les documents requis ci-dessous 
+            pour que votre candidature puisse être examinée. Les documents marqués comme "Obligatoire" sont essentiels.</p>
         </div>
         {% endif %}
     </div>
@@ -52,11 +56,16 @@
         <div class="section-header">
             <h2>📎 Documents du dossier</h2>
             {% if not est_complet %}
-            <a href="{% url 'admissions:creer_dossier' %}" class="btn btn-sm btn-primary">
+            <a href="{% url 'admissions:uploader_document' dossier.id %}" class="btn btn-sm btn-primary">
                 ➕ Ajouter un document
             </a>
             {% endif %}
         </div>
+        <p class="section-description">
+            Les documents uploadés apparaissent ci-dessous. Vous pouvez les consulter, 
+            les modifier ou les remplacer si nécessaire. Les documents validés par l'administration 
+            sont marqués d'un badge vert.
+        </p>
 
         {% if documents_uploades %}
         <div class="documents-list">
@@ -93,16 +102,27 @@
 
         {% if documents_manquants %}
         <div class="documents-manquants">
-            <h3>📋 Documents manquants</h3>
+            <h3>📋 Documents manquants ou non validés</h3>
+            <p class="documents-manquants-info">
+                <strong>Action requise :</strong> Les documents suivants doivent être uploadés pour compléter votre dossier. 
+                Cliquez sur "Uploader" pour chaque document manquant.
+            </p>
             <ul>
                 {% for doc in documents_manquants %}
                 <li>
-                    <strong>{{ doc.nom }}</strong>
-                    <br>
-                    <small>{{ doc.description }}</small>
-                    <a href="{% url 'admissions:uploader_document' dossier.id %}?document_requis_id={{ doc.id }}" class="btn btn-sm btn-primary">
-                        ➕ Uploader
-                    </a>
+                    <div class="document-manquant-info">
+                        <div>
+                            <strong>{{ doc.nom }}</strong>
+                            {% if doc.obligatoire %}
+                            <span class="badge badge-warning">Obligatoire</span>
+                            {% endif %}
+                            <br>
+                            <small>{{ doc.description }}</small>
+                        </div>
+                        <a href="{% url 'admissions:uploader_document' dossier.id %}?document_requis_id={{ doc.id }}" class="btn btn-sm btn-primary">
+                            ➕ Uploader
+                        </a>
+                    </div>
                 </li>
                 {% endfor %}
             </ul>
@@ -113,29 +133,45 @@
     {% if decision %}
     <div class="decision-section">
         <h2>📊 Décision d'admission</h2>
+        <p class="section-description">
+            La décision concernant votre candidature a été prise. Consultez les détails ci-dessous.
+        </p>
         <div class="decision-card">
             <div class="decision-status">
                 <span class="badge badge-{{ decision.decision }}">
                     {{ decision.get_decision_display }}
                 </span>
-                <span class="decision-date">Date: {{ decision.date_decision|date:"d/m/Y" }}</span>
+                <span class="decision-date">Date de décision : {{ decision.date_decision|date:"d/m/Y" }}</span>
             </div>
             {% if decision.note_finale %}
             <div class="decision-note">
-                <strong>Note finale :</strong> {{ decision.note_finale }}/20
+                <strong>Note finale :</strong> 
+                <span class="note-value">{{ decision.note_finale }}/20</span>
             </div>
             {% endif %}
             {% if decision.commentaire %}
             <div class="decision-comment">
-                <strong>Commentaire :</strong>
+                <strong>Commentaire de la commission :</strong>
                 <p>{{ decision.commentaire }}</p>
             </div>
             {% endif %}
             {% if decision.decision == 'admis' %}
             <div class="decision-actions">
+                <p class="action-description">
+                    <strong>Félicitations !</strong> Votre candidature a été acceptée. 
+                    Cliquez sur le bouton ci-dessous pour suivre les étapes d'inscription administrative.
+                </p>
                 <a href="{% url 'admissions:inscription' dossier.id %}" class="btn btn-success">
-                    ✅ Suivre la demande (DES)
+                    ✅ Procéder à l'inscription administrative
                 </a>
+            </div>
+            {% elif decision.decision == 'liste_attente' %}
+            <div class="decision-info">
+                <p><strong>Vous êtes sur liste d'attente.</strong> Vous serez contacté si une place se libère.</p>
+            </div>
+            {% elif decision.decision == 'refuse' %}
+            <div class="decision-info">
+                <p>Pour plus d'informations concernant cette décision, veuillez contacter le secrétariat.</p>
             </div>
             {% endif %}
         </div>
@@ -389,6 +425,58 @@
 .badge-refuse { background-color: #dc3545; color: white; }
 .badge-success { background-color: #28a745; color: white; }
 .badge-warning { background-color: #ffc107; color: #333; }
+
+.dossier-subtitle {
+    color: #666;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+}
+
+.section-description {
+    color: #666;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.alert p {
+    margin: 0.5rem 0 0 0;
+}
+
+.documents-manquants-info {
+    background-color: #fff3cd;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    color: #856404;
+    font-size: 0.9rem;
+}
+
+.document-manquant-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.note-value {
+    font-size: 1.2rem;
+    color: #005a9c;
+    font-weight: bold;
+}
+
+.action-description {
+    margin-bottom: 1rem;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.decision-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    color: #555;
+}
 
 .btn {
     padding: 0.5rem 1rem;

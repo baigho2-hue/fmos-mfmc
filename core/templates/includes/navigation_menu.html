@@ -7,12 +7,12 @@
                     {% if item.icon %}{{ item.icon }} {% endif %}{{ item.title }}
                 </a>
                 {% if item.submenu %}
-                    <ul class="submenu">
+                    <ul class="submenu" style="display: none;">
                         {% for subitem in item.submenu %}
                             {% if subitem.items %}
                                 <li class="submenu-group">
                                     <span class="submenu-category">{{ subitem.title }}</span>
-                                    <ul class="subsubmenu">
+                                    <ul class="subsubmenu" style="display: none;">
                                         {% for subsubitem in subitem.items %}
                                             <li>
                                                 <a href="{{ subsubitem.url }}" {% if subsubitem.external %}target="_blank"{% endif %}>

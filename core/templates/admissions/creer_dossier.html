@@ -7,14 +7,24 @@
 <div class="admissions-container">
     <div class="page-header">
         <h1>📝 Déposer une demande de candidature</h1>
-        <p>Remplissez le formulaire pour déposer votre demande. Vous n'avez pas besoin de compte au préalable.</p>
+        <p class="header-description">
+            Remplissez le formulaire ci-dessous pour déposer votre demande de candidature. 
+            <strong>Vous n'avez pas besoin de créer un compte au préalable.</strong>
+        </p>
+        <div class="info-box">
+            <p><strong>💡 Information importante :</strong> Après la soumission de votre demande, 
+            vous recevrez une référence unique. Vous devrez ensuite uploader les documents requis 
+            pour compléter votre dossier. Assurez-vous d'avoir tous les documents nécessaires 
+            avant de commencer.</p>
+        </div>
     </div>
 
     <form method="post" class="dossier-form" id="dossierForm">
         {% csrf_token %}
         
         <div class="form-section">
-            <h2>Informations générales</h2>
+            <h2>📚 Informations générales</h2>
+            <p class="section-description">Commencez par sélectionner la formation qui vous intéresse.</p>
             
             <div class="form-group">
                 <label for="{{ form.formation.id_for_label }}">{{ form.formation.label }} *</label>
@@ -22,19 +32,28 @@
                 {% if form.formation.errors %}
                 <div class="error-message">{{ form.formation.errors }}</div>
                 {% endif %}
-                <small class="form-text">Sélectionnez la formation pour laquelle vous souhaitez candidater</small>
+                {% if form.formation.help_text %}
+                <small class="form-text">{{ form.formation.help_text }}</small>
+                {% endif %}
             </div>
         </div>
 
         {% if not request.user.is_authenticated %}
         <div class="form-section">
-            <h2>Vos informations</h2>
-            <p class="info-text">Vous n'avez pas besoin de créer un compte au préalable. Ces informations permettent de suivre votre demande.</p>
+            <h2>👤 Vos informations personnelles</h2>
+            <p class="info-text">
+                Ces informations nous permettent de vous contacter et de suivre votre demande. 
+                <strong>Assurez-vous de fournir des informations exactes</strong> car elles seront utilisées 
+                pour toutes les communications officielles concernant votre candidature.
+            </p>
             <div class="form-group">
                 <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }} *</label>
                 {{ form.last_name }}
                 {% if form.last_name.errors %}
                 <div class="error-message">{{ form.last_name.errors }}</div>
+                {% endif %}
+                {% if form.last_name.help_text %}
+                <small class="form-text">{{ form.last_name.help_text }}</small>
                 {% endif %}
             </div>
             <div class="form-group">
@@ -43,12 +62,18 @@
                 {% if form.first_name.errors %}
                 <div class="error-message">{{ form.first_name.errors }}</div>
                 {% endif %}
+                {% if form.first_name.help_text %}
+                <small class="form-text">{{ form.first_name.help_text }}</small>
+                {% endif %}
             </div>
             <div class="form-group">
                 <label for="{{ form.email.id_for_label }}">{{ form.email.label }} *</label>
                 {{ form.email }}
                 {% if form.email.errors %}
                 <div class="error-message">{{ form.email.errors }}</div>
+                {% endif %}
+                {% if form.email.help_text %}
+                <small class="form-text">{{ form.email.help_text }}</small>
                 {% endif %}
             </div>
             <div class="form-group">
@@ -57,20 +82,30 @@
                 {% if form.telephone.errors %}
                 <div class="error-message">{{ form.telephone.errors }}</div>
                 {% endif %}
+                {% if form.telephone.help_text %}
+                <small class="form-text">{{ form.telephone.help_text }}</small>
+                {% endif %}
             </div>
         </div>
         {% endif %}
 
         <div class="form-section" id="bourseSection" style="display: none;">
-            <h2>Informations sur la prise en charge</h2>
+            <h2>💰 Informations sur le financement</h2>
+            <p class="section-description">
+                Si vos études sont financées par une bourse, un organisme ou un employeur, 
+                veuillez nous en informer. Ces informations nous aident à mieux comprendre votre situation.
+            </p>
             
             <div class="form-group">
-                <label>
+                <label class="checkbox-label">
                     {{ form.prise_en_charge_bourse }}
-                    {{ form.prise_en_charge_bourse.label }}
+                    <span>{{ form.prise_en_charge_bourse.label }}</span>
                 </label>
                 {% if form.prise_en_charge_bourse.errors %}
                 <div class="error-message">{{ form.prise_en_charge_bourse.errors }}</div>
+                {% endif %}
+                {% if form.prise_en_charge_bourse.help_text %}
+                <small class="form-text">{{ form.prise_en_charge_bourse.help_text }}</small>
                 {% endif %}
             </div>
 
@@ -80,22 +115,38 @@
                 {% if form.details_bourse.errors %}
                 <div class="error-message">{{ form.details_bourse.errors }}</div>
                 {% endif %}
+                {% if form.details_bourse.help_text %}
+                <small class="form-text">{{ form.details_bourse.help_text }}</small>
+                {% endif %}
             </div>
         </div>
 
         {% if documents_requis %}
         <div class="form-section">
-            <h2>Documents requis</h2>
-            <p class="info-text">Vous devrez uploader ces documents après la création du dossier.</p>
+            <h2>📎 Documents requis</h2>
+            <p class="info-text">
+                <strong>Important :</strong> Après la création de votre dossier, vous devrez uploader 
+                tous les documents listés ci-dessous. Assurez-vous d'avoir ces documents prêts 
+                (format PDF, Word ou image, taille max 10MB par fichier).
+            </p>
+            <div class="documents-info-box">
+                <p><strong>📌 Note :</strong> Les documents marqués comme "Obligatoire" doivent absolument 
+                être fournis pour que votre dossier soit considéré comme complet.</p>
+            </div>
             <ul class="documents-list">
                 {% for doc in documents_requis %}
                 <li>
-                    <strong>{{ doc.nom }}</strong>
-                    {% if doc.obligatoire %}
-                    <span class="badge badge-warning">Obligatoire</span>
-                    {% endif %}
-                    <br>
-                    <small>{{ doc.description }}</small>
+                    <div class="document-header">
+                        <strong>{{ doc.nom }}</strong>
+                        {% if doc.obligatoire %}
+                        <span class="badge badge-warning">Obligatoire</span>
+                        {% else %}
+                        <span class="badge badge-info">Optionnel</span>
+                        {% endif %}
+                    </div>
+                    <div class="document-description">
+                        <small>{{ doc.description }}</small>
+                    </div>
                 </li>
                 {% endfor %}
             </ul>
@@ -103,8 +154,19 @@
         {% endif %}
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Soumettre la demande</button>
-            <a href="{% url 'admissions:mes_dossiers' %}" class="btn btn-secondary">Annuler</a>
+            <div class="submit-info">
+                <p><strong>⚠️ Avant de soumettre :</strong> Vérifiez que toutes les informations sont correctes. 
+                Vous pourrez modifier certains éléments après la soumission, mais les informations de base 
+                (formation, nom, prénom) seront verrouillées.</p>
+            </div>
+            <div class="buttons-group">
+                <button type="submit" class="btn btn-primary">
+                    ✅ Soumettre la demande de candidature
+                </button>
+                <a href="{% url 'admissions:mes_dossiers' %}" class="btn btn-secondary">
+                    Annuler
+                </a>
+            </div>
         </div>
     </form>
 </div>
@@ -189,6 +251,97 @@
     margin-top: 0.25rem;
     font-size: 0.875rem;
     color: #666;
+    font-style: italic;
+}
+
+.header-description {
+    font-size: 1.05rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.info-box {
+    background-color: #e7f3ff;
+    border-left: 4px solid #005a9c;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+}
+
+.info-box p {
+    margin: 0;
+    color: #004080;
+}
+
+.section-description {
+    color: #666;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.documents-info-box {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.documents-info-box p {
+    margin: 0;
+    color: #856404;
+}
+
+.document-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+}
+
+.document-description {
+    margin-top: 0.25rem;
+}
+
+.submit-info {
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.submit-info p {
+    margin: 0;
+    color: #856404;
+    font-size: 0.9rem;
+}
+
+.buttons-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
 }
 
 .error-message {

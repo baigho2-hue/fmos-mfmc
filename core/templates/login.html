@@ -39,7 +39,11 @@
     </form>
 {% else %}
     <!-- Étape 1 : Authentification username/password -->
-    <p class="intro-login">Connectez-vous avec votre nom d'utilisateur ou votre adresse email et votre mot de passe. Un code de vérification vous sera envoyé par email.</p>
+    <p class="intro-login">
+        Connectez-vous avec votre nom d'utilisateur ou votre adresse email et votre mot de passe. 
+        <strong>La double authentification (2FA) est obligatoire pour tous les utilisateurs</strong> (étudiants, enseignants, administrateurs). 
+        Un code de vérification vous sera envoyé par email après la saisie de vos identifiants.
+    </p>
     
     <form method="POST" class="login-form">
         {% csrf_token %}
@@ -56,12 +60,12 @@
         
         <div class="form-group">
             <label for="id_username">Nom d'utilisateur ou Email *</label>
-            <input type="text" name="username" id="id_username" class="form-control" required autofocus placeholder="Entrez votre nom d'utilisateur ou email">
+            <input type="text" name="username" id="id_username" class="form-control" required autofocus placeholder="Entrez votre nom d'utilisateur ou email" autocomplete="username">
         </div>
         
         <div class="form-group">
             <label for="id_password">Mot de passe *</label>
-            <input type="password" name="password" id="id_password" class="form-control" required>
+            <input type="password" name="password" id="id_password" class="form-control" required autocomplete="current-password">
         </div>
         
         <button type="submit" class="btn-submit">Se connecter</button>

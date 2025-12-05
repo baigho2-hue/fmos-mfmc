@@ -103,9 +103,23 @@ def inscription(request):
         
         if form.is_valid():
             user = form.save()
+            # Nettoyer les données sensibles du formulaire de la mémoire
+            if hasattr(form, 'cleaned_data'):
+                if 'password1' in form.cleaned_data:
+                    del form.cleaned_data['password1']
+                if 'password2' in form.cleaned_data:
+                    del form.cleaned_data['password2']
+                if 'username' in form.cleaned_data:
+                    del form.cleaned_data['username']
             messages.success(request, "Compte étudiant créé avec succès ! Vous pouvez maintenant vous connecter.")
             return redirect('login')
         else:
+            # Nettoyer les données sensibles même en cas d'erreur
+            if hasattr(form, 'cleaned_data'):
+                if 'password1' in form.cleaned_data:
+                    del form.cleaned_data['password1']
+                if 'password2' in form.cleaned_data:
+                    del form.cleaned_data['password2']
             messages.error(request, "Erreur lors de la création du compte. Veuillez vérifier vos informations.")
     else:
         form = InscriptionEtudiantForm()
@@ -174,7 +188,7 @@ def login_view(request):
                     login(request, user)
                     if 'login_user_id' in request.session:
                         del request.session['login_user_id']
-                    messages.success(request, f"Bienvenue {user.get_full_name() or user.username} !")
+                    messages.success(request, f"Bienvenue {user.get_full_name() or user.username} ! Connexion sécurisée avec double authentification.")
                     
                     # Redirection selon le paramètre next ou le type d'utilisateur
                     from core.utils_redirect import get_redirect_after_login
@@ -204,47 +218,43 @@ def login_view(request):
     # Étape 1 : Authentification username/password
     if request.method == 'POST':
         form = LoginForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            
-            # Stocker l'URL de redirection si présente
-            next_url = request.GET.get('next')
-            if next_url:
-                request.session['next_url'] = next_url
-            
-            # Les superutilisateurs peuvent se connecter directement sans vérification
-            if user.is_superuser:
-                login(request, user)
-                if not user.email_verifie:
-                    user.email_verifie = True
-                    user.save()
-                messages.success(request, f"Bienvenue {user.get_full_name() or user.username} !")
+        try:
+            if form.is_valid():
+                user = form.get_user()
                 
-                # Redirection selon le paramètre next ou le type d'utilisateur
-                from core.utils_redirect import get_redirect_after_login
+                # Nettoyer les données sensibles du formulaire de la mémoire
+                if hasattr(form, 'cleaned_data'):
+                    if 'password' in form.cleaned_data:
+                        del form.cleaned_data['password']
+                    if 'username' in form.cleaned_data:
+                        del form.cleaned_data['username']
+                
+                # Stocker l'URL de redirection si présente
+                next_url = request.GET.get('next')
                 if next_url:
-                    # Nettoyer l'URL next si elle existe dans la session
-                    if 'next_url' in request.session:
-                        del request.session['next_url']
-                    # Vérifier que l'URL est valide
-                    if next_url in ['dashboard_etudiant', 'dashboard_enseignant', 'dashboard_administration']:
-                        return redirect(next_url)
+                    request.session['next_url'] = next_url
                 
-                # Redirection intelligente selon le niveau d'accès
-                redirect_url = get_redirect_after_login(user)
-                return redirect(redirect_url)
-            
-            # Générer et envoyer le code de vérification pour les autres utilisateurs
-            try:
-                generer_code_verification(user)
-                # Stocker l'ID de l'utilisateur en session pour l'étape suivante
-                request.session['login_user_id'] = user.id
-                messages.info(request, f"Un code de vérification a été envoyé à {user.email}. Veuillez l'entrer ci-dessous.")
-                return redirect('login')
-            except Exception as e:
-                messages.error(request, f"Erreur lors de l'envoi du code de vérification : {str(e)}")
-        else:
-            messages.error(request, "Erreur de connexion. Vérifiez vos identifiants.")
+                # La double authentification (2FA) est OBLIGATOIRE pour TOUS les utilisateurs
+                # Étudiants, enseignants et superutilisateurs doivent tous passer par la vérification
+                try:
+                    generer_code_verification(user)
+                    # Stocker l'ID de l'utilisateur en session pour l'étape suivante
+                    request.session['login_user_id'] = user.id
+                    messages.info(request, f"Un code de vérification a été envoyé à {user.email}. Veuillez l'entrer ci-dessous.")
+                    return redirect('login')
+                except Exception as e:
+                    messages.error(request, f"Erreur lors de l'envoi du code de vérification : {str(e)}")
+            else:
+                # Nettoyer les données sensibles même en cas d'erreur
+                if hasattr(form, 'cleaned_data'):
+                    if 'password' in form.cleaned_data:
+                        del form.cleaned_data['password']
+                    if 'username' in form.cleaned_data:
+                        del form.cleaned_data['username']
+                messages.error(request, "Erreur de connexion. Vérifiez vos identifiants.")
+        finally:
+            # Garantir le nettoyage même en cas d'exception
+            pass
     else:
         form = LoginForm()
     

@@ -200,3 +200,45 @@ else:
 
 # Email par défaut (utilisé même en mode console)
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@fmos-mfmc.ml')
+
+# Configuration du logging - éviter de logger les données sensibles
+# Note: Django ne log pas automatiquement les mots de passe dans les requêtes POST
+# mais cette configuration limite le logging pour plus de sécurité
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',  # Ne logger que les erreurs, pas les requêtes normales
+            'propagate': False,
+        },
+        # Désactiver le logging détaillé des requêtes qui pourraient contenir des mots de passe
+        'django.server': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}

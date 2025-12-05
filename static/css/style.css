@@ -268,6 +268,8 @@ display: flex;
 justify-content: center;
 align-items: center;
 width: 100%;
+position: relative;
+z-index: 1000; /* Z-index pour le menu principal */
 }
 
 nav.main-menu ul.menu {
@@ -281,6 +283,7 @@ ul.menu > li {
 position: relative; /* Essentiel pour le positionnement des sous-menus */
 display: inline-block;
 margin: 0 0.1rem;
+z-index: 1001; /* Z-index pour chaque élément de menu */
 }
 ul.menu > li > a {
 display: block;
@@ -313,22 +316,50 @@ background-color: #ffffff; /* Fond blanc */
 border-radius: 0 0 5px 5px; /* Coins arrondis en bas */
 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 min-width: 220px; /* Largeur minimale */
-z-index: 1000;
+z-index: 10000; /* Z-index élevé pour être au-dessus de tout */
+padding: 0.5rem 0; /* Padding vertical pour l'espacement */
+list-style: none; /* Supprimer les puces */
+margin: 0; /* Supprimer les marges */
 }
 /* Affichage du sous-menu au survol du parent */
-ul.menu > li:hover > .submenu {
-display: block;
+ul.menu > li:hover > .submenu,
+ul.menu > li.has-submenu:hover > .submenu,
+ul.menu > li:focus-within > .submenu {
+display: block !important;
+opacity: 1;
+visibility: visible;
+}
+
+/* S'assurer que le sous-menu reste visible quand on survole le sous-menu lui-même */
+ul.menu > li.has-submenu:hover .submenu,
+.submenu:hover {
+display: block !important;
+opacity: 1;
+visibility: visible;
 }
 .submenu li {
 position: relative; /* Pour le sous-sous-menu */
+display: block;
+width: 100%;
+}
+
+.submenu li.submenu-group {
+display: block;
+width: 100%;
 }
 
 .submenu li a {
 display: block;
 padding: 12px 20px;
-color: #005a9c; /* Texte en bleu */
+color: #005a9c !important; /* Texte en bleu */
 transition: background-color 0.3s ease, color 0.3s ease;
-color: #005a9c; /* Rendu visible sur fond blanc */
+text-decoration: none;
+white-space: nowrap; /* Empêcher le retour à la ligne */
+}
+
+.submenu li a:hover {
+background-color: #005a9c;
+color: #ffffff !important;
 }
 
 /* Styles pour les catégories et séparateurs du menu Administration */
@@ -352,6 +383,7 @@ background-color: transparent;
 color: #ffffff !important;
 }
 
+.submenu .submenu-category,
 .submenu .menu-category {
 padding: 8px 20px 4px 20px;
 font-size: 0.75rem;
@@ -362,6 +394,7 @@ letter-spacing: 0.5px;
 margin-top: 4px;
 cursor: default;
 pointer-events: none;
+display: block;
 }
 
 .submenu .menu-category:hover {
@@ -381,14 +414,20 @@ pointer-events: none;
 background-color: #e0e0e0;
 }
 
-submenu a, .subsubmenu a { 
-    color: #005a9c; /* Rendu visible sur fond blanc */
+.submenu a, .subsubmenu a { 
+    color: #005a9c !important; /* Rendu visible sur fond blanc */
+    text-decoration: none;
+}
+
+.submenu a:hover, .subsubmenu a:hover {
+    color: #ffffff !important;
 }
 
 /* Amélioration de l'interaction (facultatif mais recommandé) */
-ul.menu > li:hover > .submenu {
-    display: block;
-    transition-delay: 0.2s; /* Ajoute un léger délai */
+ul.menu > li:hover > .submenu,
+ul.menu > li.has-submenu:hover > .submenu {
+    display: block !important;
+    transition-delay: 0.1s; /* Ajoute un léger délai */
 }
 .submenu li:hover > a {
 background-color: #005a9c; /* Fond bleu au survol */
@@ -403,11 +442,18 @@ background-color: #ffffff;
 border-radius: 5px;
 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 min-width: 220px;
-}/* Affichage du sous-sous-menu au survol du parent */
+z-index: 10001; /* Z-index encore plus élevé pour les sous-sous-menus */
+padding: 0.5rem 0;
+list-style: none;
+margin: 0;
+}
 
-
-.submenu li:hover > .subsubmenu {
-display: block;
+/* Affichage du sous-sous-menu au survol du parent */
+.submenu li:hover > .subsubmenu,
+.submenu li.submenu-group:hover > .subsubmenu {
+display: block !important;
+opacity: 1;
+visibility: visible;
 }/* --- Contenu principal et pied de page --- */
 .main {
 padding: 2rem;

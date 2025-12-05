@@ -17,10 +17,47 @@ from .models import (
 class DossierCandidatureForm(forms.ModelForm):
     """Formulaire pour créer un dossier de candidature."""
 
-    first_name = forms.CharField(label="Prénom", max_length=150, required=True)
-    last_name = forms.CharField(label="Nom", max_length=150, required=True)
-    email = forms.EmailField(label="Email", required=True)
-    telephone = forms.CharField(label="Téléphone", max_length=30, required=False)
+    first_name = forms.CharField(
+        label="Prénom",
+        max_length=150,
+        required=True,
+        help_text="Votre prénom tel qu'il apparaît sur vos documents officiels",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ex: Amadou'
+        })
+    )
+    last_name = forms.CharField(
+        label="Nom de famille",
+        max_length=150,
+        required=True,
+        help_text="Votre nom de famille tel qu'il apparaît sur vos documents officiels",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ex: Diallo'
+        })
+    )
+    email = forms.EmailField(
+        label="Adresse email",
+        required=True,
+        help_text="Une adresse email valide où nous pourrons vous contacter concernant votre candidature",
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'exemple@email.com',
+            'autocomplete': 'email'
+        })
+    )
+    telephone = forms.CharField(
+        label="Numéro de téléphone",
+        max_length=30,
+        required=False,
+        help_text="Numéro de téléphone où vous joindre (format: +223 XX XX XX XX ou XX XX XX XX)",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': '+223 XX XX XX XX',
+            'autocomplete': 'tel'
+        })
+    )
 
     class Meta:
         model = DossierCandidature
@@ -34,12 +71,18 @@ class DossierCandidatureForm(forms.ModelForm):
             'telephone',
         ]
         widgets = {
-            'formation': forms.Select(attrs={'class': 'form-control'}),
-            'prise_en_charge_bourse': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'formation': forms.Select(attrs={
+                'class': 'form-control',
+                'required': True
+            }),
+            'prise_en_charge_bourse': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'id': 'id_prise_en_charge_bourse'
+            }),
             'details_bourse': forms.Textarea(attrs={
                 'class': 'form-control',
-                'rows': 3,
-                'placeholder': 'Préciser les détails de la bourse si applicable'
+                'rows': 4,
+                'placeholder': 'Ex: Bourse d\'excellence du gouvernement, Bourse de l\'OMS, Prise en charge par l\'employeur, etc. Précisez l\'organisme, le montant et la durée si possible.'
             }),
         }
 
@@ -50,7 +93,10 @@ class DossierCandidatureForm(forms.ModelForm):
 
         self.fields['formation'].queryset = Formation.objects.filter(actif=True)
         self.fields['formation'].empty_label = "Sélectionner une formation"
+        self.fields['formation'].help_text = "Choisissez la formation pour laquelle vous souhaitez candidater. Les documents requis varient selon la formation."
         self.fields['details_bourse'].required = False
+        self.fields['details_bourse'].help_text = "Si vos études sont prises en charge par une bourse ou un organisme, veuillez préciser les détails (organisme, montant, durée, etc.)"
+        self.fields['prise_en_charge_bourse'].help_text = "Cochez cette case si vos études sont financées par une bourse, un organisme ou un employeur"
 
         if self.request_user and self.request_user.is_authenticated:
             self.fields['first_name'].initial = self.request_user.first_name
@@ -100,18 +146,32 @@ class DocumentUploadForm(forms.ModelForm):
     def clean_fichier(self):
         fichier = self.cleaned_data.get('fichier')
         if not fichier:
-            raise ValidationError("Veuillez sélectionner un fichier.")
+            raise ValidationError("Veuillez sélectionner un fichier à uploader.")
         
         # Vérifier la taille (max 10MB)
-        if fichier.size > 10 * 1024 * 1024:
-            raise ValidationError("Le fichier est trop volumineux (maximum 10MB).")
+        max_size = 10 * 1024 * 1024  # 10MB
+        if fichier.size > max_size:
+            taille_mb = fichier.size / (1024 * 1024)
+            raise ValidationError(
+                f"Le fichier est trop volumineux ({taille_mb:.2f} MB). "
+                f"La taille maximale autorisée est de 10 MB. "
+                f"Veuillez compresser ou réduire la taille de votre fichier."
+            )
         
         # Vérifier l'extension
         extensions_autorisees = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png']
         nom_fichier = fichier.name.lower()
-        if not any(nom_fichier.endswith(ext) for ext in extensions_autorisees):
+        extension = None
+        for ext in extensions_autorisees:
+            if nom_fichier.endswith(ext):
+                extension = ext
+                break
+        
+        if not extension:
             raise ValidationError(
-                f"Format de fichier non autorisé. Formats acceptés: {', '.join(extensions_autorisees)}"
+                f"Format de fichier non autorisé. "
+                f"Formats acceptés: PDF, Word (.doc, .docx), Images (.jpg, .jpeg, .png). "
+                f"Votre fichier: {fichier.name}"
             )
         
         return fichier
