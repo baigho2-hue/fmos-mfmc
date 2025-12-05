@@ -18,7 +18,7 @@
         <div class="notes-content">
             {% for cours_data in bulletin.cours_moyennes %}
             <div class="cours-section">
-                <h3>{{ cours_data.cours.titre }}</h3>
+                <h3>{{ cours_data.cours.get_titre_affichage }}</h3>
                 <table>
                     <thead>
                         <tr>

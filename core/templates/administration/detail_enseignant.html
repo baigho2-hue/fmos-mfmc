@@ -215,7 +215,7 @@
                                     {{ lecon.get_type_lecon_display }}
                                 </span>
                             </td>
-                            <td>{{ lecon.cours.titre }}</td>
+                            <td>{{ lecon.cours.get_titre_affichage }}</td>
                             <td>{{ lecon.cours.classe.nom }}</td>
                             <td>
                                 {% if lecon.duree_estimee %}

@@ -15,7 +15,7 @@
         {% for cours in cours_list %}
         <div class="cours-card">
             <div class="cours-header">
-                <h3>{{ cours.titre }}</h3>
+                <h3>{{ cours.get_titre_affichage }}</h3>
                 <span class="cours-code">{{ cours.code }}</span>
             </div>
             

@@ -2,13 +2,13 @@
 {% load static %}
 {% load utilisateurs_extras %}
 
-{% block title %}{{ cours.titre }} - FMOS MFMC{% endblock %}
+{% block title %}{{ cours.get_titre_affichage }} - FMOS MFMC{% endblock %}
 
 {% block content %}
 <div class="cours-detail-container">
     <div class="cours-header">
         <div class="cours-title-section">
-            <h1>{{ cours.titre }}</h1>
+            <h1>{{ cours.get_titre_affichage }}</h1>
             <span class="cours-code">{{ cours.code }}</span>
         </div>
         <a href="{% url 'mes_cours' %}" class="btn-back">← Retour aux cours</a>

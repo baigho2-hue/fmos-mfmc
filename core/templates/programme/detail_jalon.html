@@ -97,7 +97,7 @@
                         {% for cours_prog in module.cours_programme.all %}
                         <li>
                             <a href="{% url 'detail_cours' cours_prog.cours.id %}">
-                                {{ cours_prog.cours.titre }}
+                                {{ cours_prog.cours.get_titre_affichage }}
                             </a>
                             {% if not cours_prog.obligatoire %}
                             <span class="badge-optionnel">Optionnel</span>

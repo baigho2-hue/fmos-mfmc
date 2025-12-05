@@ -5,6 +5,61 @@ Context processors pour rendre des variables disponibles dans tous les templates
 from django.urls import reverse, NoReverseMatch
 
 
+def get_grilles_submenu(safe_reverse_func):
+    """Génère le sous-menu des grilles avec les types de grilles"""
+    try:
+        from apps.evaluations.models_grilles import TypeGrilleEvaluation
+        types_grilles = TypeGrilleEvaluation.objects.filter(actif=True).order_by('type_grille', 'nom')
+        
+        # Grouper les types par catégorie
+        categories = {
+            'Apprentissage': ['habiletes_cliniques', 'formative', 'scenario'],
+            'Évaluation': ['sommative', 'finale'],
+            'Supervision': ['supervision_directe_indirecte', 'metasupervision'],
+            'Autres': ['simulation', 'presentation']
+        }
+        
+        submenu = [
+            {
+                'title': 'Actions',
+                'items': [
+                    {'title': 'Liste des grilles', 'url': safe_reverse_func('grilles:liste')},
+                    {'title': 'Créer une grille', 'url': safe_reverse_func('grilles:creer')},
+                    {'title': 'Importer depuis Word', 'url': safe_reverse_func('grilles:import_word')},
+                ]
+            }
+        ]
+        
+        # Ajouter les types de grilles par catégorie
+        for cat_name, type_codes in categories.items():
+            items = []
+            for type_grille in types_grilles:
+                if type_grille.type_grille in type_codes:
+                    items.append({
+                        'title': type_grille.nom,
+                        'url': f"{safe_reverse_func('grilles:liste')}?type_grille={type_grille.id}"
+                    })
+            if items:
+                submenu.append({
+                    'title': cat_name,
+                    'items': items
+                })
+        
+        return submenu
+    except Exception:
+        # En cas d'erreur, retourner un menu minimal
+        return [
+            {
+                'title': 'Actions',
+                'items': [
+                    {'title': 'Liste des grilles', 'url': safe_reverse_func('grilles:liste')},
+                    {'title': 'Créer une grille', 'url': safe_reverse_func('grilles:creer')},
+                    {'title': 'Importer depuis Word', 'url': safe_reverse_func('grilles:import_word')},
+                ]
+            }
+        ]
+
+
 def navigation_menu(request):
     """
     Génère le menu de navigation en fonction du type d'utilisateur
@@ -148,11 +203,7 @@ def navigation_menu(request):
                 'title': 'Grilles d\'évaluation',
                 'url': safe_reverse('grilles:liste'),
                 'icon': '📋',
-                'submenu': [
-                    {'title': 'Liste des grilles', 'url': safe_reverse('grilles:liste')},
-                    {'title': 'Créer une grille', 'url': safe_reverse('grilles:creer')},
-                    {'title': 'Importer depuis Word', 'url': safe_reverse('grilles:import_word')},
-                ],
+                'submenu': get_grilles_submenu(safe_reverse),
                 'active': 'grilles' in request.resolver_match.url_name if hasattr(request, 'resolver_match') else False
             },
             {

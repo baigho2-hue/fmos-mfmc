@@ -279,7 +279,7 @@
                 {% for cours_data in bulletin.cours_moyennes %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td class="cours-name">{{ cours_data.cours.titre }}</td>
+                    <td class="cours-name">{{ cours_data.cours.get_titre_affichage }}</td>
                     <td>{{ cours_data.cours.code|default:"-" }}</td>
                     <td>{{ cours_data.coefficient|floatformat:1 }}</td>
                     <td>

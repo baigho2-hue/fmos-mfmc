@@ -14,7 +14,7 @@
             {% for stat in stats_evaluations %}
             <div class="evaluation-card">
                 <h3>{{ stat.evaluation.titre }}</h3>
-                <p><strong>Cours:</strong> {{ stat.evaluation.cours.titre }}</p>
+                <p><strong>Cours:</strong> {{ stat.evaluation.cours.get_titre_affichage }}</p>
                 <div class="evaluation-stats">
                     <div class="stat-item">
                         <span class="stat-label">Participants:</span>

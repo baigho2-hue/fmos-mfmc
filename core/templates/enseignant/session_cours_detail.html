@@ -7,7 +7,7 @@
 <div class="session-container">
     <div class="session-header">
         <h1>{{ session.titre }}</h1>
-        <p class="session-meta">Cours : {{ session.cours.titre }} | Classe : {{ session.cours.classe.nom }}</p>
+        <p class="session-meta">Cours : {{ session.cours.get_titre_affichage }} | Classe : {{ session.cours.classe.nom }}</p>
         <span class="statut-badge statut-{{ session.statut }}">{{ session.get_statut_display }}</span>
     </div>
 

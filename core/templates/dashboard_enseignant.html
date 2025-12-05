@@ -90,7 +90,7 @@
             <div class="etudiant-defi-card">
                 <div class="etudiant-info">
                     <h4>{{ item.etudiant.get_full_name|default:item.etudiant.username }}</h4>
-                    <p class="cours-name">{{ item.cours.titre }}</p>
+                    <p class="cours-name">{{ item.cours.get_titre_affichage }}</p>
                 </div>
                 <div class="progression-info">
                     <div class="progression-bar">
@@ -188,7 +188,7 @@
                 <div class="session-item">
                     <div class="session-info">
                         <h4>{{ session.titre }}</h4>
-                        <p>{{ session.cours.titre }} - {{ session.date_debut_prevue|date:"d/m/Y à H:i" }}</p>
+                        <p>{{ session.cours.get_titre_affichage }} - {{ session.date_debut_prevue|date:"d/m/Y à H:i" }}</p>
                     </div>
                     <div class="session-status">
                         <span class="statut-badge statut-{{ session.statut }}">{{ session.get_statut_display }}</span>

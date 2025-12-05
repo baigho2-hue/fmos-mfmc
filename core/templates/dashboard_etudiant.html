@@ -83,7 +83,7 @@
                     {% for info in cours_infos %}
                     <tr>
                         <td class="course-title">
-                            <span class="course-name">{{ info.cours.titre }}</span>
+                            <span class="course-name">{{ info.cours.get_titre_affichage }}</span>
                             {% if info.cours.code %}
                             <span class="course-code">{{ info.cours.code }}</span>
                             {% endif %}

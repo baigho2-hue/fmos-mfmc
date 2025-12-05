@@ -78,7 +78,7 @@
             <div class="recent-item">
                 <div class="recent-info">
                     <h4>{{ lecon.titre }}</h4>
-                    <p><strong>Cours:</strong> {{ lecon.cours.titre }}</p>
+                    <p><strong>Cours:</strong> {{ lecon.cours.get_titre_affichage }}</p>
                     <p><strong>Type:</strong> {{ lecon.get_type_lecon_display }}</p>
                     <p><strong>Créée le:</strong> {{ lecon.date_creation|date:"d/m/Y à H:i" }}</p>
                     {% if lecon.fichier_contenu %}

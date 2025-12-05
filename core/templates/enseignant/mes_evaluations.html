@@ -21,7 +21,7 @@
             
             <div class="evaluation-meta">
                 <div class="meta-item">
-                    <strong>📚 Cours :</strong> {{ evaluation.cours.titre }}
+                    <strong>📚 Cours :</strong> {{ evaluation.cours.get_titre_affichage }}
                 </div>
                 <div class="meta-item">
                     <strong>📅 Date :</strong> {{ evaluation.date_evaluation|date:"d/m/Y à H:i" }}

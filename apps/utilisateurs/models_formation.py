@@ -316,10 +316,10 @@ class Cours(models.Model):
     ordre = models.IntegerField(default=0, verbose_name="Ordre d'affichage")
     fichier_contenu = models.FileField(
         blank=True,
-        help_text='Fichier PDF, Word, PowerPoint, etc. contenant le contenu du cours',
+        help_text='⚠️ DÉPRÉCIÉ : Les fichiers doivent être téléversés au niveau des leçons, pas du cours. Ce champ est conservé pour compatibilité mais ne devrait plus être utilisé.',
         null=True,
         upload_to='cours/fichiers/',
-        verbose_name='Fichier du cours'
+        verbose_name='Fichier du cours (déprécié)'
     )
     ressources_pedagogiques = models.TextField(
         blank=True,
@@ -378,6 +378,28 @@ class Cours(models.Model):
     
     def __str__(self):
         return f"{self.titre} ({self.classe.nom})"
+    
+    def get_titre_affichage(self):
+        """
+        Retourne le titre à afficher pour le cours.
+        Si le cours n'a qu'une seule leçon active, retourne le titre de la leçon.
+        Sinon, retourne le titre du cours.
+        """
+        lecons_actives = self.lecons.filter(actif=True)
+        if lecons_actives.count() == 1:
+            return lecons_actives.first().titre
+        return self.titre
+    
+    def get_nombre_lecons(self):
+        """Retourne le nombre de leçons actives dans ce cours"""
+        return self.lecons.filter(actif=True).count()
+    
+    def est_conteneur_simple(self):
+        """
+        Retourne True si le cours n'est qu'un conteneur avec une seule leçon.
+        Dans ce cas, le nom de la leçon devient le nom du cours.
+        """
+        return self.get_nombre_lecons() == 1
 
 
 class Lecon(models.Model):

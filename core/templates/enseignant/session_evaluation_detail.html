@@ -7,7 +7,7 @@
 <div class="session-container">
     <div class="session-header">
         <h1>{{ session.titre }}</h1>
-        <p class="session-meta">Évaluation : {{ session.evaluation.titre }} | Cours : {{ session.evaluation.cours.titre }}</p>
+        <p class="session-meta">Évaluation : {{ session.evaluation.titre }} | Cours : {{ session.evaluation.cours.get_titre_affichage }}</p>
         <div class="statut-info">
             <span class="statut-badge statut-{{ session.statut }}">{{ session.get_statut_display }}</span>
             {% if session.verrouillee %}
