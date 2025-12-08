@@ -803,7 +803,7 @@ def mes_cours_enseignant(request):
 @login_required(login_url='login')
 def modifier_cours(request, cours_id):
     """Modifier un cours (enseignant uniquement)"""
-    from apps.utilisateurs.models_formation import Cours
+    from apps.utilisateurs.models_formation import Cours, Lecon
     
     # Les superutilisateurs ont accès à tout
     if not request.user.est_enseignant() and not request.user.is_superuser:
@@ -817,16 +817,24 @@ def modifier_cours(request, cours_id):
         messages.error(request, "Vous n'avez pas le droit de modifier ce cours.")
         return redirect('mes_cours_enseignant')
     
+    # Récupérer les leçons du cours
+    lecons = Lecon.objects.filter(cours=cours, actif=True).order_by('ordre', 'numero')
+    
     if request.method == 'POST':
-        cours.titre = request.POST.get('titre', cours.titre)
-        cours.description = request.POST.get('description', cours.description)
-        cours.contenu = request.POST.get('contenu', cours.contenu)
-        cours.save()
-        messages.success(request, "Cours modifié avec succès.")
-        return redirect('modifier_cours', cours_id=cours.id)
+        # Vérifier si c'est une modification du cours ou une action sur une leçon
+        action = request.POST.get('action')
+        
+        if action == 'modifier_cours':
+            cours.titre = request.POST.get('titre', cours.titre)
+            cours.description = request.POST.get('description', cours.description)
+            cours.contenu = request.POST.get('contenu', cours.contenu)
+            cours.save()
+            messages.success(request, "Cours modifié avec succès.")
+            return redirect('modifier_cours', cours_id=cours.id)
     
     return render(request, 'enseignant/modifier_cours.html', {
         'cours': cours,
+        'lecons': lecons,
     })
 
 

@@ -10,8 +10,9 @@
         <p class="subtitle">{{ cours.titre }}</p>
     </div>
 
-    <form method="POST" class="cours-form">
+    <form method="POST" class="cours-form" enctype="multipart/form-data">
         {% csrf_token %}
+        <input type="hidden" name="action" value="modifier_cours">
         
         <div class="form-group">
             <label for="titre">Titre du cours *</label>
@@ -34,6 +35,164 @@
             <a href="{% url 'mes_cours_enseignant' %}" class="btn-cancel">Annuler</a>
         </div>
     </form>
+
+    <!-- Section Gestion des Leçons -->
+    <div class="lecons-section">
+        <div class="section-header">
+            <h2>📚 Leçons du cours</h2>
+            <button type="button" class="btn-add-lecon" onclick="toggleAddLeconForm()">➕ Ajouter une leçon</button>
+        </div>
+
+        <!-- Formulaire d'ajout de leçon (masqué par défaut) -->
+        <div id="add-lecon-form" class="lecon-form-container" style="display: none;">
+            <h3>Ajouter une nouvelle leçon</h3>
+            <form method="POST" action="{% url 'ajouter_lecon' cours.id %}" enctype="multipart/form-data" class="lecon-form">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lecon_titre">Titre de la leçon *</label>
+                        <input type="text" name="titre" id="lecon_titre" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lecon_numero">Numéro *</label>
+                        <input type="number" name="numero" id="lecon_numero" class="form-control" min="1" value="{{ lecons|length|add:1 }}" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lecon_type">Type de leçon</label>
+                        <select name="type_lecon" id="lecon_type" class="form-control">
+                            <option value="lecon">Leçon</option>
+                            <option value="atelier">Atelier</option>
+                            <option value="tp">Travaux pratiques</option>
+                            <option value="td">Travaux dirigés</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="lecon_ordre">Ordre d'affichage</label>
+                        <input type="number" name="ordre" id="lecon_ordre" class="form-control" min="0" value="{{ lecons|length }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="lecon_fichier">Fichier de la leçon *</label>
+                    <input type="file" name="fichier_contenu" id="lecon_fichier" class="form-control" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip" required>
+                    <small class="form-help">Formats acceptés: PDF, Word, PowerPoint, TXT, ZIP</small>
+                </div>
+                <div class="form-group">
+                    <label for="lecon_description">Description</label>
+                    <textarea name="contenu" id="lecon_description" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lecon_duree">Durée estimée (minutes)</label>
+                        <input type="number" name="duree_estimee" id="lecon_duree" class="form-control" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="lecon_date">Date de dispensation</label>
+                        <input type="datetime-local" name="date_dispensation" id="lecon_date" class="form-control">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">✅ Ajouter la leçon</button>
+                    <button type="button" class="btn-cancel" onclick="toggleAddLeconForm()">Annuler</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Liste des leçons existantes -->
+        <div class="lecons-list">
+            {% if lecons %}
+                {% for lecon in lecons %}
+                <div class="lecon-item" id="lecon-{{ lecon.id }}">
+                    <div class="lecon-header">
+                        <div class="lecon-info">
+                            <h4>
+                                <span class="lecon-numero">Leçon {{ lecon.numero }}</span>
+                                <span class="lecon-titre">{{ lecon.titre }}</span>
+                                <span class="lecon-type badge">{{ lecon.get_type_lecon_display }}</span>
+                            </h4>
+                            {% if lecon.fichier_contenu %}
+                                <a href="{{ lecon.fichier_contenu.url }}" target="_blank" class="lecon-file-link">📄 Voir le fichier</a>
+                            {% else %}
+                                <span class="lecon-no-file">⚠️ Aucun fichier</span>
+                            {% endif %}
+                        </div>
+                        <div class="lecon-actions">
+                            <button type="button" class="btn-edit" onclick="toggleEditLeconForm({{ lecon.id }})">✏️ Modifier</button>
+                            <form method="POST" action="{% url 'supprimer_lecon' cours.id lecon.id %}" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette leçon ?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-delete">🗑️ Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Formulaire de modification (masqué par défaut) -->
+                    <div id="edit-lecon-form-{{ lecon.id }}" class="lecon-form-container" style="display: none;">
+                        <h4>Modifier la leçon</h4>
+                        <form method="POST" action="{% url 'modifier_lecon' cours.id lecon.id %}" enctype="multipart/form-data" class="lecon-form">
+                            {% csrf_token %}
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Titre de la leçon *</label>
+                                    <input type="text" name="titre" class="form-control" value="{{ lecon.titre }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Numéro *</label>
+                                    <input type="number" name="numero" class="form-control" min="1" value="{{ lecon.numero }}" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Type de leçon</label>
+                                    <select name="type_lecon" class="form-control">
+                                        <option value="lecon" {% if lecon.type_lecon == 'lecon' %}selected{% endif %}>Leçon</option>
+                                        <option value="atelier" {% if lecon.type_lecon == 'atelier' %}selected{% endif %}>Atelier</option>
+                                        <option value="tp" {% if lecon.type_lecon == 'tp' %}selected{% endif %}>Travaux pratiques</option>
+                                        <option value="td" {% if lecon.type_lecon == 'td' %}selected{% endif %}>Travaux dirigés</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Ordre d'affichage</label>
+                                    <input type="number" name="ordre" class="form-control" min="0" value="{{ lecon.ordre }}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Fichier de la leçon (laisser vide pour ne pas modifier)</label>
+                                <input type="file" name="fichier_contenu" class="form-control" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip">
+                                {% if lecon.fichier_contenu %}
+                                    <small class="form-help">Fichier actuel: <a href="{{ lecon.fichier_contenu.url }}" target="_blank">{{ lecon.fichier_contenu.name|slice:"30:" }}</a></small>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea name="contenu" class="form-control" rows="3">{{ lecon.contenu }}</textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Durée estimée (minutes)</label>
+                                    <input type="number" name="duree_estimee" class="form-control" min="0" value="{{ lecon.duree_estimee }}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Date de dispensation</label>
+                                    <input type="datetime-local" name="date_dispensation" class="form-control" value="{% if lecon.date_dispensation %}{{ lecon.date_dispensation|date:'Y-m-d\TH:i' }}{% endif %}">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-submit">💾 Enregistrer</button>
+                                <button type="button" class="btn-cancel" onclick="toggleEditLeconForm({{ lecon.id }})">Annuler</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-lecons">
+                    <p>📝 Aucune leçon n'a encore été ajoutée à ce cours.</p>
+                    <p>Cliquez sur "Ajouter une leçon" pour commencer.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}
 
@@ -145,6 +304,183 @@ textarea.form-control {
     background-color: #5a6268;
 }
 
+/* Section Leçons */
+.lecons-section {
+    margin-top: 3rem;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #005a9c;
+}
+
+.section-header h2 {
+    color: #005a9c;
+    margin: 0;
+}
+
+.btn-add-lecon {
+    padding: 0.75rem 1.5rem;
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-add-lecon:hover {
+    background-color: #218838;
+}
+
+.lecon-form-container {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.lecon-form-container h3,
+.lecon-form-container h4 {
+    color: #005a9c;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.lecon-form {
+    margin-top: 1rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.lecons-list {
+    margin-top: 1.5rem;
+}
+
+.lecon-item {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s ease;
+}
+
+.lecon-item:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.lecon-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.lecon-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.lecon-numero {
+    font-weight: bold;
+    color: #005a9c;
+}
+
+.lecon-titre {
+    color: #333;
+}
+
+.lecon-type.badge {
+    background: #6c757d;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: normal;
+}
+
+.lecon-file-link {
+    color: #005a9c;
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+.lecon-file-link:hover {
+    text-decoration: underline;
+}
+
+.lecon-no-file {
+    color: #dc3545;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+.lecon-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-edit,
+.btn-delete {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-edit {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.btn-edit:hover {
+    background-color: #e0a800;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+.no-lecons {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+}
+
+.no-lecons p {
+    margin: 0.5rem 0;
+}
+
 @media screen and (max-width: 768px) {
     .form-container {
         padding: 1rem;
@@ -153,7 +489,50 @@ textarea.form-control {
     .form-actions {
         flex-direction: column;
     }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .btn-add-lecon {
+        width: 100%;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .lecon-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .lecon-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+    
+    .btn-edit,
+    .btn-delete {
+        flex: 1;
+    }
 }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleAddLeconForm() {
+    const form = document.getElementById('add-lecon-form');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleEditLeconForm(leconId) {
+    const form = document.getElementById('edit-lecon-form-' + leconId);
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+</script>
 {% endblock %}
 

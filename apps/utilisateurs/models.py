@@ -55,6 +55,13 @@ class Utilisateur(AbstractUser):
         verbose_name="Matières enseignées",
         help_text="Liste des matières séparées par des virgules"
     )
+    classes_enseignees = models.ManyToManyField(
+        'utilisateurs.Classe',
+        blank=True,
+        related_name='enseignants',
+        verbose_name="Classes enseignées",
+        help_text="Classes où cet enseignant dispense des cours"
+    )
     niveau_acces = models.CharField(
         max_length=20,
         choices=NIVEAU_ACCES_CHOICES,

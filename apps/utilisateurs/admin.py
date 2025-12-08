@@ -199,11 +199,11 @@ class ClasseFilter(admin.SimpleListFilter):
 
 @admin.register(Utilisateur)
 class UtilisateurAdmin(UserAdmin):
-    list_display = ('username', 'get_full_name', 'first_name', 'last_name', 'email', 'type_utilisateur', 'classe', 'email_verifie', 'is_active')
+    list_display = ('username', 'get_full_name', 'first_name', 'last_name', 'email', 'type_utilisateur', 'classe', 'get_classes_enseignees_display', 'get_cours_enseignes', 'email_verifie', 'is_active')
     list_filter = ('type_utilisateur', ClasseFilter, 'niveau_acces', 'email_verifie', 'superviseur_cec', 'centre_supervision', 'membre_coordination', 'is_staff', 'is_active', 'groups')
     search_fields = ('username', 'email', 'telephone', 'first_name', 'last_name', 'classe', 'matieres')
     ordering = ('username',)
-    filter_horizontal = ('groups', 'user_permissions')
+    filter_horizontal = ('groups', 'user_permissions', 'classes_enseignees')
     list_per_page = 100  # Augmenter la pagination pour voir plus d'étudiants
     
     fieldsets = (
@@ -213,6 +213,10 @@ class UtilisateurAdmin(UserAdmin):
         }),
         ('Type et accès', {
             'fields': ('type_utilisateur', 'classe', 'matieres', 'niveau_acces', 'email_verifie', 'superviseur_cec', 'centre_supervision', 'membre_coordination')
+        }),
+        ('Enseignement', {
+            'fields': ('classes_enseignees',),
+            'description': 'Sélectionnez les classes où cet enseignant dispense des cours'
         }),
         ('Permissions', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
         ('Dates importantes', {'fields': ('last_login', 'date_joined')}),
@@ -230,6 +234,11 @@ class UtilisateurAdmin(UserAdmin):
         ('Type et accès', {
             'classes': ('wide',),
             'fields': ('type_utilisateur', 'classe', 'matieres', 'niveau_acces', 'email_verifie', 'superviseur_cec', 'centre_supervision', 'membre_coordination'),
+        }),
+        ('Enseignement', {
+            'classes': ('wide',),
+            'fields': ('classes_enseignees',),
+            'description': 'Sélectionnez les classes où cet enseignant dispense des cours'
         }),
         ('Permissions', {
             'classes': ('wide',),
@@ -256,6 +265,45 @@ class UtilisateurAdmin(UserAdmin):
         return obj.username or "Sans nom"
     get_full_name.short_description = 'Nom complet'
     get_full_name.admin_order_field = 'last_name'
+    
+    def get_classes_enseignees_display(self, obj):
+        """Affiche les classes enseignées par cet enseignant"""
+        if not obj.est_enseignant():
+            return "-"
+        classes = obj.classes_enseignees.filter(actif=True)
+        if classes.exists():
+            noms = [c.nom for c in classes[:3]]
+            count = classes.count()
+            if count > 3:
+                return f"{', '.join(noms)} (+{count - 3} autres)"
+            return ', '.join(noms)
+        return "Aucune classe"
+    get_classes_enseignees_display.short_description = 'Classes enseignées'
+    
+    def get_cours_enseignes(self, obj):
+        """Affiche les cours enseignés par cet enseignant"""
+        if not obj.est_enseignant():
+            return "-"
+        try:
+            from .models_formation import Cours
+            cours_principaux = Cours.objects.filter(enseignant=obj, actif=True).count()
+            cours_co = Cours.objects.filter(co_enseignants=obj, actif=True).count()
+            total = cours_principaux + cours_co
+            if total > 0:
+                return f"{total} cours ({cours_principaux} principal{'s' if cours_principaux > 1 else ''}, {cours_co} co-enseignant{'s' if cours_co > 1 else ''})"
+            return "Aucun cours"
+        except:
+            return "-"
+    get_cours_enseignes.short_description = 'Cours enseignés'
+    
+    def get_form(self, request, obj=None, **kwargs):
+        """Personnalise le formulaire pour filtrer les classes selon le type d'utilisateur"""
+        form = super().get_form(request, obj, **kwargs)
+        # Filtrer les classes actives seulement
+        if 'classes_enseignees' in form.base_fields:
+            from .models_formation import Classe
+            form.base_fields['classes_enseignees'].queryset = Classe.objects.filter(actif=True).order_by('formation', 'annee', 'nom')
+        return form
 
 
 @admin.register(CodeVerification)
