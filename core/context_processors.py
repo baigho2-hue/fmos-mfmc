@@ -193,13 +193,6 @@ def navigation_menu(request):
                 'active': request.resolver_match.url_name in ['mes_cours_enseignant', 'modifier_cours', 'mes_evaluations_enseignant'] if hasattr(request, 'resolver_match') else False
             },
             {
-                'title': 'Grilles d\'évaluation',
-                'url': safe_reverse('grilles:liste'),
-                'icon': '📋',
-                'submenu': get_grilles_submenu(safe_reverse),
-                'active': 'grilles' in request.resolver_match.url_name if hasattr(request, 'resolver_match') else False
-            },
-            {
                 'title': 'Évaluations de Stage',
                 'url': safe_reverse('evaluations_stage:liste_evaluations_stage'),
                 'icon': '📝',
