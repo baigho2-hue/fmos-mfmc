@@ -222,8 +222,8 @@ def navigation_menu(request):
                 'active': 'superviseur' in request.resolver_match.url_name if hasattr(request, 'resolver_match') else False
             })
     
-    # Menu pour coordination
-    if user and user.is_authenticated and hasattr(user, 'est_membre_coordination') and user.est_membre_coordination():
+    # Menu pour coordination et superusers
+    if user and user.is_authenticated and (user.is_superuser or (hasattr(user, 'est_membre_coordination') and user.est_membre_coordination())):
         menu_items.append({
             'title': 'Administration',
             'url': safe_reverse('dashboard_administration'),

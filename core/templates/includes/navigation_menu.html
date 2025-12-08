@@ -39,28 +39,28 @@
             </li>
         {% endfor %}
         
-        {# Menu utilisateur #}
+        {# Menu utilisateur - Simplifié sans doublons #}
         {% if user.is_authenticated %}
-            <li class="user-menu">
+            <li class="user-menu has-submenu">
                 <a href="#" class="user-menu-trigger">
                     👤 {{ user.get_full_name|default:user.username }}
                 </a>
-                <ul class="submenu user-submenu">
+                <ul class="submenu user-submenu" style="display: none;">
                     <li>
                         <a href="{% if user.est_etudiant %}{% url 'dashboard_etudiant' %}{% elif user.est_enseignant %}{% url 'dashboard_enseignant' %}{% else %}{% url 'dashboard_administration' %}{% endif %}">
                             🏠 Mon espace
                         </a>
                     </li>
                     {% if user.est_etudiant %}
-                        <li><a href="{% url 'mon_carnet_stage' %}">📝 Carnet de stage</a></li>
                         <li><a href="{% url 'mes_paiements' %}">💳 Mes paiements</a></li>
                     {% endif %}
                     {% if user.est_enseignant %}
-                        <li><a href="{% url 'grilles:liste' %}">📋 Grilles d'évaluation</a></li>
                         <li><a href="{% url 'activer_2fa' %}">🔐 Sécurité</a></li>
                     {% endif %}
                     {% if user.is_superuser %}
+                        <li class="menu-separator"></li>
                         <li><a href="{% url 'admin:index' %}" target="_blank">⚙️ Admin Django</a></li>
+                        <li><a href="{% url 'dashboard_administration' %}">📊 Administration</a></li>
                     {% endif %}
                     <li class="menu-separator"></li>
                     <li><a href="{% url 'logout' %}">🚪 Déconnexion</a></li>

@@ -284,6 +284,7 @@ position: relative; /* Essentiel pour le positionnement des sous-menus */
 display: inline-block;
 margin: 0 0.1rem;
 z-index: 1001; /* Z-index pour chaque élément de menu */
+isolation: isolate; /* Créer un nouveau contexte d'empilement pour isoler les sous-menus */
 }
 
 /* Augmenter l'espacement entre les éléments de menu pour éviter les chevauchements */
@@ -328,8 +329,9 @@ margin: 0; /* Supprimer les marges */
 max-height: 80vh; /* Limiter la hauteur pour éviter les menus trop longs */
 overflow-y: auto; /* Permettre le scroll si nécessaire */
 overflow-x: visible; /* Permettre aux sous-sous-menus de dépasser */
+pointer-events: auto; /* S'assurer que les sous-menus peuvent recevoir les événements */
 }
-/* Affichage du sous-menu au survol du parent */
+/* Affichage du sous-menu au survol du parent - Isolé pour chaque élément */
 ul.menu > li:hover > .submenu,
 ul.menu > li.has-submenu:hover > .submenu,
 ul.menu > li:focus-within > .submenu {
@@ -338,12 +340,36 @@ opacity: 1;
 visibility: visible;
 }
 
-/* S'assurer que le sous-menu reste visible quand on survole le sous-menu lui-même */
+/* S'assurer que le sous-menu reste visible quand on survole le sous-menu lui-même - Isolé au parent */
 ul.menu > li.has-submenu:hover .submenu,
-.submenu:hover {
+ul.menu > li.has-submenu .submenu:hover {
 display: block !important;
 opacity: 1;
 visibility: visible;
+}
+
+/* Par défaut, tous les sous-menus sont cachés */
+ul.menu > li.has-submenu > .submenu {
+display: none !important;
+opacity: 0;
+visibility: hidden;
+transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+/* Afficher uniquement le sous-menu de l'élément survolé */
+ul.menu > li.has-submenu:hover > .submenu,
+ul.menu > li.has-submenu:focus-within > .submenu,
+ul.menu > li.has-submenu:hover .submenu:hover {
+display: block !important;
+opacity: 1 !important;
+visibility: visible !important;
+}
+
+/* S'assurer que les sous-menus se ferment quand on quitte */
+ul.menu > li.has-submenu:not(:hover):not(:focus-within) > .submenu {
+display: none !important;
+opacity: 0 !important;
+visibility: hidden !important;
 }
 .submenu li {
 position: relative; /* Pour le sous-sous-menu */
@@ -1681,4 +1707,19 @@ animation-play-state: paused;
     .usttb-subtitle {
         font-size: 0.9rem;
     }
+}
+
+/* Menu utilisateur */
+.user-menu {
+    margin-left: auto;
+}
+
+.user-menu-trigger {
+    cursor: pointer;
+}
+
+.user-submenu {
+    right: 0;
+    left: auto;
+    min-width: 220px;
 }
