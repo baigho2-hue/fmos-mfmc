@@ -18,25 +18,36 @@
         <form method="GET" class="filters-form">
             <div class="filter-group">
                 <label for="type_grille">Type de grille</label>
-                <select name="type_grille" id="type_grille">
+                <select name="type_grille" id="type_grille" style="pointer-events: auto !important; cursor: pointer !important; position: relative; z-index: 1000;">
                     <option value="">Tous les types</option>
-                    {% for type in types_grilles %}
-                        <option value="{{ type.id }}" {% if request.GET.type_grille == type.id|stringformat:"s" %}selected{% endif %}>
-                            {{ type.nom }}
-                        </option>
-                    {% endfor %}
+                    {% if types_grilles %}
+                        {% for type in types_grilles %}
+                            <option value="{{ type.id }}" {% if request.GET.type_grille|stringformat:"s" == type.id|stringformat:"s" %}selected{% endif %}>
+                                {{ type.nom }}
+                            </option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="" disabled>Aucun type disponible</option>
+                    {% endif %}
                 </select>
+                {% if not types_grilles %}
+                    <small style="color: #dc3545; display: block; margin-top: 0.25rem;">⚠️ Aucun type de grille disponible. Veuillez contacter l'administrateur.</small>
+                {% endif %}
             </div>
 
             <div class="filter-group">
                 <label for="classe">Classe</label>
-                <select name="classe" id="classe">
+                <select name="classe" id="classe" style="pointer-events: auto !important; cursor: pointer !important; position: relative; z-index: 1000;">
                     <option value="">Toutes les classes</option>
-                    {% for classe in classes %}
-                        <option value="{{ classe.id }}" {% if request.GET.classe == classe.id|stringformat:"s" %}selected{% endif %}>
-                            {{ classe.nom }}
-                        </option>
-                    {% endfor %}
+                    {% if classes %}
+                        {% for classe in classes %}
+                            <option value="{{ classe.id }}" {% if request.GET.classe|stringformat:"s" == classe.id|stringformat:"s" %}selected{% endif %}>
+                                {{ classe.nom }}
+                            </option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="" disabled>Aucune classe disponible</option>
+                    {% endif %}
                 </select>
             </div>
 
@@ -205,6 +216,29 @@
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 1rem;
+    background-color: white;
+    cursor: pointer;
+    pointer-events: auto !important;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+    appearance: menulist;
+    position: relative;
+    z-index: 1000;
+    user-select: auto;
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+}
+
+.filter-group select:focus {
+    outline: 2px solid #005a9c;
+    border-color: #005a9c;
+}
+
+.filter-group select:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .filter-actions {
@@ -412,5 +446,64 @@
     }
 }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // S'assurer que les selects sont bien activés
+    const typeGrilleSelect = document.getElementById('type_grille');
+    const classeSelect = document.getElementById('classe');
+    
+    if (typeGrilleSelect) {
+        typeGrilleSelect.disabled = false;
+        typeGrilleSelect.removeAttribute('disabled');
+        typeGrilleSelect.style.pointerEvents = 'auto';
+        typeGrilleSelect.style.cursor = 'pointer';
+        typeGrilleSelect.style.opacity = '1';
+        typeGrilleSelect.style.backgroundColor = 'white';
+        
+        // Vérifier si le select est vraiment activé
+        console.log('Type grille select disabled:', typeGrilleSelect.disabled);
+        console.log('Type grille select style:', window.getComputedStyle(typeGrilleSelect).pointerEvents);
+    }
+    
+    if (classeSelect) {
+        classeSelect.disabled = false;
+        classeSelect.removeAttribute('disabled');
+        classeSelect.style.pointerEvents = 'auto';
+        classeSelect.style.cursor = 'pointer';
+        classeSelect.style.opacity = '1';
+        classeSelect.style.backgroundColor = 'white';
+        
+        // Vérifier si le select est vraiment activé
+        console.log('Classe select disabled:', classeSelect.disabled);
+        console.log('Classe select style:', window.getComputedStyle(classeSelect).pointerEvents);
+    }
+    
+    // Empêcher tout script externe de désactiver les selects
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'disabled') {
+                if (typeGrilleSelect && typeGrilleSelect.hasAttribute('disabled')) {
+                    typeGrilleSelect.removeAttribute('disabled');
+                    typeGrilleSelect.style.pointerEvents = 'auto';
+                }
+                if (classeSelect && classeSelect.hasAttribute('disabled')) {
+                    classeSelect.removeAttribute('disabled');
+                    classeSelect.style.pointerEvents = 'auto';
+                }
+            }
+        });
+    });
+    
+    if (typeGrilleSelect) {
+        observer.observe(typeGrilleSelect, { attributes: true, attributeFilter: ['disabled'] });
+    }
+    if (classeSelect) {
+        observer.observe(classeSelect, { attributes: true, attributeFilter: ['disabled'] });
+    }
+});
+</script>
 {% endblock %}
 
