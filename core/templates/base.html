@@ -1,9 +1,10 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <meta name="description" content="FMOS MFMC - Plateforme de formation médicale continue" />
   <title>{% block title %}FMOS MFMC{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
@@ -15,6 +16,7 @@
       gap: 0.75rem !important;
       margin-right: 0.5rem !important;
     }
+
     .btn-inscription,
     .btn-connexion {
       padding: 0.75rem 1.25rem !important;
@@ -34,38 +36,45 @@
       text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3) !important;
       box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
     }
+
     .btn-inscription {
       background-image: linear-gradient(to bottom, #7d8489 0%, #6c757d 50%, #5a6268 100%) !important;
       border-color: #495057 !important;
     }
+
     .btn-inscription:hover {
       background-image: linear-gradient(to bottom, #6c757d 0%, #5a6268 50%, #495057 100%) !important;
       border-color: #343a40 !important;
       transform: translateY(-1px) !important;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
     }
+
     .btn-inscription:active {
       transform: translateY(0) !important;
       background-image: linear-gradient(to bottom, #5a6268 0%, #495057 100%) !important;
       box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4) !important;
       border-color: #343a40 !important;
     }
+
     .btn-connexion {
       background-image: linear-gradient(to bottom, #7d8489 0%, #6c757d 50%, #5a6268 100%) !important;
       border-color: #495057 !important;
     }
+
     .btn-connexion:hover {
       background-image: linear-gradient(to bottom, #6c757d 0%, #5a6268 50%, #495057 100%) !important;
       border-color: #343a40 !important;
       transform: translateY(-1px) !important;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
     }
+
     .btn-connexion:active {
       transform: translateY(0) !important;
       background-image: linear-gradient(to bottom, #5a6268 0%, #495057 100%) !important;
       box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4) !important;
       border-color: #343a40 !important;
     }
+
     /* Header USTTB - Design moderne et attractif */
     .usttb-header {
       background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%) !important;
@@ -76,6 +85,7 @@
       position: relative !important;
       overflow: hidden !important;
     }
+
     .usttb-header::before {
       content: '' !important;
       position: absolute !important;
@@ -86,6 +96,7 @@
       background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%) !important;
       pointer-events: none !important;
     }
+
     .usttb-header-content {
       max-width: 1400px !important;
       margin: 0 auto !important;
@@ -98,6 +109,7 @@
       position: relative !important;
       z-index: 1 !important;
     }
+
     .usttb-logo-left {
       flex-shrink: 0 !important;
       display: flex !important;
@@ -106,6 +118,7 @@
       margin: 0 !important;
       padding: 0 !important;
     }
+
     .usttb-logo-circle {
       height: 60px !important;
       width: 60px !important;
@@ -118,10 +131,12 @@
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(255, 255, 255, 0.2) !important;
       border: 2px solid rgba(255, 255, 255, 0.3) !important;
     }
+
     .usttb-logo-circle:hover {
       transform: scale(1.1) rotate(5deg) !important;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), 0 0 0 4px rgba(255, 255, 255, 0.3) !important;
     }
+
     .usttb-text-container {
       text-align: center !important;
       flex: 1 !important;
@@ -132,6 +147,7 @@
       justify-content: center !important;
       gap: 0.5rem !important;
     }
+
     .usttb-title {
       color: #ffffff !important;
       font-size: 1rem !important;
@@ -151,11 +167,13 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
       transition: all 0.3s ease !important;
     }
+
     .usttb-title:hover {
       background: rgba(255, 255, 255, 0.2) !important;
       transform: translateY(-2px) !important;
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
     }
+
     .usttb-subtitle {
       color: #e0e7ff !important;
       font-size: 0.75rem !important;
@@ -173,31 +191,37 @@
       letter-spacing: 0.2px !important;
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) !important;
     }
+
     @media screen and (max-width: 768px) {
       .usttb-header {
         padding: 0.4rem 0.8rem !important;
       }
+
       .usttb-header-content {
         flex-direction: column !important;
         gap: 0.6rem !important;
       }
+
       .usttb-logo-left {
         order: -1 !important;
       }
+
       .usttb-logo-circle {
         height: 50px !important;
         width: 50px !important;
       }
+
       .usttb-title {
         font-size: 0.85rem !important;
         padding: 0.3rem 0.8rem !important;
       }
+
       .usttb-subtitle {
         font-size: 0.65rem !important;
         padding: 0.2rem 0.8rem !important;
       }
     }
-    
+
     /* Header principal - Design moderne */
     .main-header {
       background: linear-gradient(135deg, #005a9c 0%, #0066b3 50%, #0073cc 100%) !important;
@@ -210,6 +234,7 @@
       position: relative !important;
       border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
     }
+
     .main-header::after {
       content: '' !important;
       position: absolute !important;
@@ -221,15 +246,25 @@
       background-size: 200% 100% !important;
       animation: shimmer 3s ease-in-out infinite !important;
     }
+
     @keyframes shimmer {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
     }
+
     .header-brand {
       display: flex !important;
       flex-direction: column !important;
       gap: 0.2rem !important;
     }
+
     .brand-title {
       font-size: 1.3rem !important;
       font-weight: 900 !important;
@@ -239,10 +274,12 @@
       text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3) !important;
       letter-spacing: 0.5px !important;
     }
+
     .brand-accent {
       color: #60a5fa !important;
       text-shadow: 0 0 8px rgba(96, 165, 250, 0.5) !important;
     }
+
     .brand-subtitle {
       font-size: 0.65rem !important;
       margin: 0 !important;
@@ -252,6 +289,7 @@
       letter-spacing: 0.3px !important;
       text-transform: uppercase !important;
     }
+
     .header-logo-container {
       display: flex !important;
       align-items: center !important;
@@ -261,10 +299,12 @@
       border-radius: 8px !important;
       transition: all 0.3s ease !important;
     }
+
     .header-logo-container:hover {
       background: rgba(255, 255, 255, 0.2) !important;
       transform: scale(1.05) !important;
     }
+
     .header-logo {
       max-height: 40px !important;
       max-width: 100px !important;
@@ -274,16 +314,19 @@
   </style>
   {% block extra_css %}{% endblock %}
 </head>
+
 <body>
   <!-- Header USTTB -->
   <div class="usttb-header">
     <div class="usttb-header-content">
       <div class="usttb-logo-left">
-        <img src="{% static 'images/logo USTTB.png' %}" alt="Logo USTTB" class="usttb-logo-circle" onerror="this.style.display='none'">
+        <img src="{% static 'images/logo USTTB.png' %}" alt="Logo USTTB" class="usttb-logo-circle"
+          onerror="this.style.display='none'">
       </div>
       <div class="usttb-text-container">
         <h1 class="usttb-title">Université des Sciences, des Techniques et des Technologies de Bamako - Mali</h1>
-        <p class="usttb-subtitle">Faculté de Médecine et d'Odonto-Stomatologie (FMOS) - Médecine de Famille et Médecine Communautaire (MFMC)</p>
+        <p class="usttb-subtitle">Faculté de Médecine et d'Odonto-Stomatologie (FMOS) - Médecine de Famille et Médecine
+          Communautaire (MFMC)</p>
       </div>
     </div>
   </div>
@@ -301,20 +344,21 @@
     <div class="header-right">
       {% with request.resolver_match.url_name as current_url %}
       {% if not user.is_authenticated %}
-        {% if current_url == 'formations' or current_url == 'programmes' %}
-        <div class="header-buttons">
-          <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription">Demande de candidature</a>
-          <a href="{% url 'login' %}" class="btn-connexion">Connexion</a>
-        </div>
-        {% else %}
-        <div class="header-buttons">
-          <a href="{% url 'login' %}" class="btn-connexion">Connexion</a>
-        </div>
-        {% endif %}
+      {% if current_url == 'formations' or current_url == 'programmes' %}
+      <div class="header-buttons">
+        <a href="{% url 'admissions:creer_dossier' %}" class="btn-inscription">Demande de candidature</a>
+        <a href="{% url 'login' %}" class="btn-connexion">Connexion</a>
+      </div>
+      {% else %}
+      <div class="header-buttons">
+        <a href="{% url 'login' %}" class="btn-connexion">Connexion</a>
+      </div>
+      {% endif %}
       {% endif %}
       {% endwith %}
       <div class="header-logo-container">
-        <img src="{% static 'images/logo_adobe_express.png' %}" alt="Logo FMOS" class="header-logo" onerror="this.style.display='none'">
+        <img src="{% static 'images/logo_adobe_express.png' %}" alt="Logo FMOS" class="header-logo"
+          onerror="this.style.display='none'">
       </div>
     </div>
     <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
@@ -342,6 +386,8 @@
   <div class="news-ticker">
     <div class="news-ticker-label">Actualités</div>
     <div class="news-ticker-content">
+      <div class="news-item">🌟 1er Congrès du REMEFAC-MALI : 17-19 Juin 2026 à Bamako - Soumission des abstracts
+        ouverte !</div>
       <div class="news-item">📢 Demandes de candidature ouvertes pour la session 2025 du DESMFMC</div>
       <div class="news-item">🎓 Nouveau programme de formation en santé communautaire disponible</div>
       <div class="news-item">📅 Conférence internationale sur la médecine de famille - 15 mars 2025</div>
@@ -358,9 +404,9 @@
     <p>&copy; 2025 FMOS MFMC - Tous droits réservés</p>
     <p>Contact : +223 79 27 64 70</p>
   </footer>
-  
+
   <script src="{% static 'js/menu.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>
-</html>
 
+</html>

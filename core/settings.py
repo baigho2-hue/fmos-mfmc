@@ -135,19 +135,25 @@ if 'DATABASE_URL' in os.environ:
         # Pour les autres providers (Railway, etc.)
         db_config = dj_database_url.parse(database_url)
     
-    DATABASES = {
-        'default': db_config
-    }
-else:
-    # Sinon, utiliser la configuration normale avec variables d'environnement
+    # Forcer l'utilisation de SQLite en développement local si souhaité
+    # ou si la connexion à Supabase échoue
+    USE_SQLITE = os.getenv('USE_SQLITE', 'True') == 'True'
+    
+    if USE_SQLITE:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+    else:
+        DATABASES = {
+            'default': db_config
+        }
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME', 'fmos-mfmc'),
-            'USER': os.getenv('DB_USER', 'postgres'),
-            'PASSWORD': os.getenv('DB_PASSWORD', 'Yiriba_19'),
-            'HOST': os.getenv('DB_HOST', 'localhost'),
-            'PORT': os.getenv('DB_PORT', '5432'),
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 

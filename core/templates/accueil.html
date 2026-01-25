@@ -2,159 +2,226 @@
 {% load static %}
 
 {% block content %}
-    <!-- Section 1: Médecine Famille/Communautaire (Grande) -->
-    <section class="section-hero">
-      <div class="section-content">
-        <div class="section-image">
-          <!-- Carousel d'images du CSCom de Banconi -->
-          <div class="image-carousel">
-            <div class="carousel-container">
-              <div class="carousel-slides">
-                <!-- Image 1 -->
-                <div class="carousel-slide active">
-                  <p class="carousel-caption">CSCom-U de Kayes N'di</p>
-                  <img src="{% static 'images/cscom-kayes-ndi/WhatsApp Image 2025-11-17 at 12.06.33.jpeg' %}" alt="CSCom de Kayes N'di - Photo 1" onerror="this.style.display='none';" />
-                </div>
-                <!-- Image 2 -->
-                <div class="carousel-slide">
-                  <p class="carousel-caption">CSCom-U de Kayes N'di</p>
-                  <img src="{% static 'images/cscom-kayes-ndi/WhatsApp Image 2025-11-17 at 12.06.34 (1).jpeg' %}" alt="CSCom de Kayes N'di - Photo 2" onerror="this.style.display='none';" />
-                </div>
-                <!-- Image 3 -->
-                <div class="carousel-slide">
-                  <p class="carousel-caption">CSCom-U de Banconi</p>
-                  <img src="{% static 'images/cscom-banconi/Banconi.webp' %}" alt="CSCom de Banconi" onerror="this.style.display='none';" />
-                </div>
-                <!-- Image 4 -->
-                <div class="carousel-slide">
-                  <p class="carousel-caption">CSCom-U de Ségué</p>
-                  <img src="{% static 'images/cscom-segue/WhatsApp Image 2025-11-25 at 12.21.24.jpeg' %}" alt="CSCom de Ségué - Photo 1" onerror="this.style.display='none';" />
-                </div>
-                <!-- Image 5 -->
-                <div class="carousel-slide">
-                  <p class="carousel-caption">CSCom-U de Ségué</p>
-                  <img src="{% static 'images/cscom-segue/WhatsApp Image 2025-11-25 at 12.21.27.jpeg' %}" alt="CSCom de Ségué - Photo 2" onerror="this.style.display='none';" />
-                </div>
-                <!-- Image par défaut si aucune image n'est disponible -->
-                <div class="carousel-slide fallback" style="display: none;">
-                  <img src="{% static 'images/logo_fmos.png' %}" alt="Médecine de famille et médecine communautaire" />
-                </div>
-              </div>
-              <!-- Boutons de navigation -->
-              <button class="carousel-btn carousel-prev" aria-label="Image précédente">&#8249;</button>
-              <button class="carousel-btn carousel-next" aria-label="Image suivante">&#8250;</button>
-              <!-- Indicateurs de position -->
-              <div class="carousel-indicators"></div>
+<!-- Section 1: Médecine Famille/Communautaire (Grande) -->
+<section class="section-hero">
+  <div class="section-content">
+    <div class="section-image">
+      <!-- Carousel d'images du CSCom de Banconi -->
+      <div class="image-carousel">
+        <div class="carousel-container">
+          <div class="carousel-slides">
+            <!-- Image 1 -->
+            <div class="carousel-slide active">
+              <p class="carousel-caption">CSCom-U de Kayes N'di</p>
+              <img src="{% static 'images/cscom-kayes-ndi/WhatsApp Image 2025-11-17 at 12.06.33.jpeg' %}"
+                alt="CSCom de Kayes N'di - Photo 1" onerror="this.style.display='none';" />
+            </div>
+            <!-- Image 2 -->
+            <div class="carousel-slide">
+              <p class="carousel-caption">CSCom-U de Kayes N'di</p>
+              <img src="{% static 'images/cscom-kayes-ndi/WhatsApp Image 2025-11-17 at 12.06.34 (1).jpeg' %}"
+                alt="CSCom de Kayes N'di - Photo 2" onerror="this.style.display='none';" />
+            </div>
+            <!-- Image 3 -->
+            <div class="carousel-slide">
+              <p class="carousel-caption">CSCom-U de Banconi</p>
+              <img src="{% static 'images/cscom-banconi/Banconi.webp' %}" alt="CSCom de Banconi"
+                onerror="this.style.display='none';" />
+            </div>
+            <!-- Image 4 -->
+            <div class="carousel-slide">
+              <p class="carousel-caption">CSCom-U de Ségué</p>
+              <img src="{% static 'images/cscom-segue/WhatsApp Image 2025-11-25 at 12.21.24.jpeg' %}"
+                alt="CSCom de Ségué - Photo 1" onerror="this.style.display='none';" />
+            </div>
+            <!-- Image 5 -->
+            <div class="carousel-slide">
+              <p class="carousel-caption">CSCom-U de Ségué</p>
+              <img src="{% static 'images/cscom-segue/WhatsApp Image 2025-11-25 at 12.21.27.jpeg' %}"
+                alt="CSCom de Ségué - Photo 2" onerror="this.style.display='none';" />
+            </div>
+            <!-- Image par défaut si aucune image n'est disponible -->
+            <div class="carousel-slide fallback" style="display: none;">
+              <img src="{% static 'images/logo_fmos.png' %}" alt="Médecine de famille et médecine communautaire" />
             </div>
           </div>
-        </div>
-        <div class="section-text">
-          <h2>Médecine de Famille et Médecine Communautaire</h2>
-          <p>
-            La Médecine de Famille et la Médecine Communautaire (MFMC) représentent une approche holistique 
-            et centrée sur le patient qui vise à offrir des soins de santé complets, continus et accessibles 
-            à toute la famille, de la naissance à la fin de vie. Cette spécialité médicale se distingue par 
-            sa capacité à prendre en charge une grande variété de problèmes de santé, en tenant compte du 
-            contexte familial, social et communautaire du patient.
-          </p>
-          <p>
-            À la FMOS MFMC, nous formons des médecins compétents capables de répondre aux besoins de santé 
-            des populations, particulièrement dans les contextes où l'accès aux soins spécialisés est limité. 
-            Notre programme met l'accent sur la prévention, la promotion de la santé, la gestion des maladies 
-            chroniques et la coordination des soins au sein de la communauté.
-          </p>
-          <p>
-            Les médecins formés en MFMC sont des acteurs essentiels du système de santé, travaillant en 
-            première ligne pour améliorer la santé globale des communautés qu'ils servent. Ils développent 
-            des compétences en communication, en gestion de cas complexes, en médecine préventive et en 
-            santé publique, faisant d'eux des professionnels polyvalents et indispensables.
-          </p>
+          <!-- Boutons de navigation -->
+          <button class="carousel-btn carousel-prev" aria-label="Image précédente">&#8249;</button>
+          <button class="carousel-btn carousel-next" aria-label="Image suivante">&#8250;</button>
+          <!-- Indicateurs de position -->
+          <div class="carousel-indicators"></div>
         </div>
       </div>
-    </section>
-
-    <!-- Conteneur pour les 3 sections en bas -->
-    <div class="sections-container">
-      <!-- Section 2: CSCom-U -->
-      <section class="section-small">
-        <div class="section-content">
-          <div class="section-image">
-            <img src="{% static 'images/logo_fmos.png' %}" alt="Centres de Santé Communautaires Universitaires" />
-          </div>
-          <div class="section-text">
-            <h2>CSCom-U (Centres de Santé Communautaires Universitaires)</h2>
-            <p>
-              Les Centres de Santé Communautaires Universitaires (CSCom-U) sont des structures de soins 
-              primaires intégrées à notre programme de formation. Ces centres servent à la fois de lieux 
-              de soins pour les communautés locales et de sites d'enseignement clinique pour nos étudiants 
-              et résidents.
-            </p>
-            <p>
-              Dans ces centres, les apprenants développent leurs compétences pratiques sous la supervision 
-              de médecins expérimentés, tout en contribuant à améliorer l'accès aux soins de santé de qualité 
-              pour les populations. Les CSCom-U sont des modèles de soins intégrés qui démontrent l'importance 
-              de la médecine communautaire dans le système de santé.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Section 4: Activités à la FMOS -->
-      <section class="section-small">
-        <div class="section-content">
-          <div class="section-image">
-            <img src="{% static 'images/logo_fmos.png' %}" alt="Activités à la FMOS" />
-          </div>
-          <div class="section-text">
-            <h2>Activités à la FMOS</h2>
-            <p>
-              La Faculté de Médecine et d'Odontostomatologie (FMOS) propose une gamme variée d'activités 
-              académiques, cliniques et communautaires. Nos activités incluent des conférences scientifiques, 
-              des ateliers de formation continue, des projets de recherche en santé communautaire, et des 
-              campagnes de sensibilisation et de prévention.
-            </p>
-            <p>
-              Nous organisons régulièrement des séminaires avec des experts nationaux et internationaux, 
-              des sessions de formation pratique sur des techniques médicales spécifiques, et des activités 
-              de service communautaire qui permettent à nos étudiants de s'engager directement avec les 
-              populations qu'ils serviront dans leur future pratique professionnelle.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Section 5: REMEFAC -->
-      <section class="section-small">
-        <div class="section-content">
-          <div class="section-image">
-            <img src="{% static 'images/logo_fmos.png' %}" alt="REMEFAC - Réseau des Médecins de Famille et Médecins Communautaires" />
-          </div>
-          <div class="section-text">
-            <h2>REMEFAC</h2>
-            <p>
-              <strong>Réseau des Médecins de Famille et Médecins Communautaires - Mali</strong>
-            </p>
-            <p>
-              Le REMEFAC (Réseau des Médecins de Famille et Médecins Communautaires) est un réseau professionnel 
-              qui rassemble les médecins de famille et médecins communautaires du Mali. Ce réseau vise à 
-              renforcer la pratique de la médecine de famille et communautaire à travers le partage d'expériences, 
-              la formation continue, la recherche collaborative et le plaidoyer pour une meilleure reconnaissance 
-              de cette spécialité médicale essentielle.
-            </p>
-            <p>
-              Le REMEFAC œuvre pour améliorer la qualité des soins de santé primaires au Mali en favorisant 
-              l'échange de connaissances entre praticiens, en organisant des formations continues, et en 
-              promouvant les meilleures pratiques en médecine de famille et communautaire. Le réseau contribue 
-              également au développement professionnel de ses membres et à l'amélioration de l'accès aux soins 
-              de santé de qualité pour toutes les communautés maliennes.
-            </p>
-          </div>
-        </div>
-      </section>
     </div>
+    <div class="section-text">
+      <h2>La Médecine de Famille au Mali</h2>
+      <p>
+        Créée en <strong>2012</strong>, la spécialité de Médecine de Famille et de Communauté au Mali est née de la
+        volonté de renforcer les soins de santé primaires et d'améliorer la couverture sanitaire des populations
+        maliennes, particulièrement dans les zones les plus reculées.
+      </p>
+      <p>
+        Aujourd'hui, notre pays compte fièrement <strong>82 médecins spécialistes</strong> en Médecine de Famille et
+        Médecine Communautaire (MFMC). Ces praticiens constituent la pierre angulaire d'un système de santé de
+        proximité, offrant une prise en charge globale, continue et coordonnée pour toute la famille.
+      </p>
+      <p>
+        Inspiré par les standards internationaux et adapté aux réalités locales, le programme DESMFMC forme des médecins
+        capables d'allier excellence clinique et engagement communautaire. Ils œuvrent quotidiennement au cœur des
+        CSCom-U pour transformer le paysage sanitaire du Mali.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Section Partenariat & Qualité -->
+<section style="padding: 4rem 2rem; background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 3.5rem;">
+      <h2 style="color: #0f172a; font-size: 2.25rem; font-weight: 800; margin-bottom: 1rem;">Un Standard d'Excellence
+        International</h2>
+      <div style="width: 80px; height: 4px; background: #3b82f6; margin: 0 auto; border-radius: 2px;"></div>
+    </div>
+
+    <div style="display: flex; gap: 3rem; align-items: center; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 300px;">
+        <p style="font-size: 1.15rem; line-height: 1.8; color: #334155; margin-bottom: 2rem;">
+          Le succès du programme DESMFMC repose sur une collaboration historique et indissoluble avec la <strong>Faculté
+            de Médecine et des Sciences de la Santé de l'Université de Sherbrooke (Canada)</strong>. Ce partenariat
+          stratégique garantit une formation de haut niveau, alignée sur les meilleures pratiques mondiales.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <div>
+            <h4 style="color: #2563eb; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1.5rem;">🎓</span> Qualité Pédagogique
+            </h4>
+            <p style="font-size: 0.95rem; color: #64748b;">Un accompagnement de proximité pour des méthodes
+              d'enseignement innovantes et interactives.</p>
+          </div>
+          <div>
+            <h4 style="color: #2563eb; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1.5rem;">🔬</span> Recherche Scientifique
+            </h4>
+            <p style="font-size: 0.95rem; color: #64748b;">Un soutien méthodologique rigoureux pour propulser la
+              recherche en santé communautaire au Mali.</p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        style="flex: 0 0 350px; background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; position: relative; overflow: hidden;">
+        <div
+          style="position: absolute; top: 0; right: 0; padding: 1rem; background: #3b82f6; color: white; border-bottom-left-radius: 12px; font-weight: bold; font-size: 0.8rem; text-transform: uppercase;">
+          Synergie Nord-Sud
+        </div>
+        <h3 style="color: #1e3a8a; margin-bottom: 1.5rem; font-weight: 700;">Pourquoi choisir le DESMFMC ?</h3>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 1rem; display: flex; gap: 0.75rem; align-items: start;">
+            <span style="color: #10b981;">✔</span> <span>Curriculum validé internationalement.</span>
+          </li>
+          <li style="margin-bottom: 1rem; display: flex; gap: 0.75rem; align-items: start;">
+            <span style="color: #10b981;">✔</span> <span>Experts formateurs de Sherbrooke et de Bamako.</span>
+          </li>
+          <li style="margin-bottom: 1rem; display: flex; gap: 0.75rem; align-items: start;">
+            <span style="color: #10b981;">✔</span> <span>Focus sur la pédagogie de proximité.</span>
+          </li>
+          <li style="display: flex; gap: 0.75rem; align-items: start;">
+            <span style="color: #10b981;">✔</span> <span>Accès à un réseau de recherche international.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section Compétences -->
+<section class="section-hero" style="background-color: #f0f7ff; border-color: #3b82f6; margin-top: 2rem;">
+  <h2 style="text-align: center; color: #1e3a8a; margin-bottom: 2rem;">Les 7 Compétences Cœurs de la Spécialité</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; padding: 1rem;">
+    <div
+      style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid #3b82f6;">
+      <h4 style="color: #2563eb; margin-bottom: 0.5rem;">🎓 Expert Médical</h4>
+      <p style="font-size: 0.9rem;">Maîtrise des soins cliniques polyvalents et approche centrée sur la personne.</p>
+    </div>
+    <div
+      style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid #3b82f6;">
+      <h4 style="color: #2563eb; margin-bottom: 0.5rem;">🗣️ Communicateur</h4>
+      <p style="font-size: 0.9rem;">Établir une relation de confiance et une communication efficace avec le patient et
+        sa famille.</p>
+    </div>
+    <div
+      style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid #3b82f6;">
+      <h4 style="color: #2563eb; margin-bottom: 0.5rem;">🤝 Collaborateur</h4>
+      <p style="font-size: 0.9rem;">Travailler en équipe avec les autres professionnels de santé pour des soins
+        optimaux.</p>
+    </div>
+    <div
+      style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid #3b82f6;">
+      <h4 style="color: #2563eb; margin-bottom: 0.5rem;">🚀 Leader</h4>
+      <p style="font-size: 0.9rem;">Gérer les ressources et contribuer à l'efficacité du système de santé.</p>
+    </div>
+    <div
+      style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid #3b82f6;">
+      <h4 style="color: #2563eb; margin-bottom: 0.5rem;">📢 Promoteur de la santé</h4>
+      <p style="font-size: 0.9rem;">Agir pour le bien-être de la communauté par la prévention et l'éducation.</p>
+    </div>
+    <div
+      style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid #3b82f6;">
+      <h4 style="color: #2563eb; margin-bottom: 0.5rem;">📚 Érudit</h4>
+      <p style="font-size: 0.9rem;">Engagement envers l'apprentissage continu et la recherche scientifique.</p>
+    </div>
+    <div
+      style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid #3b82f6;">
+      <h4 style="color: #2563eb; margin-bottom: 0.5rem;">🛡️ Professionnel</h4>
+      <p style="font-size: 0.9rem;">Respect de l'éthique médicale et engagement envers l'excellence.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Section Hommage aux Pionniers -->
+<section class="section-hero" style="border-style: dashed; border-color: #64748b; background-color: #f8fafc;">
+  <h2 style="text-align: center; color: #475569; margin-bottom: 2rem;">Hommage à nos Pionniers</h2>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
+
+    <!-- Prof. Anatole Tounkara -->
+    <div style="text-align: center;">
+      <div
+        style="width: 200px; height: 200px; margin: 0 auto 1.5rem; border-radius: 50%; overflow: hidden; border: 4px solid #cbd5e1; background: #e2e8f0; display: flex; align-items: center; justify-content: center;">
+        <span style="font-size: 3rem; color: #94a3b8;">👨‍⚕️</span>
+        <!-- Remplacez par le chemin de la photo réelle quand disponible -->
+      </div>
+      <h3 style="color: #1e293b; margin-bottom: 0.5rem;">Feu Prof. Anatole TOUNKARA</h3>
+      <p style="color: #64748b; font-style: italic; font-size: 0.9rem; margin-bottom: 1rem;">Ancien Doyen de la FMOS,
+        Mali</p>
+      <p style="font-size: 0.95rem; line-height: 1.6;">
+        Immunologiste de renom et visionnaire, le Professeur Tounkara a été l'architecte de la modernisation de la FMOS.
+        Son engagement pour l'excellence et son intégrité ont permis la naissance de nombreux programmes innovants au
+        Mali.
+      </p>
+    </div>
+
+    <!-- Prof. François Couturier -->
+    <div style="text-align: center;">
+      <div
+        style="width: 200px; height: 200px; margin: 0 auto 1.5rem; border-radius: 50%; overflow: hidden; border: 4px solid #cbd5e1; background: #e2e8f0; display: flex; align-items: center; justify-content: center;">
+        <img src="{% static 'images/pionniers/francois_couturier.jpg' %}" alt="Feu Prof. François COUTURIER"
+          style="width: 100%; height: 100%; object-fit: cover; object-position: center top;">
+      </div>
+      <h3 style="color: #1e293b; margin-bottom: 0.5rem;">Feu Prof. François COUTURIER</h3>
+      <p style="color: #64748b; font-style: italic; font-size: 0.9rem; margin-bottom: 1rem;">Université de Sherbrooke,
+        Canada</p>
+      <p style="font-size: 0.95rem; line-height: 1.6;">
+        Médecin humaniste et partenaire indéfectible du Mali, il a consacré sa vie au développement de la médecine de
+        famille. Son soutien au programme DESMFMC a forgé un lien indissoluble entre Sherbrooke et Bamako.
+      </p>
+    </div>
+
+  </div>
+</section>
+
 {% endblock %}
 
 {% block extra_js %}
-  <script src="{% static 'js/news-ticker.js' %}"></script>
-  <script src="{% static 'js/carousel.js' %}"></script>
+<script src="{% static 'js/news-ticker.js' %}"></script>
+<script src="{% static 'js/carousel.js' %}"></script>
 {% endblock %}
