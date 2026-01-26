@@ -137,10 +137,10 @@ header::after {
 
 .main-header,
 header {
-    background: var(--glass) !important;
+    background: rgba(15, 23, 42, 0.9) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
-    color: var(--text-dark) !important;
+    color: var(--white) !important;
     padding: 0.75rem 2rem !important;
     display: flex !important;
     justify-content: space-between !important;
@@ -149,42 +149,43 @@ header {
     position: sticky !important;
     top: 0 !important;
     z-index: 1000 !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     transition: var(--transition) !important;
 }
 
 .brand-title {
-    color: var(--primary) !important;
+    color: var(--white) !important;
     font-size: 1.5rem !important;
-    text-shadow: none !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
 .brand-accent {
     color: var(--accent) !important;
-    text-shadow: none !important;
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5) !important;
 }
 
 .brand-subtitle {
-    color: var(--text-main) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
 }
 
 /* Navigation items premium look */
 nav.main-menu ul.menu>li>a {
-    color: var(--text-main) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
     font-weight: 600 !important;
-    padding: 1rem 1.5rem !important;
+    padding: 0.8rem 1.2rem !important;
     border-radius: 8px !important;
     transition: var(--transition) !important;
 }
 
 nav.main-menu ul.menu>li>a:hover {
-    background-color: rgba(59, 130, 246, 0.1) !important;
-    color: var(--accent) !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: var(--white) !important;
 }
 
 nav.main-menu ul.menu>li.active>a {
     background-color: var(--accent) !important;
     color: var(--white) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
 }
 
 .header-buttons {
