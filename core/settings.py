@@ -14,11 +14,13 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost,fmos-mfmc.onrender.com').split(',')
 
-# CSRF trusted origins (important pour Render/production)
+# CSRF et Proxy (important pour Render/production)
 CSRF_TRUSTED_ORIGINS = os.getenv(
     'CSRF_TRUSTED_ORIGINS',
     'https://fmos-mfmc.onrender.com'
 ).split(',')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 # Auth user personnalisé
 AUTH_USER_MODEL = 'utilisateurs.Utilisateur'
@@ -90,67 +92,30 @@ DATABASES = {
     }
 }
 
-# Base de données PostgreSQL
-# Si DATABASE_URL existe (Railway, Render, etc.), l'utiliser
+# Base de données
 if 'DATABASE_URL' in os.environ:
     import dj_database_url
+    database_url = os.environ.get('DATABASE_URL')
     
-    # Récupérer l'URL de la base de données
-    database_url = os.environ.get('DATABASE_URL', '')
+    # Configuration via dj-database-url
+    # Forcer SSL si c'est une connexion externe Render
+    db_config = dj_database_url.config(
+        default=database_url,
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
     
-    # Pour Render PostgreSQL, configuration SSL robuste
-    if 'render.com' in database_url:
-        # Les URLs internes Render (commencent par dpg-) n'ont PAS besoin de SSL
-        # Les URLs externes nécessitent SSL
-        
-        # Détecter si c'est une URL interne (contient dpg-)
-        is_internal = 'dpg-' in database_url
-        
-        if is_internal:
-            # URL interne : Retirer sslmode de l'URL si présent (pas besoin de SSL)
-            if 'sslmode' in database_url:
-                import re
-                database_url = re.sub(r'[?&]sslmode=[^&]*', '', database_url)
-                # Nettoyer les ? ou & en double
-                database_url = database_url.replace('??', '?').replace('&&', '&')
-                if database_url.endswith('?') or database_url.endswith('&'):
-                    database_url = database_url[:-1]
-            
-            # Parser l'URL
-            db_config = dj_database_url.parse(database_url)
-            
-            # Pas d'options SSL pour les URLs internes
-            db_config['OPTIONS'] = {
-                'connect_timeout': 10,
-            }
-        else:
-            # URL externe : Utiliser SSL avec mode prefer (plus flexible)
-            if 'sslmode' not in database_url:
-                if '?' not in database_url:
-                    database_url += '?sslmode=prefer'
-                else:
-                    database_url += '&sslmode=prefer'
-            
-            db_config = dj_database_url.parse(database_url)
-            db_config['OPTIONS'] = {
-                'sslmode': 'prefer',  # Plus flexible que 'require'
-                'connect_timeout': 10,
-            }
-        
-        # Réutiliser les connexions pour éviter les fermetures inattendues
-        db_config['CONN_MAX_AGE'] = 600
-    else:
-        # Pour les autres providers (Railway, etc.)
-        db_config = dj_database_url.parse(database_url)
+    # Si c'est Render, on ajuste les options SSL
+    if 'render.com' in database_url and 'sslmode' not in database_url:
+        if 'dpg-' in database_url:
+            # Pour les URLs Render, on préfère sslmode=prefer pour la compatibilité
+            db_config['OPTIONS'] = {'sslmode': 'prefer'}
     
     # Forcer l'utilisation de SQLite en développement local si souhaité
-    # En production (Render), USE_SQLITE doit être à False
     USE_SQLITE = os.getenv('USE_SQLITE', 'False') == 'True'
     
     if not USE_SQLITE:
-        DATABASES = {
-            'default': db_config
-        }
+        DATABASES = {'default': db_config}
 
 # Validation des mots de passe
 AUTH_PASSWORD_VALIDATORS = [

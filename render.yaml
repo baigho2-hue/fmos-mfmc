@@ -14,7 +14,7 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
-        value: False
+        value: True
       - key: ALLOWED_HOSTS
         value: fmos-mfmc.onrender.com
       - key: DATABASE_URL
