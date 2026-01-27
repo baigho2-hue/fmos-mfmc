@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Sécurité et debug
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost,fmos-mfmc.onrender.com').split(',')
 
 # CSRF trusted origins (important pour Render/production)
 CSRF_TRUSTED_ORIGINS = os.getenv(
@@ -82,6 +82,14 @@ TEMPLATES = [
 # WSGI
 WSGI_APPLICATION = 'core.wsgi.application'
 
+# Configuration des bases de données
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
 # Base de données PostgreSQL
 # Si DATABASE_URL existe (Railway, Render, etc.), l'utiliser
 if 'DATABASE_URL' in os.environ:
@@ -136,17 +144,10 @@ if 'DATABASE_URL' in os.environ:
         db_config = dj_database_url.parse(database_url)
     
     # Forcer l'utilisation de SQLite en développement local si souhaité
-    # ou si la connexion à Supabase échoue
-    USE_SQLITE = os.getenv('USE_SQLITE', 'True') == 'True'
+    # En production (Render), USE_SQLITE doit être à False
+    USE_SQLITE = os.getenv('USE_SQLITE', 'False') == 'True'
     
-    if USE_SQLITE:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
-    else:
+    if not USE_SQLITE:
         DATABASES = {
             'default': db_config
         }
