@@ -175,6 +175,7 @@ nav.main-menu ul.menu>li>a {
     padding: 0.8rem 1.2rem !important;
     border-radius: 8px !important;
     transition: var(--transition) !important;
+    text-decoration: none !important;
 }
 
 nav.main-menu ul.menu>li>a:hover {
@@ -463,7 +464,7 @@ ul.menu>li.has-submenu:not(:hover):not(:focus-within)>.submenu {
     color: #005a9c !important;
     /* Texte en bleu */
     transition: background-color 0.3s ease, color 0.3s ease;
-    text-decoration: none;
+    text-decoration: none !important;
     white-space: nowrap;
     /* Empêcher le retour à la ligne */
 }
@@ -529,7 +530,7 @@ ul.menu>li.has-submenu:not(:hover):not(:focus-within)>.submenu {
 .subsubmenu a {
     color: #005a9c !important;
     /* Rendu visible sur fond blanc */
-    text-decoration: none;
+    text-decoration: none !important;
 }
 
 .submenu a:hover,
@@ -612,7 +613,7 @@ ul.menu>li.has-submenu:hover>.submenu {
     display: block;
     padding: 10px 20px;
     color: #005a9c !important;
-    text-decoration: none;
+    text-decoration: none !important;
     white-space: nowrap;
     transition: background-color 0.2s ease, color 0.2s ease;
 }

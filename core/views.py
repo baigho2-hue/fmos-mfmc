@@ -168,10 +168,12 @@ def login_view(request):
             return redirect('login')
         
         # Gérer le renvoi du code
+        method = request.GET.get('method', user.pref_verification)
         if request.GET.get('resend') == '1':
             try:
-                generer_code_verification(user)
-                messages.success(request, f"Un nouveau code de vérification a été envoyé à {user.email}.")
+                generer_code_verification(user, method=method)
+                dest = user.email if method == 'email' else user.telephone
+                messages.success(request, f"Un nouveau code de vérification a été envoyé par {method} à {dest}.")
             except Exception as e:
                 messages.error(request, f"Erreur lors de l'envoi du code : {str(e)}")
             return redirect('login')
@@ -209,10 +211,16 @@ def login_view(request):
         else:
             code_form = CodeVerificationForm()
         
+        # Ensure method and dest are available for the context if not already set by resend logic
+        method = request.GET.get('method', user.pref_verification)
+        dest = user.email if method == 'email' else user.telephone
+
         return render(request, 'login.html', {
             'code_form': code_form,
             'user': user,
-            'etape_verification': True
+            'etape_verification': True,
+            'method': method,
+            'destination': dest,
         })
     
     # Étape 1 : Authentification username/password
@@ -235,12 +243,17 @@ def login_view(request):
                     request.session['next_url'] = next_url
                 
                 # La double authentification (2FA) est OBLIGATOIRE pour TOUS les utilisateurs
-                # Étudiants, enseignants et superutilisateurs doivent tous passer par la vérification
                 try:
-                    generer_code_verification(user)
+                    method = user.pref_verification
+                    if method == 'sms' and not user.telephone:
+                        method = 'email'
+                    
+                    generer_code_verification(user, method=method)
                     # Stocker l'ID de l'utilisateur en session pour l'étape suivante
                     request.session['login_user_id'] = user.id
-                    messages.info(request, f"Un code de vérification a été envoyé à {user.email}. Veuillez l'entrer ci-dessous.")
+                    
+                    dest = user.email if method == 'email' else user.telephone
+                    messages.info(request, f"Un code de vérification a été envoyé par {method} à {dest}. Veuillez l'entrer ci-dessous.")
                     return redirect('login')
                 except Exception as e:
                     messages.error(request, f"Erreur lors de l'envoi du code de vérification : {str(e)}")

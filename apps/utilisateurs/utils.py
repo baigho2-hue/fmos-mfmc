@@ -8,9 +8,9 @@ from .models import CodeVerification, Utilisateur
 from .models_programme_desmfmc import CSComUCentre, StageRotationDES
 
 
-def generer_code_verification(user):
+def generer_code_verification(user, method='email'):
     """
-    Génère un code de vérification à 6 chiffres et l'envoie par email
+    Génère un code de vérification à 6 chiffres et l'envoie par email ou SMS
     """
     # Générer un code à 6 chiffres
     code = str(random.randint(100000, 999999))
@@ -22,6 +22,13 @@ def generer_code_verification(user):
         expire_le=timezone.now() + timedelta(minutes=10)
     )
     
+    if method == 'email':
+        return _envoyer_code_email(user, code, code_verif)
+    elif method == 'sms':
+        return _envoyer_code_sms(user, code, code_verif)
+    return code_verif
+
+def _envoyer_code_email(user, code, code_verif):
     # Envoyer l'email
     sujet = "Code de vérification - FMOS MFMC"
     message = f"""
@@ -51,7 +58,7 @@ L'équipe FMOS MFMC
         # En mode développement, afficher aussi le code dans la console pour faciliter les tests
         if settings.DEBUG:
             print(f"\n{'='*60}")
-            print(f"CODE DE VERIFICATION (MODE DEVELOPPEMENT)")
+            print(f"CODE DE VERIFICATION PAR EMAIL (MODE DEVELOPPEMENT)")
             print(f"{'='*60}")
             print(f"Utilisateur: {user.username} ({user.email})")
             print(f"Code: {code}")
@@ -60,8 +67,6 @@ L'équipe FMOS MFMC
         
         return code_verif
     except Exception as e:
-        # En cas d'erreur d'envoi, ne pas supprimer le code en mode développement
-        # pour permettre de le récupérer manuellement
         if settings.DEBUG:
             print(f"\n{'='*60}")
             print(f"ERREUR ENVOI EMAIL - CODE DISPONIBLE (MODE DEVELOPPEMENT)")
@@ -71,12 +76,34 @@ L'équipe FMOS MFMC
             print(f"Valide jusqu'à: {code_verif.expire_le}")
             print(f"Erreur: {e}")
             print(f"{'='*60}\n")
-            # Ne pas supprimer le code en mode développement
             return code_verif
         else:
-            # En production, supprimer le code en cas d'erreur
             code_verif.delete()
             raise e
+
+def _envoyer_code_sms(user, code, code_verif):
+    """
+    Envoie le code par SMS (actuellement via console/logs en attendant un fournisseur)
+    """
+    if not user.telephone:
+        code_verif.delete()
+        raise ValueError("L'utilisateur n'a pas de numéro de téléphone configuré.")
+
+    message = f"Votre code FMOS MFMC est : {code}. Valide 10 min."
+    
+    # TODO: Intégrer un fournisseur SMS (ex: Twilio, Infobip, Orange Money API, etc.)
+    # Pour l'instant, on simule l'envoi dans les logs/console
+    
+    print(f"\n{'='*60}")
+    print(f"ENVOI SMS (SIMULATION)")
+    print(f"{'='*60}")
+    print(f"Destinataire: {user.telephone}")
+    print(f"Message: {message}")
+    print(f"Code: {code}")
+    print(f"{'='*60}\n")
+    
+    # On considère l'envoi réussi pour la démonstration
+    return code_verif
 
 
 def verifier_code(user, code_saisi):

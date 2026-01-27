@@ -17,6 +17,11 @@ class Utilisateur(AbstractUser):
         ('enseignant', 'Enseignant'),
     ]
     
+    VERIFICATION_CHOICES = [
+        ('email', 'E-mail'),
+        ('sms', 'SMS'),
+    ]
+    
     NIVEAU_ACCES_CHOICES = [
         ('limite', 'Accès limité'),
         ('standard', 'Accès standard'),
@@ -113,7 +118,13 @@ class Utilisateur(AbstractUser):
     deux_facteurs_actives = models.BooleanField(
         default=False,
         verbose_name="Double authentification activée",
-        help_text="Active la vérification par code email pour les accès sensibles"
+        help_text="Active la vérification par code email ou SMS pour les accès sensibles"
+    )
+    pref_verification = models.CharField(
+        max_length=10,
+        choices=VERIFICATION_CHOICES,
+        default='email',
+        verbose_name="Méthode de vérification préférée"
     )
     
     def est_superviseur_cec(self):
