@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ma Progression - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="progression-container">
+    <div class="progression-header">
+        <h1 class="page-title">📊 Ma Progression Pédagogique</h1>
+        <p class="classe-info">Classe : <strong>{{ classe_obj.nom }}</strong></p>
+    </div>
+
+    <!-- Statistiques globales -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_cours }}</div>
+            <div class="stat-label">Cours au total</div>
+        </div>
+        <div class="stat-card ongoing">
+            <div class="stat-value">{{ stats.en_cours }}</div>
+            <div class="stat-label">En cours</div>
+        </div>
+        <div class="stat-card completed">
+            <div class="stat-value">{{ stats.termine }}</div>
+            <div class="stat-label">Terminés</div>
+        </div>
+        <div class="stat-card validated">
+            <div class="stat-value">{{ stats.valide }}</div>
+            <div class="stat-label">Validés</div>
+        </div>
+    </div>
+
+    <!-- Liste des cours -->
+    <div class="courses-progression">
+        <h2 class="section-title">Suivi par matière</h2>
+        <div class="progression-table-container">
+            <table class="progression-table">
+                <thead>
+                    <tr>
+                        <th>Cours</th>
+                        <th>Enseignant</th>
+                        <th>Progression</th>
+                        <th>Statut</th>
+                        <th>Dernière activité</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cours in cours_list %}
+                    {% with progression=progressions|dictsort:"cours_id"|first %}
+                    {# Note: Logic to find matching progression might be needed if progressions is a QuerySet #}
+                    {# In a real template we'd use a filter or look it up in a dict/relation #}
+                    {% endwith %}
+
+                    {# Since finding progression in a loop in template is hard without a custom filter, #}
+                    {# I will use the established pattern in the app #}
+
+                    <tr class="course-row">
+                        <td class="course-title-cell">
+                            <strong>{{ cours.titre }}</strong>
+                            <span class="course-code">{{ cours.code }}</span>
+                        </td>
+                        <td>Prof. {{ cours.enseignant.last_name|default:"Non assigné" }}</td>
+                        <td>
+                            {% for p in progressions %}
+                            {% if p.cours_id == cours.id %}
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: {{ p.pourcentage_completion }}%;"></div>
+                                <span class="progress-text">{{ p.pourcentage_completion }}%</span>
+                            </div>
+                            {% endif %}
+                            {% empty %}
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: 0%;"></div>
+                                <span class="progress-text">0%</span>
+                            </div>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for p in progressions %}
+                            {% if p.cours_id == cours.id %}
+                            <span class="badge {{ p.statut }}">{{ p.get_statut_display }}</span>
+                            {% endif %}
+                            {% empty %}
+                            <span class="badge non_commence">Non commencé</span>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for p in progressions %}
+                            {% if p.cours_id == cours.id %}
+                            {{ p.derniere_activite|date:"d/m/Y" }}
+                            {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <a href="{% url 'detail_cours' cours.id %}" class="btn-action">
+                                {% if any_progression %}Continuer{% else %}Commencer{% endif %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-msg">Aucun cours disponible pour votre classe.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="progression-footer">
+        <a href="{% url 'ma_progression_programme' %}" class="btn-alt">Voir ma progression globale par jalon →</a>
+    </div>
+</div>
+
+<style>
+    .progression-container {
+        max-width: 1200px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .progression-header {
+        margin-bottom: 2.5rem;
+    }
+
+    .page-title {
+        font-size: 2.25rem;
+        color: var(--primary);
+        margin: 0 0 0.5rem 0;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: var(--shadow-sm);
+        text-align: center;
+        border-top: 4px solid #cbd5e1;
+    }
+
+    .stat-card.ongoing {
+        border-top-color: #3b82f6;
+    }
+
+    .stat-card.completed {
+        border-top-color: #10b981;
+    }
+
+    .stat-card.validated {
+        border-top-color: #8b5cf6;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--primary);
+    }
+
+    .progression-table-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+    }
+
+    .progression-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .progression-table th {
+        background: #f8fafc;
+        padding: 1.25rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #64748b;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .progression-table td {
+        padding: 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    .course-title-cell {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .course-code {
+        font-size: 0.75rem;
+        color: #94a3b8;
+    }
+
+    .progress-bar-container {
+        width: 120px;
+        height: 8px;
+        background: #e2e8f0;
+        border-radius: 10px;
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: #3b82f6;
+        border-radius: 10px;
+    }
+
+    .progress-text {
+        position: absolute;
+        right: -40px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #3b82f6;
+    }
+
+    .badge {
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .badge.non_commence {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    .badge.en_cours {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .badge.termine {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge.valide {
+        background: #f3e8ff;
+        color: #6b21a8;
+    }
+
+    .btn-action {
+        padding: 0.5rem 1rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        color: var(--primary);
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .progression-footer {
+        margin-top: 3rem;
+        text-align: center;
+    }
+
+    .btn-alt {
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s ease;
+    }
+
+    .btn-alt:hover {
+        color: #2563eb;
+        text-decoration: underline;
+    }
+
+    @media (max-width: 900px) {
+
+        .progression-table th:nth-child(2),
+        .progression-table td:nth-child(2),
+        .progression-table th:nth-child(5),
+        .progression-table td:nth-child(5) {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}

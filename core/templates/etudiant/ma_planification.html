@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ma Planification - FMOS MFMC{% endblock %}
+
+{% block content %}
+<div class="calendar-container">
+    <div class="calendar-header">
+        <div class="header-content">
+            <h1 class="page-title">📅 Mon Emploi du Temps</h1>
+            <p class="classe-info">Classe : <strong>{{ classe_obj.nom }}</strong></p>
+        </div>
+        <div class="calendar-legend">
+            <span class="legend-item"><span class="dot cours"></span> Cours</span>
+            <span class="legend-item"><span class="dot tp"></span> TP/TD</span>
+            <span class="legend-item"><span class="dot examen"></span> Examen</span>
+        </div>
+    </div>
+
+    <div class="calendar-grid">
+        {% if planifications_par_date %}
+        {% for date, planifs in planifications_par_date.items %}
+        <div class="day-card">
+            <div class="day-header">
+                <div class="day-name">{{ date|date:"l" }}</div>
+                <div class="day-number">{{ date|date:"d" }}</div>
+                <div class="day-month">{{ date|date:"F Y" }}</div>
+                {% if date == today %}
+                <span class="today-badge">Aujourd'hui</span>
+                {% endif %}
+            </div>
+            <div class="day-activities">
+                {% for planif in planifs %}
+                <div class="activity-item {{ planif.type_activite }}">
+                    <div class="activity-time">
+                        <span class="time-start">{{ planif.date_debut|date:"H:i" }}</span>
+                        <span class="time-separator">-</span>
+                        <span class="time-end">{{ planif.date_fin|date:"H:i" }}</span>
+                    </div>
+                    <div class="activity-details">
+                        <h4 class="activity-title">{{ planif.titre }}</h4>
+                        {% if planif.cours_lie %}
+                        <p class="activity-course">
+                            📚 {{ planif.cours_lie.titre }}
+                        </p>
+                        {% endif %}
+                        <div class="activity-meta">
+                            <span class="meta-item">
+                                📍 {{ planif.lieu|default:"Salle de cours" }}
+                            </span>
+                            {% if planif.enseignant %}
+                            <span class="meta-item">
+                                👤 Prof. {{ planif.enseignant.last_name }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        {% if planif.description %}
+                        <div class="activity-desc">
+                            {{ planif.description }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📅</div>
+            <h3>Aucune activité prévue</h3>
+            <p>Votre emploi du temps est vide pour les 60 prochains jours.</p>
+            <a href="{% url 'dashboard_etudiant' %}" class="btn-back">Retour au tableau de bord</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .calendar-container {
+        max-width: 1000px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .page-title {
+        font-size: 2.25rem;
+        color: var(--primary);
+        margin: 0 0 0.5rem 0;
+    }
+
+    .classe-info {
+        font-size: 1.1rem;
+        color: var(--text-main);
+        margin: 0;
+    }
+
+    .calendar-legend {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.9rem;
+        color: var(--text-main);
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+
+    .dot.cours {
+        background: #3b82f6;
+    }
+
+    .dot.tp {
+        background: #10b981;
+    }
+
+    .dot.examen {
+        background: #ef4444;
+    }
+
+    .calendar-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .day-card {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .day-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .day-header {
+        background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-right: 1px solid #e2e8f0;
+        position: relative;
+    }
+
+    .day-name {
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: 0.05rem;
+    }
+
+    .day-number {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: var(--primary);
+        line-height: 1;
+        margin: 0.5rem 0;
+    }
+
+    .day-month {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #64748b;
+    }
+
+    .today-badge {
+        position: absolute;
+        top: 1rem;
+        background: #3b82f6;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+    }
+
+    .day-activities {
+        padding: 1.5rem;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .activity-item {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+        padding: 1rem;
+        border-radius: 12px;
+        border-left: 5px solid #cbd5e1;
+        background: #f8fafc;
+        transition: background 0.2s ease;
+    }
+
+    .activity-item:hover {
+        background: #f1f5f9;
+    }
+
+    .activity-item.cours {
+        border-left-color: #3b82f6;
+    }
+
+    .activity-item.tp,
+    .activity-item.td {
+        border-left-color: #10b981;
+    }
+
+    .activity-item.examen {
+        border-left-color: #ef4444;
+    }
+
+    .activity-time {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-weight: 700;
+        color: var(--primary);
+        font-size: 0.95rem;
+    }
+
+    .time-separator {
+        font-size: 0.8rem;
+        opacity: 0.5;
+        margin: -2px 0;
+    }
+
+    .activity-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .activity-course {
+        margin: 0 0 0.5rem 0;
+        font-size: 0.95rem;
+        color: #475569;
+    }
+
+    .activity-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+
+    .activity-desc {
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px dashed #e2e8f0;
+        font-size: 0.9rem;
+        color: #64748b;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-back {
+        display: inline-block;
+        margin-top: 1.5rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--primary);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: transform 0.2s ease;
+    }
+
+    .btn-back:hover {
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+        .calendar-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .day-card {
+            grid-template-columns: 1fr;
+        }
+
+        .day-header {
+            flex-direction: row;
+            gap: 1rem;
+            padding: 1rem;
+            border-right: none;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .day-number {
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .activity-item {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
+
+        .activity-time {
+            flex-direction: row;
+            gap: 0.5rem;
+        }
+
+        .time-separator {
+            margin: 0;
+        }
+    }
+</style>
+{% endblock %}
